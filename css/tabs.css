@@ -1,0 +1,42 @@
+.tabs {
+  height: 1.2em;
+  background-color: #d9deff;
+  border-bottom: solid navy 1px;
+}
+
+.tabs ul.horizontal {
+  width: 100%;
+  margin-left: 1em;
+  margin-top: 5px;
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 0 0 0 0;
+}
+
+
+.tabs .horizontal li {
+  display: inline;
+  background-color: #eeeeee;
+  margin-left: 0.5em;
+  padding: 0px 1em;
+  border: solid navy;
+  border-width: 1px 1px 0 1px;
+}
+
+.tabs .horizontal li.selected {
+  background-color: white;
+  border-bottom: 1px solid white;
+}
+
+.tabs .horizontal li a {
+  text-decoration: none;
+  font-weight: bold;
+  color: navy;
+}
+.tabs .horizontal li:hover {
+  background-color: navy;
+  border-bottom: 1px solid navy;
+}
+.tabs .horizontal li:hover a {
+  color: #ffffe0;
+}

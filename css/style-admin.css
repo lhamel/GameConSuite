@@ -1,0 +1,57 @@
+.content #action_sub_menu {
+	font-size: 8pt;
+	float: right;
+	width: 180px;
+	margin-left: 5px;
+	padding: 5px;
+	background: #e0e8ff;
+	border: solid gray 1px;
+}
+
+
+
+.content .commentBlock {
+  width: 100%;
+	height: 4em;
+  padding: 2px;
+	background: #e0e8ff;
+  border: solid gray 1px;
+}
+
+.content .eventScheduling {
+  
+}
+.content .eventScheduling td {
+}
+
+.content .eventSummary {
+  border-top: solid lightgray 1px;
+}
+
+.content .eventSummary td {
+  border-bottom: solid lightgray 1px;
+  padding-right: 6px;
+}
+
+.editable:hover, .editableSelect:hover, .editableArea:hover, .editableCustom:hover {
+  background: #ff9;
+}
+
+.content .buttonBar {
+  text-align: center;
+}
+
+.content .ticketstripe {
+	float: right;
+	width: 50%;
+  border-top: solid black 1px;
+  border-bottom: solid black 1px;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  padding-left: 4px;
+	background-color: navy;
+  color: white;
+}
+.content .ticketstripe a {
+  color: white;
+}

@@ -1,0 +1,204 @@
+@import "search.css";
+
+.content {font: 11pt Calibri, Helvetica, Arial, sans-serif; color: #111111; width: 100%;  }
+.content form, .content input, .content textarea, .content select {font: 11pt Calibri, Helvetica, Arial, sans-serif;}
+
+.content .small {font-size: 9pt;}
+
+/* Note: !important is an IE work around */
+.content .button {
+	border-style: outset;
+	background: #EEEEEE; color: navy !important; 
+	text-decoration: none; 
+	font-weight: bold; font-size: 9pt; 
+	padding-left: 2px; padding-right: 2px;
+	padding-top: 0px; padding-bottom: 0px;
+	white-space: nowrap;
+}
+
+.content .column {width:50%; padding:10px; float:right; text-align:justify;}
+ 
+.content .button:active { border-style: inset; }
+
+.content h1 { font-size: 16pt; font-weight: bold; margin-bottom: 4px; color: navy; border-bottom: 2px solid navy; }
+.content h2 { font-size: 14pt; font-weight: bold; margin-bottom: 4px; color: navy; font-style: italic; }
+.content h3 { font-size: 13pt; font-weight: bold; margin-bottom: 4px; color: navy; }
+.content h4 { font-size: 12pt; font-weight: bold; margin-bottom: 4px; color: black; margin-bottom: }
+.content p, .content form { margin-top: 0px; margin-bottom: 6px; }
+.content ul, .content ol { margin-top: 6px; margin-bottom: 6px; }
+
+.content .section { 
+  background-color: #e0e8ff; 
+	border-top: 1px dotted #999999;
+	border-bottom: 1px dotted #999999;
+	padding-left: 3px;
+}
+
+.content img { margin: 3px; }
+
+.content hr, .content .altheader {
+	background-color: navy;
+	color: white;
+	font-weight: bolder; 
+	font-size: 10pt;
+}
+
+.content th { font-size: 9pt; color: white; background: navy; font-weight: bolder; }
+.content th a { color: white; }
+
+.content ul, .content ol { margin-left: 0; padding-left: 0.25in; }
+
+.content .altcolor1 {
+	background-color: white;
+	border-bottom: solid black 1px;
+	font-size: 9pt;
+}
+.content .altcolor2 {
+	background-color: #FFFFE0; 
+	border-bottom: solid black 1px;
+	font-size: 9pt;
+}
+
+.content caption {
+	text-align: left;
+	font-size: 12pt;
+	font-weight: bolder;
+	margin-top: 10px;
+}
+
+
+/* Style for when a database-driven section of the website has errors
+ */
+.content .failure {
+	font-size: 12pt;
+	color: #660000;
+}
+
+/* A flavor image is one which is just there to enhance the look/feel of the
+ * site */
+.content img.flavor { border: solid 1px; float: right }
+
+.content img { border: solid 0px; }
+
+/* An archive is a large clump of content */
+.content div.archive { text-align: center; }
+/*.content div.archive img { width: 48%; } /* Makes them display 2 wide */
+.content div.archive img.fixed { width: auto; } /* ...unless we say otherwise */
+
+/* A header menu is a section of text displayed at the top of the content */
+.content span.headermenu { text-align: center; margin: 15px auto; display: block; clear: both; }
+
+/* commentTrailed is applied to an element that is normally block-displayed (like a
+ * header), to allow us to append additional text on the same line */
+.content .commentTrailed { display: inline; }
+
+/* placeholder content is put in temporarily until the real content is available */
+.content .placeholder img { display: block; margin-left: auto; margin-right: auto; border: solid 1px; }
+
+/* longcontent is anything that the designer wants to fit a lot of on a page. */
+.content .longcontent { font-size: smaller; }
+
+/* copyright is a copyright notice embedded in the content */
+.content .copyright { font-size: smaller; }
+
+/* .content .event table { border-top: solid black 1px; border-right: solid black 1px; border-left: solid black 1px; } */
+.content .event td { font-size: 10pt; }
+.content .event th { color: white; }
+.content .event th a { color: white; }
+
+.content tr { vertical-align: top; }
+
+.content .event_search { 
+	border: solid black 1px; 
+	font-size: 10pt; 
+	background: #e0e0e0;  
+	padding: 2px;
+}
+
+/* fixes the extra space around the event search form */
+.content .event_search form {
+	margin: 0px;
+}
+
+
+.event_view { font-size: 10pt; }
+.event_view .data { font-weight: bold; }
+.event_view .longtext { 
+	background-color: #FFFFE0; 
+	border-bottom: solid black 1px; 
+	border-top: solid black 1px; 
+}
+
+.event_search_result th {
+	background-color: navy;
+	color: white;
+}
+
+.event_search_result th a {
+	color: white;
+}
+
+.content .news {
+        /* float: left; */
+        padding: 5px;
+        margin-right: 10px;
+        border: solid black 1px;
+        background: #ffffe0;
+}
+
+.content .news h1 {
+        text-align: center;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        font-size: 12pt;
+        font-weight: bolder;
+        border-bottom: solid black 1px;
+}
+
+.content .news dl {
+        margin: 0px;
+}
+
+.content .news dt {
+        margin-top: 9px;
+        margin-bottom: 0px;
+        font-weight: bolder;
+}
+
+.content .news dd {
+        margin-left: 0px;
+        font-size: 9pt;
+}
+
+.content .news strong {
+        color: darkred;
+}
+
+/* Styles for meeting minutes */
+.content .minutes ul {
+	padding-left: 0px;
+}
+
+.content .minutes ul ul {
+	padding-left: 20px;
+}
+
+.content .minutes li {
+	list-style-type: none;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+.content .minutes li li { 
+	padding-bottom: 0; 
+	font-weight: 400;
+}
+
+/* only used in admin section now */
+.content .hilite {
+	background-color: #ffffe0;
+	border: solid black 1px;
+	padding: 3px;
+}
+
+#contactForm #secret { display: none; }
+#contactForm textarea { width: 60%; }

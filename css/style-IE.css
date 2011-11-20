@@ -1,0 +1,13 @@
+/* Hacks to get around inferior CSS support in Microsoft Internet Explorer */
+
+/* IE doesn't support margin: auto, but instead incorrectly applies the parent's text-align. */
+body { text-align: center; } /* IE hack for bad "margin: auto" support */
+.mainpane { text-align: left; } /* IE hack for bad "margin: auto" support */
+.mainbar table { border-collapse: collapse; } /* IE hack for bad "border-spacing" support */
+.menulist ul { margin-left: 0; } /* IE hack for bad use of margins vs. padding */
+/* Also, for lack of "white-space: nowrap" support in IE 5.0, we have to use some &nbsp; entities in our menu text */
+
+/* Fix IE. Hide from IE Mac \*/
+* html .menulist li { float: left; height: 1%; }
+* html .menulist li a { height: 1%; }
+/* End */

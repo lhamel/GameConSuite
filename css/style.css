@@ -1,0 +1,34 @@
+@import "style-content.css";
+@import "style-IE.css";
+@import "style-cart.css"; /* deprecated */
+@import "style-admin.css";
+@import "style-wp.css";
+@import "forms.css";
+@import "event.css";
+@import "cart.css";
+@import "table.css";
+@import "tabs.css";
+
+body { font-family: Calibri, Helvetica, Arial, sans-serif; background: white; font-size: 12pt; }
+a:link, a:visited { color: navy; }
+.mainpane { margin: 0 auto; width: 1024px; margin-bottom: 25px; } 
+.footer, .mainbar { width: 100%;  } 
+.header { border: solid black; border-width: medium 0 medium 0; } 
+img { border-width: 0; } 
+img.logo {display: block; margin: 0 auto;}
+.mainbar { border-width: medium 0; }
+.mainbar td { vertical-align: top; }
+.mainbar table { border-spacing: 0; }
+.sidebar { border: solid black; border-width: 0 medium 0 0; vertical-align: top; background-color: #d9deff; }
+.menulist { margin: 0; padding: 5px; font-weight: bolder; white-space: nowrap; vertical-align: top; }
+.menulist li { list-style-type: none; padding-bottom: 10px; }
+.menulist li li { padding-bottom: 0; }
+.menulist ul { padding-left: 15px; }
+.menulist a { text-decoration: none; }
+.menulist .selected { color: maroon !important; }
+.content { padding-left: 10px; vertical-align: text-top; }
+.footer { border-width: 0; }
+.footer1 { float: left; }
+.footer2 { float: right; }
+.ads { }
+.ads img { border-width: 1px; border-color: black; }

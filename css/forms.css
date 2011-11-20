@@ -1,0 +1,60 @@
+.ucon_form {
+  width: 100%;
+}
+
+.ucon_form th {
+  text-align: left;
+  padding-left: 5px;
+  font-size: 13pt;
+  border-bottom: solid #808080 1px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background: #10218b; /*#8b4513;*/
+  color: #ffffff;
+}
+
+.ucon_form td {
+  padding-left: 10px;
+  padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+  color: #333333;
+  background: #e0e0e0;
+  font-size: 12pt;
+  vertical-align: top;
+}
+
+.ucon_form .field_name {
+  font-weight: bold;
+}
+
+.ucon_form .description {
+  font-style: italic;
+}
+
+.ucon_form .submit {
+  text-align: right;
+}
+
+.ucon_form .required {
+
+}
+
+.ucon_form span.validation {
+	color: #a00000;
+}
+
+.ucon_form input.validation, .ucon_form textarea.validation {
+	border: solid #a00000 2px;
+}
+
+.ucon_form .userdata {
+  background-color: #ffffff;
+  border: solid #8b4513 1px;
+  padding: 3px;
+}
+
+.ucon .eventButtons {
+  margin: 4px;
+  padding: 4px;
+}

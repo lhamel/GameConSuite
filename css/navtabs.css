@@ -1,0 +1,17 @@
+#navtabs {
+ width: 100%;
+ background-color: navy;
+ padding-top: 5px; padding-left: 5px; }
+
+#navtabs a, #navtabs span {
+ background-color: #e0e8ff;
+ border: solid black 1px;
+ text-decoration: none;
+ padding-left: 10px; padding-right: 10px; 
+}
+
+#navtabs a.selecttab, #navtabs span.selecttab {
+ background-color: #ffffff;
+ border-bottom: 0px; 
+}
+

@@ -1,0 +1,73 @@
+/*
+	Styles used for various forms in the cart.
+*/
+
+.content .cart {
+  margin: auto;
+  width: 100%;
+  /* text-align: right; */
+}
+
+.content .cart th {
+  border-bottom: solid navy 1px;
+}
+
+.content .cart td {
+  border-top: solid navy 1px;
+}
+
+.content .itemTotal td, .content .paymentTotal td {
+  border-top: solid navy 2px;
+  border-bottom: solid navy 2px;
+  background: #eeeeee;
+  font-weight: bold;
+}
+
+.content td.due {
+  text-align: right;
+  border: solid navy 2px;
+  font-weight: bold;
+  background: #ffffe0;
+  color: darkred;
+}
+
+.content .cart th, .content .cart td {
+  padding-left: .5em;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-right: .5em;
+}
+
+.content .removeCol { width: 20px; text-align: left; }
+.content .itemsCol { width: 400px; text-align: left; }
+.content .quantityCol { width: 60px; text-align: right; }
+.content .priceCol { width: 60px; text-align: right; }
+.content .totalCol { width: 50px; text-align: right; }
+
+.content td.itemsCol, 
+.content td.quantityCol, 
+.content td.priceCol, 
+.content td.totalCol {
+    border-right: dotted gray 1px;
+}
+
+.content .cart input.numeric {
+	text-align: right;
+}
+
+
+.content .paymentMethods {
+  margin: auto;
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.content .paymentMethods td {
+  padding-top: 20px;
+}
+
+.content .paymentMethodType {
+	width: 100px;
+}
+.content .paymentMethodDescription {
+}

@@ -1,0 +1,26 @@
+
+
+
+.content .searchresult {
+  //border: solid black 1px;
+}
+
+.content .searchresult th {
+  background: navy;
+  color: white;
+  font-weight: bold;
+  border-bottom: solid black 1px;
+}
+.content .searchresult th a {
+  color: white;
+  font-weight: bold;
+}
+.content .searchresult td {
+  border-top: solid black 1px;
+}
+
+.content a.selected {
+  font-weight: bold;
+  color: darkred;
+}
+

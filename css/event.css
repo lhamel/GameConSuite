@@ -1,0 +1,23 @@
+
+.viewEvent p {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.viewEvent td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-bottom: solid lightgray 1px;
+}
+
+.viewEvent td.left {
+  width: 150px;
+}
+.viewEvent td.right {
+  width: 300px;
+}
+.viewEvent td.description {
+  padding-left: 6px;
+}
+
+

@@ -1,0 +1,33 @@
+/*
+	Styles used for various forms in the cart.
+*/
+
+.content .order {
+	padding: 0px;
+	margin: 0px;
+}
+
+.content .order form {
+	margin: 0px;
+}
+
+.content .order input {
+	font-size: 9pt;
+}
+
+.content .order_buttons {
+	padding: 0px;
+	margin: 10px;
+	text-align: center;
+}
+
+.content .order_shirt li {
+	list-style-type: none; 
+}
+
+.content .personal_information {
+	border: solid navy 2px;
+	padding: 10px;
+	background-color: #FFFFE0;
+}
+

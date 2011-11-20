@@ -1,0 +1,22 @@
+.content table.member_info {
+	width: 100%;
+}
+
+.content table.member_info th {
+  border-top: solid black 1px;
+  border-bottom: solid black 1px;
+  font-size: 10pt;
+  color: white;
+  background: navy;
+  font-weight: bolder;
+}
+
+
+.content table.member_info td {
+  border-bottom: solid black 1px;
+}
+
+.content table.member_info .alt td {
+  background: #f6f680
+}
+
