@@ -82,7 +82,7 @@ $menu['items'] = array(
     //array('label'=>'Tee Shirts', 'link'=>'events/db/shirt.php'),
   )),
   array('label'=>'Participation', 'children'=>array(
-    array('label'=>'Submit Events', 'link'=>'gcs/gm/submit.php'),
+    array('label'=>'Submit Events', 'link'=>'gm/submit.php'),
     array('label'=>'RPGA Judges', 'link'=>'info/rpga.php'),
     array('label'=>'Volunteers', 'link'=>'info/volunteers.php'),
   )),
