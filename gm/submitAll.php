@@ -52,7 +52,7 @@ $db->CompleteTrans();
 require_once INC_PATH.'/smarty.php';
 $location = "gm/submit.php";
 $year = YEAR;
-require_once INC_PATH.'/layout/menu.php';
+require_once INC_PATH.'/menu.php';
 $smarty->assign('UCON', $UCON);
 $smarty->assign('config', $config);
 
@@ -76,7 +76,7 @@ $gmEmail = $_SESSION['gm']['member']['s_email'];
 $ok = mail($gmEmail, $subject, $body, 'From: ' . $regEmail);
 $ok = mail($regEmail, $subject, $body, 'From: ' . $gmEmail);
 
-$smarty->assign('content', $smarty->fetch('gcs/gm/thanks.tpl'));
+$smarty->assign('content', $smarty->fetch('gm/thanks.tpl'));
 
 //$smarty->assign('content', '<pre>'.wordwrap($body,80).'</pre>');
 $smarty->display('base.tpl');

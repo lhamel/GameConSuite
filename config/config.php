@@ -10,6 +10,7 @@ Exhibitors' Hall, Auction, Specialty Tracks, and much more!
 EOD;
 
 $config['gcs']['con']['name'] = "U-Con";
+$config['gcs']['con']['website'] = "http://www.ucon-gaming.org/";
 
 /* Meta information for the site, appears in the headers of every page */
 $config['gcs']['meta']['defaultTitle'] = "U-Con Gaming Convention, Ann Arbor Michigan";

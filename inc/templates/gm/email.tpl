@@ -1,7 +1,7 @@
-U-Con {$config.ucon.year} Event Submission
+{$config.gcs.con.name} {$config.ucon.year} Event Submission
 {* above is the subject *}
 
-Thank you for registering for U-Con {$config.ucon.year}!
+Thank you for registering for {$config.gcs.con.name} {$config.ucon.year}!
 
 This is the confirmation email for the events you have 
 offered to run.  If you have received this email in error, 
@@ -14,8 +14,8 @@ events for any reason, please contact the same email
 address.
 
 Please submit a $10 GM deposit either by paypal (to 
-*{$config.email.paypal}*) or print this email and mail it 
-along with a check (payable to *U-Con Gaming Club*) to the 
+*{$config.gcs.payments.paypalEmail}*) or print this email and mail it 
+along with a check (payable to *{$config.gcs.payments.checkPayable*)*) to the 
 address below:
 
   U-Con Events
