@@ -32,8 +32,8 @@ $config['page']['location'] = substr($scriptPathFromRoot,1);
 $config['page']['depth'] = DEPTH;
 $config['page']['request'] = $_REQUEST;
 
-require_once dirname(__FILE__).'../config/config.php';
-require_once dirname(__FILE__).'../config/settings.php';
+require_once dirname(__FILE__).'/../config/config.php';
+require_once dirname(__FILE__).'/../config/settings.php';
 
 //echo '<pre>'.print_r($config,1).'</pre>';
 
