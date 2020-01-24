@@ -1,0 +1,15 @@
+{
+
+  "require": {
+    "adodb/adodb-php": "^5",
+    "smarty/smarty": "^3",
+    "tecnickcom/tcpdf": "^6",
+    "phpauth/phpauth": "dev-master",
+    "phpmailer/phpmailer": "^6"
+  },
+  "require-dev": {
+    "simpletest/simpletest": "^1"
+  }
+
+
+}
