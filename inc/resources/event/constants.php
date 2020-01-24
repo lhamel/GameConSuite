@@ -30,7 +30,7 @@ if (isset($_SESSION['cache']['constants']['events'])) {
 
   	// room selection list contains only rooms at the current venue
   	// TODO redo for selected venue
-  	$clause = $config['ucon']['venueId'] ? 'id_venue='.$config['ucon']['venueId'] : null;
+  	$clause = $config['gcs']['venueId'] ? 'id_venue='.$config['gcs']['venueId'] : null;
   	$array = $rooms->Find($clause);
   	$constants['events']['roomsWithBlank'] = $blank + array();
   	foreach ($array as $entry) {

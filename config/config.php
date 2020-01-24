@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($config)) $config = array();
+
+$config['gcs']['year'] = 2019;
+$config['gcs']['venueId'] = 3; //Eagle Crest
+
 $config['gcs']['location'] = "Ann Arbor, Michigan";
 $config['gcs']['dates']['all'] = 'November 11-13, 2011';
 
