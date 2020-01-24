@@ -1,6 +1,6 @@
 <?php
-require_once(dirname(__FILE__).'/../lib/adodb/adodb.inc.php');
-require_once(dirname(__FILE__).'/../lib/adodb/adodb-active-record.inc.php');
+require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb.inc.php');
+require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb-active-record.inc.php');
 
 $db = NewADOConnection('mysql://root:@localhost/ucon_db');
 $db->SetFetchMode(ADODB_FETCH_ASSOC);
