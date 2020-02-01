@@ -1,4 +1,13 @@
 <?php
+
+// force to use https
+if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off"){
+    $redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: ' . $redirect);
+    exit();
+}
+
 if (!defined("BASE_PATH")) {
   $rootFilePath = realpath(dirname(__FILE__).'/../');
   $rootFilePath = str_replace("\\", "/", $rootFilePath);
@@ -29,7 +38,7 @@ if (!defined('DEPTH')) define('DEPTH', BASE_PATH);
 if (!isset($config)) $config = array();
 $config['page']['basename'] = basename($_SERVER['SCRIPT_NAME']);
 $config['page']['location'] = substr($scriptPathFromRoot,1);
-$config['page']['depth'] = DEPTH;
+$config['page']['depth'] = BASE_PATH;
 $config['page']['request'] = $_REQUEST;
 
 require_once dirname(__FILE__).'/../config/config.php';

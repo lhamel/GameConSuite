@@ -1,6 +1,7 @@
 <?php
 require_once '../inc/inc.php';
-$year = YEAR;
+
+$year = $config['gcs']['year'];
 $location = 'gcs/login.php';
 
 //

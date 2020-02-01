@@ -15,22 +15,37 @@
     <script src="{$config.page.depth}js/jquery.jeditable.checkbox.js" type="text/javascript" ></script>
 </head>
 
-<body><div class="mainpane" {if $width}style="width:{$width}px"{/if}>
+<body><div class="mainpane" {if isset($width)}style="width:{$width}px"{/if}>
 
+<body>
+
+{if $mobile|default:false}
+<style>
+table td {
+  font-size: 18pt;
+}
+</style>
+{/if}
+
+<div class="mainpane" {if $width|default:0}style="width:{$width}px"{/if}>
 <div class="mainbar">
 
 <table cellspacing="0" cellpadding="0">
+{if !($mobile|default:false)}
 {include file="layout/header.tpl"}
+{/if}
 <tr>
-<td class="sidebar"{if $tabs} rowspan="2"{/if}>
+{if !($mobile|default:false)}
+<td class="sidebar"{if $tabs|default:false} rowspan="2"{/if}>
 {include file="layout/menu.tpl"}
 </td>
+{/if}
 {strip}
-{if $tabs}
+{if $tabs|default:'' && !($mobile|default:false)}
 <td class="tabs" colspan="2"><ul class="horizontal">
 {foreach item=item from=$tabs}
   <li{if $item.link==$config.page.location} class="selected"{/if}>
-    <a href="{$config.page.depth}{$item.link}{$item.querystring}">{$item.label}</a>
+    <a href="{$config.page.depth}{$item.link}{$item.querystring|default:''}">{$item.label}</a>
   </li>
 {/foreach}
 </ul></td></tr><tr>
@@ -44,11 +59,17 @@
 
 </tr></table></div>
 
+{if !($mobile|default:false)}
 <div class="footer">
 {include file="layout/footer.tpl" title="User Info"}
 </div>
+{/if}
 
 </div>
 
+
+{foreach item=item from=$js|default:array()}
+  <script src="{$item}"></script>
+{/foreach}
 </body>
 </html>

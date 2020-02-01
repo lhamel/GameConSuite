@@ -101,11 +101,11 @@ p2.addEventListener('input', compareFn);
 
 </form>
 
-{if $forgotAction}
+{if isset($forgotAction)}
 <p><a href="{$forgotAction}">Forgot password?</a></p>
 {/if}
 
-{if $createAction}
+{if isset($createAction)}
 <p><a href="{$createAction}">Create account?</a></p>
 {/if}
 
