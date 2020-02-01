@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb.inc.php');
 require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb-active-record.inc.php');
 
-$db = NewADOConnection('mysql://root:@localhost/ucon_db');
+$db = NewADOConnection('mysqli://root:@localhost/ucon_db');
 $db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 ADOdb_Active_Record::SetDatabaseAdapter($db);
