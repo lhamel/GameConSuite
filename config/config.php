@@ -55,3 +55,22 @@ $config['gcs']['meta']['description'] = "Affordable gaming convention in Ann Arb
 $config['gcs']['payments']['paypalEmail'] = "ucon-paypal@ucon-gaming.org";
 $config['gcs']['payments']['checkPayable'] = "U-Con Gaming Club";
 $config['gcs']['payments']['mailAddress'] = "U-Con Events<br/>PO Box 4491<br/>Ann Arbor, MI 48106-4491";
+
+
+//
+// PHPMailer settings
+
+// From line of email
+$config['phpmailer']['email'] = '';
+$config['phpmailer']['fromname'] = 'Customer service';
+
+// Mail host username and password
+$config['phpmailer']['username'] = '';
+$config['phpmailer']['password'] = '';
+
+// Mail host connection information
+$config['phpmailer']['host'] = '';
+$config['phpmailer']['port'] = 465;
+$config['phpmailer']['smtpsecure'] = 'ssl';
+$config['phpmailer']['smtpauth'] = true;
+

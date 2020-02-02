@@ -96,9 +96,9 @@ $body = join("\n", $lines);
 
 // send email to GM and Event coordinator
 require_once INC_PATH."/mail.php";
-$ok = ucon_mail($gmEmail, $subject, $body, array('from',$regEmail));
+$ok = gcs_mail($gmEmail, $subject, $body, array('from',$regEmail));
 if (!$ok) {error_log("submitAll.php: Error sending email from registration to $gmEmail");}
-$ok = ucon_mail($regEmail, $subject, $body, array('from',$gmEmail));
+$ok = gcs_mail($regEmail, $subject, $body, array('from',$gmEmail));
 if (!$ok) {error_log("submitAll.php: Error sending email to registration from $gmEmail");}
 if (trim($regEmail)=="" || trim($regEmail)=="") {
   error_log("empty email reg ($regEmail) or gm ($gmEmail)");
