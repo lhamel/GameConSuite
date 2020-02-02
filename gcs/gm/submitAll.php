@@ -107,4 +107,4 @@ if (trim($regEmail)=="" || trim($regEmail)=="") {
 $smarty->assign('content', $smarty->fetch('gcs/gm/thanks.tpl'));
 $smarty->display('base.tpl');
 
-// unset($_SESSION['gm']);
+unset($_SESSION['gm']);

@@ -47,7 +47,7 @@ $(document).ready(function() {
               {html_options name=id_event_type class=validation options=$constants.events.eventTypesWithBlank selected=$event.id_event_type|default:''}
               <br/>*{$errors.id_event_type}</span>
             {else}
-            {html_options name=id_event_type options=$constants.events.eventTypesWithBlank selected=$event.id_event_type|default:''}
+            {html_options name=id_event_type options=$constants.events.eventTypesWithBlank selected=($event.id_event_type|default:'')}
             {/if}
         </td>
         <td class="description">The selected event type determines in which category

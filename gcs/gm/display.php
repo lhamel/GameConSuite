@@ -152,7 +152,7 @@ EOD;
 
   // display event form
   $smarty->assign('event', $event);
-  $smarty->assign('content', $smarty->fetch('gcs/event/edit.tpl'));
+  $smarty->assign('content', $smarty->fetch('gcs/gm/edit.tpl'));
   $smarty->display('base.tpl');
 
 } elseif(isset($_GET['action']) && $_GET['action'] == 'add') {
@@ -172,7 +172,7 @@ EOD;
 
   // display the event form without validation
   $smarty->assign('event', $event);
-  $smarty->assign('content', $smarty->fetch('gcs/event/edit.tpl'));
+  $smarty->assign('content', $smarty->fetch('gcs/gm/edit.tpl'));
   $smarty->display('base.tpl');
 
 
