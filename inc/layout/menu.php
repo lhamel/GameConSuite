@@ -8,7 +8,7 @@ if (!isset($smarty))
   die('please set $smarty');
 }
 if (!isset($year)) {
-  die('please set $year');
+  $year = $config['gcs']['year'];
 }
 
 $menu = array();

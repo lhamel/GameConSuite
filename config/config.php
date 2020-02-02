@@ -19,7 +19,7 @@ $config['allow']['message'] = ''; //<span style="font-size:18pt">Pregistration O
 
 // $config['ucon']['baseUrl'] = "https://www.ucon-gaming.org/reg";
 
-// $config['email']['registration'] = 'reg2019@ucon-gaming.org';
+$config['email']['registration'] = 'reg2019@ucon-gaming.org';
 // $config['email']['webmaster'] = 'webmaster@ucon-gaming.org';
 // $config['email']['paypal'] = 'sendpaypal@ucon-gaming.org';
 
