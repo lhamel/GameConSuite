@@ -10,7 +10,10 @@
     <link rel="stylesheet" href="{$config.page.depth}css/style.css" type="text/css"/>
 
     <link rel="SHORTCUT ICON" href="{$config.page.depth}favicon.ico" />
-    <script src="{$config.page.depth}js/jquery-1.4.4.min.js" type="text/javascript" ></script>
+    <script src="{$config.page.depth}js/jquery-3.4.1.min.js" type="text/javascript" ></script>
+    <script src="{$config.page.depth}js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript" ></script>
+    <link rel="stylesheet" href="{$config.page.depth}js/jquery-ui-1.12.1/jquery-ui.theme.min.css" type="text/css"/>
+
     <script src="{$config.page.depth}js/jquery.jeditable.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.checkbox.js" type="text/javascript" ></script>
 </head>
