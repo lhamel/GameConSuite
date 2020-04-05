@@ -4,15 +4,15 @@ require_once dirname(__FILE__).'/../../inc.php';
 
 function validateMember($member) {
   $errors = array();
-  if (!$member['s_fname']) $errors['s_fname'] = 'Please indicate your first name';
-  if (!$member['s_lname']) $errors['s_lname'] = 'Please indicate your last name';
-  if (!$member['s_email']) $errors['s_email'] = 'Please indicate your email';
+  if (isset($member['s_fname']) && !$member['s_fname']) $errors['s_fname'] = 'Please indicate your first name';
+  if (isset($member['s_lname']) && !$member['s_lname']) $errors['s_lname'] = 'Please indicate your last name';
+  if (isset($member['s_email']) && !$member['s_email']) $errors['s_email'] = 'Please indicate your email';
 
-  if (!$member['s_international']) {
-    if (!$member['s_addr1']) $errors['s_addr1'] = 'Please indicate your address';
-    if (!$member['s_city']) $errors['s_city'] = 'Please indicate your city';
-    if (!$member['s_state']) $errors['s_state'] = 'Please indicate your state';
-    if (!$member['s_zip']) $errors['s_zip'] = 'Please indicate your zip';
+  if (isset($member['s_international']) && !$member['s_international']) {
+    if (isset($member['s_addr1']) && !$member['s_addr1']) $errors['s_addr1'] = 'Please indicate your address';
+    if (isset($member['s_city']) && !$member['s_city']) $errors['s_city'] = 'Please indicate your city';
+    if (isset($member['s_state']) && !$member['s_state']) $errors['s_state'] = 'Please indicate your state';
+    if (isset($member['s_zip']) && !$member['s_zip']) $errors['s_zip'] = 'Please indicate your zip';
   }
 
   // TODO validate format for email, phone, zip, state
