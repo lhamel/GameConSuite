@@ -1,23 +1,30 @@
 <?php
+require_once INC_PATH.'db/db.php';
 
 
 function validateEvent($event) {
   $errors = array();
-  if (!$event['s_game']) $errors['s_game'] = 'Please indicate the game system';
-  if (!$event['i_minplayers']) $errors['i_minplayers'] = 'Please indicate the minimum number of players';
-  if (!$event['i_maxplayers']) $errors['i_maxplayers'] = 'Please indicate the maximum number of players';
-  if (!$event['id_event_type']) $errors['id_event_type'] = 'Please indicate the event category';
-  if (!$event['i_length']) $errors['i_length'] = 'Please indicate the length of your game in hours';
+  if (!isset($event['s_game']) || !$event['s_game']) $errors['s_game'] = 'Please indicate the game system';
+  if (!isset($event['i_minplayers']) || !$event['i_minplayers']) $errors['i_minplayers'] = 'Please indicate the minimum number of players';
+  if (!isset($event['i_maxplayers']) || !$event['i_maxplayers']) $errors['i_maxplayers'] = 'Please indicate the maximum number of players';
+  if (!isset($event['id_event_type']) || !$event['id_event_type']) $errors['id_event_type'] = 'Please indicate the event category';
+  if (!isset($event['i_length']) || !$event['i_length']) $errors['i_length'] = 'Please indicate the length of your game in hours';
 
-  if (!is_numeric($event['i_maxplayers'])) $errors['i_maxplayers'] = 'The number of players must be a number';
-  if (!is_numeric($event['i_minplayers'])) $errors['i_minplayers'] = 'The number of players must be a number';
-  
-  if(is_numeric($event['i_maxplayers']) && is_numeric($event['i_minplayers'])
+  if (isset($event['i_maxplayers']) && $event['i_maxplayers']!='' && !is_numeric($event['i_maxplayers'])) {
+    $errors['i_maxplayers'] = 'The number of players must be a number';
+  } else if (isset($event['i_minplayers']) && $event['i_minplayers']!='' && !is_numeric($event['i_minplayers'])) {
+    $errors['i_minplayers'] = 'The number of players must be a number';
+  }
+
+  // TODO validate this another way  
+  if(isset($event['i_maxplayers']) && isset($event['i_minplayers']) && is_numeric($event['i_maxplayers']) && is_numeric($event['i_minplayers'])
      && $event['i_minplayers']>$event['i_maxplayers']) $errors['i_minplayers'] = 'The minimum number of players should be equal to or lower than the maximum.'; 
 
-  if (!is_numeric($event['i_length']) || $event['i_length'] <= 0) $errors['i_length'] = 'The number of hours must be a number';
+  if (isset($event['i_length']) && (!is_numeric($event['i_length']) || $event['i_length'] <= 0)) {
+    $errors['i_length'] = 'The number of hours must be a number';
+  }
 
-  if ($event['s_desc']) {
+  if (isset($event['s_desc']) && $event['s_desc']) {
     $length = strlen($event['s_desc']);
     if ($length > 350) {
       $errors['s_desc'] = 'Please reduce your description to 350 characters (currently ' . $length . ')';
@@ -28,7 +35,7 @@ function validateEvent($event) {
 }
 
 function saveEvents($idGm, &$events) {
-  require_once INC_PATH.'db/db.php';
+  global $config;
 
   // save a new event
   if (isset($event['id_event'])
@@ -64,7 +71,7 @@ EOD;
   foreach($events as $idx => $event) {
     $prepareArgs = array(
       null,
-      YEAR,
+      $config['gcs']['year'],
       (int) $idGm,
       (int) $event['id_event_type'],
       $event['s_game'],
@@ -90,6 +97,7 @@ EOD;
 
     if (!$ok) die('sql error: '.$db->ErrorMsg());
 
+    $events[$idx]['gmEventNumber'] = $idx+1;
     $events[$idx]['id_event'] = $db->Insert_ID();
   }
 

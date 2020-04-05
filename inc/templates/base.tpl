@@ -10,27 +10,45 @@
     <link rel="stylesheet" href="{$config.page.depth}css/style.css" type="text/css"/>
 
     <link rel="SHORTCUT ICON" href="{$config.page.depth}favicon.ico" />
-    <script src="{$config.page.depth}js/jquery-1.4.4.min.js" type="text/javascript" ></script>
+    <script src="{$config.page.depth}js/jquery-3.4.1.min.js" type="text/javascript" ></script>
+    <script src="{$config.page.depth}js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript" ></script>
+    <link rel="stylesheet" href="{$config.page.depth}js/jquery-ui-1.12.1/jquery-ui.theme.min.css" type="text/css"/>
+
     <script src="{$config.page.depth}js/jquery.jeditable.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.checkbox.js" type="text/javascript" ></script>
 </head>
 
-<body><div class="mainpane" {if $width}style="width:{$width}px"{/if}>
+<body><div class="mainpane" {if isset($width)}style="width:{$width}px"{/if}>
 
+<body>
+
+{if $mobile|default:false}
+<style>
+table td {
+  font-size: 18pt;
+}
+</style>
+{/if}
+
+<div class="mainpane" {if $width|default:0}style="width:{$width}px"{/if}>
 <div class="mainbar">
 
 <table cellspacing="0" cellpadding="0">
+{if !($mobile|default:false)}
 {include file="layout/header.tpl"}
+{/if}
 <tr>
-<td class="sidebar"{if $tabs} rowspan="2"{/if}>
+{if !($mobile|default:false)}
+<td class="sidebar"{if $tabs|default:false} rowspan="2"{/if}>
 {include file="layout/menu.tpl"}
 </td>
+{/if}
 {strip}
-{if $tabs}
+{if $tabs|default:'' && !($mobile|default:false)}
 <td class="tabs" colspan="2"><ul class="horizontal">
 {foreach item=item from=$tabs}
   <li{if $item.link==$config.page.location} class="selected"{/if}>
-    <a href="{$config.page.depth}{$item.link}{$item.querystring}">{$item.label}</a>
+    <a href="{$config.page.depth}{$item.link}{$item.querystring|default:''}">{$item.label}</a>
   </li>
 {/foreach}
 </ul></td></tr><tr>
@@ -44,11 +62,17 @@
 
 </tr></table></div>
 
+{if !($mobile|default:false)}
 <div class="footer">
 {include file="layout/footer.tpl" title="User Info"}
 </div>
+{/if}
 
 </div>
 
+
+{foreach item=item from=$js|default:array()}
+  <script src="{$item}"></script>
+{/foreach}
 </body>
 </html>

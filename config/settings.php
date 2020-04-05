@@ -1,5 +1,8 @@
 <?php
 
+// TODO system is not currently using these constants
+// and instead using the ones in config.php
+
 /** Uses this year for all database fields */
 $config['gcs']['settings']['year'] = 2011;
 
