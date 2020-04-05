@@ -41,7 +41,7 @@ if (isset($_POST['s_email'])) {
   } else {
 
     // check to see if there are associated members
-    $members = $associates->listAssociates($id_member);
+    $members = $associates->listAssociates();
     if (count($members)==0) {
 
       // automatically associate auth with members based on email address

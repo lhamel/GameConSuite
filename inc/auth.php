@@ -52,7 +52,7 @@ class Associates
             $uid = $this->auth->getCurrentUser()['uid'];
         }
 
-        $sql = "select AM.id_member as id2, M.* \n"
+        $sql = "select AM.id_member as id2, M.id_member, M.s_lname, M.s_fname, s_email \n"
              . " from ucon_auth_member as AM, ucon_member as M \n"
              . " where M.id_member=AM.id_member and AM.uid=?";
         $result = $db->getAssoc($sql, array($uid));
