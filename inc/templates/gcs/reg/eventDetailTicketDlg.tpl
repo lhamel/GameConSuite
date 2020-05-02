@@ -163,7 +163,7 @@ var ticketSelection = {$loginInfo.ticketSelection|json_encode};
 <!--<input type="hidden" name="action" value="selectMember">-->
 {include file='gcs/common/general-table.tpl'}
 <!--<input type="submit" value="Select Envelope">-->
-{$additionalFormContent}
+{$additionalFormContent|default:''}
 {*</form>*}
 
 <p style="text-align:left;margin-bottom:2px;">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>

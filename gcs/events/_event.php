@@ -1,7 +1,7 @@
 <?php
 include_once '../../inc/inc.php';
 include_once INC_PATH.'db/db.php';
-$year = $config['ucon']['year'];
+$year = $config['gcs']['year'];
 
 if (!$config['allow']['view_events']) {
   echo "Bad request.  Viewing events disabled";
