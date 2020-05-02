@@ -14,7 +14,7 @@
     <a href="{$config.page.depth}index.php"><img src="{$config.page.depth}images/theme/title.png" alt="{$config.logo.alt|default:''}" /></a>
 <!--    <br/><span style="margin: 0px; font-size: 12pt; color: #dd3333; font-weight: bold;">**New Location: Metropolitan Hotel, Romulus Michigan</span> -->
   </td>
-  <td class="header" style="width: 320px; text-align: center; font-size: smaller; font-weight: bold; ">
+  <td class="header" style="width: 330px; text-align: center; font-size: smaller; font-weight: bold; ">
     <span style="margin: 0px; font-size: 12pt; color: #dd3333;">{$config.gcs.dates.all}, {$config.gcs.location}</span>
 <br/>
 {$config.gcs.tagline}
