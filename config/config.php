@@ -1,6 +1,14 @@
 <?php
-
 if (!isset($config)) $config = array();
+
+// database configuration
+$config['db']['main_db_conn'] = 'mysqli://root:@localhost/ucon_db';
+$config['db']['auth_db_conn'] = "mysql:host=localhost;dbname=ucon_auth";
+$config['db']['auth_db_user'] = "root";
+$config['db']['auth_db_pass'] = "";
+
+
+
 
 $config['gcs']['year'] = 2019;
 $config['gcs']['venueId'] = 3; //Eagle Crest

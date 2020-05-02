@@ -1,8 +1,9 @@
 <?php
-require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb.inc.php');
-require_once(dirname(__FILE__).'/../../vendor/adodb/adodb-php/adodb-active-record.inc.php');
+require_once(__DIR__.'/../../config/config.php');
+require_once(__DIR__.'/../../vendor/adodb/adodb-php/adodb.inc.php');
+require_once(__DIR__.'/../../vendor/adodb/adodb-php/adodb-active-record.inc.php');
 
-$db = NewADOConnection('mysqli://root:@localhost/ucon_db');
+$db = NewADOConnection($config['db']['main_db_conn']);
 $db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 ADOdb_Active_Record::SetDatabaseAdapter($db);

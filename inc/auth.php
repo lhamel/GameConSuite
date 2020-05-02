@@ -1,11 +1,11 @@
 <?php
-
+require_once(__DIR__.'/../config/config.php');
 require_once __DIR__.'/../vendor/autoload.php';
 
 use PHPAuth\Config as PHPAuthConfig;
 use PHPAuth\Auth as PHPAuth;
 
-$dbh = new PDO("mysql:host=localhost;dbname=ucon_auth", "root", '');
+$dbh = new PDO($config['db']['auth_db_conn'], $config['db']['auth_db_user'], $config['db']['auth_db_pass']);
 
 $authconfig = new PHPAuthConfig($dbh);
 $auth = new PHPAuth($dbh, $authconfig);
