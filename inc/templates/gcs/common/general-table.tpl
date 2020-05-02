@@ -37,7 +37,7 @@
 
 {* list additional fields if requested *}
 {foreach from=$columns key=dbField item=colHeader}
-<td class="{$class}" {if isset($columnsAlign.$dbField)}style="text-align:{$columnsAlign.$dbField};"{/if}>{$v.$dbField}</td>
+<td class="{$class}" {if isset($columnsAlign.$dbField)}style="text-align:{$columnsAlign.$dbField};"{/if}>{$v.$dbField|default:''}</td>
 {/foreach}
 
 </tr>
