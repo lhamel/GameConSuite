@@ -1,7 +1,7 @@
 <?php
 include_once '../../inc/inc.php';
 include_once INC_PATH.'db/db.php';
-$year = $config['ucon']['year'];
+$year = $config['gcs']['year'];
 
 // if you cannot view events or you cannot buy events...
 if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
@@ -57,7 +57,6 @@ if (!$auth->isLogged()) {
 }
 $currUser = $auth->getCurrentUser();
 $uid = $currUser['uid'];
-$year = @is_numeric($_GET['year']) ? $_GET['year'] : YEAR;
 $members = $associates->listAssociates($uid);
 foreach ($id_members as $id_member) {
   if (!isset($members[$id_member])) {
@@ -145,7 +144,7 @@ switch($action) {
 
     //echo "<pre>".print_r($cart,1)."</pre>";
     //echo "Item to remove:<pre>".print_r($item,1)."</pre>";
-    $params = array($id_members[0], $_REQUEST['orderId'], $config['ucon']['year']);
+    $params = array($id_members[0], $_REQUEST['orderId'], $config['gcs']['year']);
     //echo "<pre>".print_r($params,1)."</pre>";
     $ok = $db->execute($sql, $params);
     if (!$ok) { header('HTTP/1.0 500 Internal Error'); echo "SQL Error: ".$db->ErrorMsg(); exit; }
