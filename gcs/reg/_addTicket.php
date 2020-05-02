@@ -1,7 +1,7 @@
 <?php
 include_once '../../inc/inc.php';
 include_once INC_PATH.'db/db.php';
-$year = $config['ucon']['year'];
+$year = $config['gcs']['year'];
 
 // if you cannot view events or you cannot buy events...
 if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
@@ -39,7 +39,6 @@ if (!$auth->isLogged()) {
 }
 $currUser = $auth->getCurrentUser();
 $uid = $currUser['uid'];
-$year = @is_numeric($_GET['year']) ? $_GET['year'] : YEAR;
 $members = $associates->listAssociates($uid);
 foreach ($id_members as $id_member) {
   if (!isset($members[$id_member])) {

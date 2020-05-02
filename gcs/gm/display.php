@@ -13,7 +13,7 @@ $smarty->assign('js', array($config['page']['depth'] . "js/gcs/gm.js"));
 
 
 if (!$config['allow']['submit_events']) {
-  $year = $config['ucon']['year'];
+  $year = $config['gcs']['year'];
   $depth = $config['page']['depth'];
   $content = <<< EOD
         <h1>U-Con {$year} Events</h1>

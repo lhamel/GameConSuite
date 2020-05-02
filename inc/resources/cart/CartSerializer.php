@@ -35,7 +35,7 @@ EOD;
       //echo "<pre>".print_r($row,1)."</pre>";
       
       $ok = $db->execute($stmt, $row);
-      if (!ok) die($db->ErrorMsg());
+      if (!$ok) die($db->ErrorMsg());
     }
 
     // handle updated
@@ -60,7 +60,7 @@ EOD;
       //echo "<pre>".print_r($row,1)."</pre>";
     
       $ok = $db->execute($stmt, $row);
-      if (!ok) die($db->ErrorMsg());
+      if (!$ok) die($db->ErrorMsg());
     }
 
   }
