@@ -88,7 +88,6 @@ $body = $smarty->fetch('gcs/gm/email.tpl');
 // TESTING EMAIL template
 //$smarty->assign('content', '<pre>'.wordwrap($body,80).'</pre>'); $smarty->display('base.tpl'); exit;
 
-
 // the subject is on the first line, so parse that out
 $lines = explode("\n", $body);
 $subject = trim(array_shift($lines));

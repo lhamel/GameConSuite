@@ -1,6 +1,5 @@
 <?php
 include '../inc/inc.php';
-
 $location = 'gcs/reg.php';
 $title = 'Account Information'; // override with name further down
 

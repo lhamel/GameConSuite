@@ -1,6 +1,5 @@
 <?php
 require_once '../../inc/inc.php';
-
 $year = $config['gcs']['year'];
 
 //
