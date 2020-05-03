@@ -9,9 +9,8 @@ $year = $config['gcs']['year'];
 
 // if the user is currently logged in, this is an error
 if ($auth->isLogged()) {
-    $s = $auth->logout($auth->getSessionHash());
+    $s = $auth->logout($auth->getCurrentSessionHash());
 }
 
 redirect('login.php');
-
 
