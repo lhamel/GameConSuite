@@ -43,7 +43,7 @@
 	font-size: 10pt;
 }
 
-.content th { font-size: 9pt; color: white; background: navy; font-weight: bolder; }
+.content th { color: white; background: navy; font-weight: bolder; }
 .content th a { color: white; }
 
 .content ul, .content ol { margin-left: 0; padding-left: 0.25in; }
@@ -51,12 +51,10 @@
 .content .altcolor1 {
 	background-color: white;
 	border-bottom: solid black 1px;
-	font-size: 9pt;
 }
 .content .altcolor2 {
 	background-color: #FFFFE0; 
 	border-bottom: solid black 1px;
-	font-size: 9pt;
 }
 
 .content caption {
@@ -137,68 +135,3 @@
 .event_search_result th a {
 	color: white;
 }
-
-.content .news {
-        /* float: left; */
-        padding: 5px;
-        margin-right: 10px;
-        border: solid black 1px;
-        background: #ffffe0;
-}
-
-.content .news h1 {
-        text-align: center;
-        margin-top: 0px;
-        margin-bottom: 0px;
-        font-size: 12pt;
-        font-weight: bolder;
-        border-bottom: solid black 1px;
-}
-
-.content .news dl {
-        margin: 0px;
-}
-
-.content .news dt {
-        margin-top: 9px;
-        margin-bottom: 0px;
-        font-weight: bolder;
-}
-
-.content .news dd {
-        margin-left: 0px;
-        font-size: 9pt;
-}
-
-.content .news strong {
-        color: darkred;
-}
-
-/* Styles for meeting minutes */
-.content .minutes ul {
-	padding-left: 0px;
-}
-
-.content .minutes ul ul {
-	padding-left: 20px;
-}
-
-.content .minutes li {
-	list-style-type: none;
-	padding-bottom: 10px;
-	font-weight: bold;
-}
-.content .minutes li li { 
-	padding-bottom: 0; 
-	font-weight: 400;
-}
-
-/* only used in admin section now */
-.content .hilite {
-	background-color: #ffffe0;
-	border: solid black 1px;
-	padding: 3px;
-}
-
-#contactForm #secret { display: none; }
-#contactForm textarea { width: 60%; }
