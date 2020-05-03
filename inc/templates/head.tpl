@@ -6,7 +6,7 @@
     <meta name="keywords" content="ucon, ann arbor, gaming convention, games, role-playing, collectable card games, ccgs, rpgs, rpga, magic, magic the gathering, auction, university of michigan, uofm, convention, miniatures, historicals, board games, card games" />
     <meta name="description" content="Affordable gaming convention in south east lower Michigan, featuring a large variety of games, exhibitors hall and auction. Games include Role-playing, RPGA, CCGs, board, miniatures, historicals, card games." />
     <link rel="stylesheet" href="{$config.page.depth}css/style.css" type="text/css"/>
-    <link rel="stylesheet" href="{$config.page.depth}css/flick/jquery-ui-1.10.3.custom.css"/>
+    <link rel="stylesheet" href="{$config.page.depth}css/flick/jquery-ui-1.10.3.custom.min.css"/>
 
     <link rel="SHORTCUT ICON" href="{$config.page.depth}favicon.ico" />
     <script src="{$config.page.depth}js/jquery-1.10.2.min.js" type="text/javascript" ></script>
