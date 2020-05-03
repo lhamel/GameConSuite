@@ -44,7 +44,7 @@
 	color: #a00000;
 }
 
-.ucon_form input.validation, .ucon_form textarea.validation {
+.ucon_form input.validation, .ucon_form textarea.validation, .ucon_form select.validation {
 	border: solid #a00000 2px;
 }
 
