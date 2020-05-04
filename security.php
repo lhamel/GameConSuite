@@ -1,7 +1,7 @@
 <?php
 define('DEPTH','');
 require_once 'inc/inc.php';
-$year = $config['ucon']['year'];
+$year = $config['gcs']['year'];
 $location = 'security.php';
 
 require_once INC_PATH.'smarty.php';
@@ -36,5 +36,4 @@ ob_clean();
 $smarty->assign('config', $config);
 $smarty->assign('content', $content);
 $smarty->display('base.tpl');
-
 
