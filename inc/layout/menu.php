@@ -21,43 +21,43 @@ if (defined('ADMIN')) {
 $menu['items'] = array(
   array('label'=>'Admin', 'children'=>array(
     array('label'=>'Admin Home', 'link'=>'admin/index.php'),
-    array('label'=>'Legacy DB', 'link'=>'admin/legacy.php'),
-    array('label'=>'Statistics', 'link'=>'admin/db/'),
-    array('label'=>'Change Password', 'link'=>'admin/db/password.php'),
+    // array('label'=>'Legacy DB', 'link'=>'admin/legacy.php'),
+    // array('label'=>'Statistics', 'link'=>'admin/db/'),
+    // array('label'=>'Change Password', 'link'=>'admin/db/password.php'),
   )),
   array('label'=>'Events', 'children'=>array(
     array('label'=>'Search', 'link'=>'admin/gcs/eventsearch/index.php'),
-    array('label'=>'Submissions', 'link'=>'admin/gcs/submissions/unscheduled.php'),
-    array('label'=>'Publishing', 'link'=>'admin/gcs/publish/unedited.php'),
-    array('label'=>'Schedule', 'link'=>'admin/gcs/schedule/browse.php'),
-    array('label'=>'Results', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
+    // array('label'=>'Submissions', 'link'=>'admin/gcs/submissions/unscheduled.php'),
+    // array('label'=>'Publishing', 'link'=>'admin/gcs/publish/unedited.php'),
+    // array('label'=>'Schedule', 'link'=>'admin/gcs/schedule/browse.php'),
+    // array('label'=>'Results', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
   )),
   array('label'=>'Members', 'children'=>array(
       array('label'=>'Search', 'link'=>'admin/gcs/membersearch/index.php'),
-      array('label'=>'Registration', 'link'=>'admin/gcs/registration/index.php'),
-      array('label'=>'Duplicates', 'link'=>'admin/gcs/memberduplicates/index.php'),
-      array('label'=>'Add Member', 'link'=>'admin/db/member/new.php'),
+      // array('label'=>'Registration', 'link'=>'admin/gcs/registration/index.php'),
+      // array('label'=>'Duplicates', 'link'=>'admin/gcs/memberduplicates/index.php'),
+      // array('label'=>'Add Member', 'link'=>'admin/db/member/new.php'),
   )),
-  array('label'=>'Operations', 'children'=>array(
-      array('label'=>'Purchase Items', 'link'=>'admin/gcs/config/purchaseitems.php'),
-      array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
-      array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
-  )),
-  array('label'=>'Fates', 'children'=>array(
-    array('label'=>'Fates', 'link'=>'admin/db/fates'),
-    array('label'=>'Conventions', 'link'=>'admin/db/convention.php'), 
-    array('label'=>'Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByCategory.php'),
-    array('label'=>'Room Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByRoom.php'),
-    array('label'=>'Time Slot', 'link'=>'admin/db/fates/scheduling/RoomsByTime.php'),
-    array('label'=>'Event Location', 'link'=>'admin/db/fates/scheduling/roompicture.php'),
-  )),
-  array('label'=>'Records', 'children'=>array(
-    array('label'=>'All Preregistration', 'link'=>'admin/db/member/prereg.php'),
-    array('label'=>'Gamemasters', 'link'=>'admin/db/member/prereg.php?type=gm'), 
-    array('label'=>'Preregistered', 'link'=>'admin/db/member/prereg.php?type=pre'),
-    array('label'=>'Event Running', 'link'=>'admin/gcs/record/record.php'),
-    array('label'=>'Checkin By Barcode', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
-  )),
+  // array('label'=>'Operations', 'children'=>array(
+  //     array('label'=>'Purchase Items', 'link'=>'admin/gcs/config/purchaseitems.php'),
+  //     array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
+  //     array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
+  // )),
+  // array('label'=>'Fates', 'children'=>array(
+  //   array('label'=>'Fates', 'link'=>'admin/db/fates'),
+  //   array('label'=>'Conventions', 'link'=>'admin/db/convention.php'), 
+  //   array('label'=>'Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByCategory.php'),
+  //   array('label'=>'Room Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByRoom.php'),
+  //   array('label'=>'Time Slot', 'link'=>'admin/db/fates/scheduling/RoomsByTime.php'),
+  //   array('label'=>'Event Location', 'link'=>'admin/db/fates/scheduling/roompicture.php'),
+  // )),
+  // array('label'=>'Records', 'children'=>array(
+  //   array('label'=>'All Preregistration', 'link'=>'admin/db/member/prereg.php'),
+  //   array('label'=>'Gamemasters', 'link'=>'admin/db/member/prereg.php?type=gm'), 
+  //   array('label'=>'Preregistered', 'link'=>'admin/db/member/prereg.php?type=pre'),
+  //   array('label'=>'Event Running', 'link'=>'admin/gcs/record/record.php'),
+  //   array('label'=>'Checkin By Barcode', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
+  // )),
 );
 } else {
 $menu['items'] = array(
