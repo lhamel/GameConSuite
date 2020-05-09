@@ -27,8 +27,8 @@ $menu['items'] = array(
   )),
   array('label'=>'Events', 'children'=>array(
     array('label'=>'Search', 'link'=>'admin/gcs/eventsearch/index.php'),
-    // array('label'=>'Submissions', 'link'=>'admin/gcs/submissions/unscheduled.php'),
-    // array('label'=>'Publishing', 'link'=>'admin/gcs/publish/unedited.php'),
+    array('label'=>'Submissions', 'link'=>'admin/gcs/submissions/unscheduled.php'),
+    array('label'=>'Publishing', 'link'=>'admin/gcs/publish/unedited.php'),
     // array('label'=>'Schedule', 'link'=>'admin/gcs/schedule/browse.php'),
     // array('label'=>'Results', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
   )),
@@ -62,8 +62,8 @@ $menu['items'] = array(
 } else {
 $menu['items'] = array(
   array('label'=>'General Info', 'children'=>array(
-    array('label'=>'U-Con Website', 'url'=>'https://www.ucon-gaming.org'),
-    array('label'=>'Subscribe to Email', 'url'=>'https://www.ucon-gaming.org/email/?p=subscribe&id=1'),
+    array('label'=>'Main Website', 'url'=>'/'),
+    // array('label'=>'Subscribe to Email', 'url'=>'https://www.ucon-gaming.org/email/?p=subscribe&id=1'),
   )),
   array('label'=>'Event Submission', 'children'=>array(
     array('label'=>'Submit Events', 'link'=>'gcs/gm/submit.php'),
