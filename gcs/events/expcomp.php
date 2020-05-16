@@ -1,7 +1,7 @@
 <?php
 include_once ('../../inc/inc.php');
 $location = 'gcs/events/expcomp.php';
-$title = 'U-Con Gaming Convention, Ann Arbor Michigan';
+$title = $config['gcs']['sitetitle'];
 $year = $config['gcs']['year'];
 
 require_once INC_PATH.'smarty.php';

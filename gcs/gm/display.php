@@ -15,7 +15,7 @@ if (!$config['allow']['submit_events']) {
   $year = $config['gcs']['year'];
   $depth = $config['page']['depth'];
   $content = <<< EOD
-        <h1>U-Con {$year} Events</h1>
+        <h1>{$config['gcs']['name']} {$year} Events</h1>
         <p>Event submission for {$year} is closed.</p>
 
         <p style="text-align: center;">
@@ -25,7 +25,7 @@ EOD;
 
    // render the page
   $smarty->assign('config', $config);
-  $smarty->assign('constants', $constants);
+  //$smarty->assign('constants', $constants);
 
   $smarty->assign('content', $content);
   $smarty->display('base.tpl');

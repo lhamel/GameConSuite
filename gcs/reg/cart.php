@@ -8,7 +8,7 @@ $year = YEAR;
 // This guard is provided for when preregistration is closed.
 // if you cannot view events or you cannot buy events...
 if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
-        $content = "<h1>Register for U-Con!</h1>\n";
+        $content = "<h1>Register for {$config['gcs']['name']}!</h1>\n";
     if (!$config['allow']['buy_events']) {
                         $content .= "<p>Pre-registration for {$year} is closed.  See you soon!</p>";
     } else {

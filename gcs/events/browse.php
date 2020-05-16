@@ -34,7 +34,7 @@ require_once INC_PATH.'resources/cart/constants.php';
 
 */
 $location = 'events/browse.php';
-$title = 'Browse Events - U-Con Gaming Convention, Ann Arbor Michigan';
+$title = $config['gcs']['sitetitle'] . ' - Browse Events';
 
 $actions = array('list'=>basename(__FILE__),
                  'filterDay'=>basename(__FILE__).'?day=',
