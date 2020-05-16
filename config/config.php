@@ -64,7 +64,7 @@ $config['gcs']['meta']['description'] = "Affordable gaming convention in Ann Arb
 /** Payment configuration */
 $config['gcs']['payments']['paypalEmail'] = "ucon-paypal@ucon-gaming.org";
 $config['gcs']['payments']['checkPayable'] = "U-Con Gaming Club";
-$config['gcs']['payments']['mailAddress'] = "U-Con Events<br/>PO Box 4491<br/>Ann Arbor, MI 48106-4491";
+$config['gcs']['payments']['mailAddress'] = "U-Con Gaming Convention<br/>PO Box 130242<br/>Ann Arbor, MI 48113-0242";
 
 
 //

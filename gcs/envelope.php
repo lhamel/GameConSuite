@@ -332,13 +332,12 @@ $msgPending
 </td><td>
 
 <p>Alternately, you may submit a check by postal mail to our P.O. Box, however it will
-  take longer for us to receive and process your payment.  Please include the name on your 
+  take longer for us to receive and process your payment.  Please make checks payable 
+  to <b>{$config['gcs']['payments']['checkPayable']}</b> and include the name on your 
   registration with the check.  Never send cash through the mail!</p>
 
-  <p>Registration<br/>
-  U-Con Gaming Convention<br/>
-  PO Box 130242<br/>
-  Ann Arbor, MI 48113-0242</p>
+  <p>Attn: Registration<br/>
+  {$config['gcs']['payments']['mailAddress']}</p>
 </td></tr></table>
 EOD;
 
