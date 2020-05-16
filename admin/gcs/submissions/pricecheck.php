@@ -6,7 +6,7 @@ include '../../../inc/inc.php';
 */
 
 $location = 'admin/gcs/events/pricecheck.php';
-$title = 'Price Check- U-Con Admin';
+$title = $config['gcs']['admintitle']." - Event Price Check";
 
 
 // unapproved events

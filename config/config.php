@@ -43,6 +43,7 @@ Exhibitors' Hall, Auction, Specialty Tracks, and much more!
 EOD;
 
 $config['gcs']['sitetitle'] = "U-Con Gaming Convention";
+$config['gcs']['admintitle'] = "GameConSuite Admin";
 $config['gcs']['website'] = "http://www.ucon-gaming.org/";
 $config['gcs']['location'] = "Ypsilanti, Michigan";
 $config['gcs']['dates']['all'] = 'November 22-24, 2019';

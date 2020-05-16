@@ -1,7 +1,7 @@
 <?php
 include '../../../inc/inc.php';
 $location = 'admin/gcs/publish/unedited.php';
-$title = 'Find Unedited Events - U-Con Admin';
+$title = $config['gcs']['admintitle']." - Unedited Events";
 
 // unapproved events
 $year = isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : $config['gcs']['year'];

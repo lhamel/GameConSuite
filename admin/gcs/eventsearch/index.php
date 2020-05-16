@@ -1,7 +1,7 @@
 <?php
 include '../../../inc/inc.php';
 $location = 'admin/gcs/eventsearch/index.php';
-$title = 'Search Members';
+$title = $config['gcs']['admintitle']." - Event Search";
 $year = @is_numeric($_REQUEST['year']) ? $_REQUEST['year'] : $config['gcs']['year'];
 include_once INC_PATH.'resources/event/constants.php';
 require_once INC_PATH.'db/db.php';

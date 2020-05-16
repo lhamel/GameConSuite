@@ -1,7 +1,7 @@
 <?php
 include '../../../inc/inc.php';
 $location = 'admin/gcs/publish/long.php';
-$title = 'Find Lengthy Events - U-Con Admin';
+$title = $config['gcs']['admintitle']." - Lengthy Events";
 
 // unapproved events
 $year = isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : $config['gcs']['year'];

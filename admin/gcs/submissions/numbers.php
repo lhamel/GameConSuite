@@ -8,7 +8,7 @@ include '../../../inc/inc.php';
 */
 
 $location = 'admin/gcs/events/numbers.php';
-$title = 'Event Number Management - U-Con Admin';
+$title = $config['gcs']['admintitle']." - Event Number Management";
 
 
 // unapproved events

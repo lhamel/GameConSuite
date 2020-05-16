@@ -4,7 +4,7 @@
 */
 include '../../../inc/inc.php';
 $location = 'admin/gcs/events/eventnumbers.php';
-$title = 'Assign Event Numbers';
+$title = $config['gcs']['admintitle']." - Assign Event Numbers";
 
 include_once (INC_PATH.'db/db.php');
 

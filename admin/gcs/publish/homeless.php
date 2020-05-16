@@ -8,8 +8,7 @@ include '../../../inc/inc.php';
 */
 
 $location = 'admin/gcs/publish/homeless.php';
-$title = 'Find Homeless Events - U-Con Admin';
-
+$title = $config['gcs']['admintitle']." - Homeless Events";
 
 // homeless events
 $year = isset($_GET['year'])&&is_numeric($_GET['year']) ? $_GET['year'] : $config['gcs']['year'];

@@ -8,7 +8,7 @@ include '../../../inc/db/db.php';
 */
 
 $location = 'admin/gcs/submissions/unscheduled.php';
-$title = 'Find Unscheduled Events - U-Con Admin';
+$title = $config['gcs']['admintitle']." - Unscheduled Events";
 
 
 // unapproved events

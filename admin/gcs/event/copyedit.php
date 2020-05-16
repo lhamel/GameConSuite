@@ -43,9 +43,9 @@ $year = $event['id_convention'];
 $game = $event['s_game'];
 $title = $event['s_title'];
 $name = ($title && ($title != $game)) ? $game.": ".$title : $game;
-$title = "Event: $name ($year) - U-Con Admin";
 
 
+$title = $config['gcs']['admintitle']." - Event: $name ($year)";
 include INC_PATH.'resources/event/constants.php';
 include INC_PATH.'smarty.php';
 include INC_PATH.'layout/adminmenu.php';
