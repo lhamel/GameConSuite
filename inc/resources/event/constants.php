@@ -56,7 +56,7 @@ if (isset($_SESSION['cache']['constants']['events'])) {
   // TODO move ages to database configuration
    // age types
   $constants['events']['ages'] = array(
-            '' => '',
+            0 => '',
             7 => 'Family Friendly (7+)',
             13 => 'General Audience (13+)',
             18 => 'Adults Only (18+)',
@@ -65,7 +65,7 @@ if (isset($_SESSION['cache']['constants']['events'])) {
   $constants['events']['agesNoBlank'] = $constants['events']['ages'];
   unset($constants['events']['agesNoBlank']['']);
         $constants['events']['agesInBook'] = array(
-            '' => '',
+            0 => '',
             7 => '(Ages 7+)',
             13 => '(Ages 13+)',
             18 => '(Adults 18+)',
