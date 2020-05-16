@@ -2,7 +2,7 @@
 <p style="background: #ff9999">{$error}</p>
 {/if}
 
-<h1>Search U-Con Members</h1>
+<h1>Search Membership</h1>
 
 <p class="small">Enter the first or last name to search for a member.</p>
 

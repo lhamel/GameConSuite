@@ -2,7 +2,7 @@
 <p style="background: #ff9999">{$error}</p>
 {/if}
 
-<h1>Search U-Con Events</h1>
+<h1>Search Events</h1>
 
 Enter search term, GM last name, or barcode:
 
