@@ -1,5 +1,5 @@
 <head>
-    <title>{$title|default : $config.sitetitle}</title>
+    <title>{$title|default:$config.gcs.sitetitle|default:"GameConSuite"}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Script-Type" content="text/javascript" />

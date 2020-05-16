@@ -8,20 +8,11 @@ require_once INC_PATH.'smarty.php';
 $location = 'admin/index.php';
 require_once INC_PATH.'layout/adminmenu.php';
 
+$content = <<< EOD
+<h1>{$config["gcs"]["admintitle"]} Dashboard</h1>
 
+EOD;
 
-ob_start();
-?>
-<h1>U-Con Administration</h1>
-
-<ul>
-<li><a href="db/">Admin Database</a></li>
-</ul>
-
-
-<?php
-$content = ob_get_contents();
-ob_clean();
 
 require_once INC_PATH.'db/db.php';
 

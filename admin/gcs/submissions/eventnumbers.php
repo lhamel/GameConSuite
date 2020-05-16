@@ -4,7 +4,6 @@
 */
 include '../../../inc/inc.php';
 $location = 'admin/gcs/events/eventnumbers.php';
-$title = $config['gcs']['admintitle']." - Assign Event Numbers";
 
 include_once (INC_PATH.'db/db.php');
 
@@ -65,7 +64,7 @@ $events = $db->getAll($sql, array($day, $time, $type, $year));
 // echo "<pre>EVENTS\n".print_r($events, 1)."</pre>";
 
 
-$title = "U-Con - Assign Numbers for $type $day {$time}00";
+$title = $config['gcs']['admintitle']." - Assign Event Numbers type $day {$time}00";
 include INC_PATH.'resources/event/constants.php';
 include INC_PATH.'smarty.php';
 include INC_PATH.'layout/adminmenu.php';
