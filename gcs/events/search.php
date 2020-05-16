@@ -6,6 +6,7 @@ require_once INC_PATH.'smarty.php';
 $location = 'gcs/events/search.php';
 require_once INC_PATH.'layout/menu.php';
 include_once INC_PATH.'auth.php';
+$title = $config['gcs']['sitetitle'] . ' - Browse Events';
 
 include '_tabs.php';
 
@@ -16,7 +17,6 @@ if (!$config['allow']['view_events']) {
 }
 
 $depth = DEPTH;
-$title = 'U-Con Gaming Convention, Ann Arbor Michigan';
 
 require_once INC_PATH.'resources/event/constants.php';
 require_once INC_PATH.'resources/cart/constants.php';
@@ -35,7 +35,6 @@ require_once INC_PATH.'resources/cart/constants.php';
 		cart.php		->	currently selected items
 
 */
-$title = 'Browse Events - U-Con Gaming Convention, Ann Arbor Michigan';
 
 $actions = array('list'=>basename(__FILE__),
                  'filterDay'=>basename(__FILE__).'?day=',
@@ -59,7 +58,6 @@ if (count($_GET)==0) {
   $content = '';
   $message = $config['allow']['message'];
   if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-//  $content .= "<h1>Register for U-Con!</h1>\n";
   $content .= $smarty->fetch('gcs/reg/search.tpl');
 
   // render the page
@@ -242,7 +240,6 @@ $smarty->assign('loginInfo', $associates->getLoginInfo());
 $content = '';
 $message = $config['allow']['message'];
 if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-//$content .= "<h1>Register for U-Con!</h1>\n";
 $content .= $smarty->fetch('gcs/reg/search.tpl');
 
 // render the page

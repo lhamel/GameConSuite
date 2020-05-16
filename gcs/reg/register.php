@@ -12,7 +12,7 @@ if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
     $content = '';
     $message = $config['allow']['message'];
     if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-    $content .= "<h1>Register for U-Con!</h1>\n";
+    $content .= "<h1>Register for {$config['gcs']['name']}!</h1>\n";
     if ($config['allow']['view_events'] && $config['allow']['see_location']) {
         $dates = $config['gcs']['dates']['all'];
         $content .= "<p>Pre-registration for {$year} is closed.  You may register onsite $dates.  See you soon!</p>";
@@ -49,7 +49,7 @@ if (!$auth->isLogged()) {
 require_once INC_PATH.'db/db.php';
 
 
-$members = $associates->listAssociates($uid);
+$members = $associates->listAssociates();
 foreach ($members as $id => $v) {
   // get a count of events (approved and unapproved) for each member
   $sql = "select concat(count(id_event), '/', sum(b_approval)) as numevents "
@@ -83,7 +83,7 @@ $actions = array('addItem'=>'_add.php?&action=addItem',
                  'useItemDlg'=>1);
 $smarty->assign('additionalFormContent', $badgeNameForm);
 
-if ($_REQUEST['action']=='addBadge') {
+if (isset($_REQUEST['action']) && $_REQUEST['action']=='addBadge') {
   include_once dirname(__FILE__).'/_process.php';
 //echo "redirecting..."; exit;
   redirect($config['page']['depth']."gcs/reg/cart.php");
@@ -104,7 +104,7 @@ if (isset($error)) {
 }
 
 $smarty->assign('config', $config);
-$smarty->assign('constants', $constants);
+//$smarty->assign('constants', $constants);
 $content = <<< EOD
 <h1>Select Badge</h1>
 
@@ -223,7 +223,7 @@ $content .= $smarty->fetch('gcs/reg/additional.tpl');
 include '../events/_tabs.php';
 
 // render the page
-$smarty->assign('title', 'Register - U-Con Gaming Convention, Ann Arbor Michigan');
+$smarty->assign('title', $config['gcs']['sitetitle'].' - Register');
 $smarty->assign('content', $content);
 $smarty->display('base.tpl');
 

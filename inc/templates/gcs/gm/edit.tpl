@@ -25,9 +25,7 @@ $(document).ready(function() {
 
 <h1>Please Describe Your Event</h1>
 
-<p>U-Con reserves the right to edit submissions for content, style, clairity and brevity. We also reserve the right to decline an event for any reason (such as a space or scheduling limitation).</p>
-
-<p>Please read the instructions to ensure an accurate events submission, and contact us via our website in case you notice any discrepency or issue with your event listing.</p>
+<p>Event submissions may be edited for content, style, clairity and brevity. Events may be declined for any reason (including space or scheduling limitations).  Please read the instructions to ensure an accurate events submission, and contact us via our website in case you notice any discrepency or issue with your event listing.</p>
 
 <form class="ucon_form" name="eventForm" action="{$form.submit}" method="post">
 <input type="hidden" name="action" value="editEvent" />

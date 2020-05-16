@@ -2,7 +2,7 @@
     $year = $config['gcs']['year'];
     $depth = $config['page']['depth'];
     $content = <<< EOD
-        <h1>U-Con {$year} Events</h1>
+        <h1>{$config['gcs']['name']} {$year} Events</h1>
         <p>Pre-registration for {$year} is not yet available.  We will announce on
         the email list when pre-registration is open!</p>
 

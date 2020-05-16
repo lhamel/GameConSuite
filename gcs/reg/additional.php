@@ -12,7 +12,7 @@ if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
     $content = '';
     $message = $config['allow']['message'];
     if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-    $content .= "<h1>Register for U-Con!</h1>\n";
+    $content .= "<h1>Register for {$config['gcs']['name']}!</h1>\n";
     if ($config['allow']['view_events'] && $config['allow']['see_location']) {
         $dates = $config['gcs']['dates']['all'];
         $content .= "<p>Pre-registration for {$year} is closed.  You may register onsite $dates.  See you soon!</p>";
@@ -100,7 +100,7 @@ $content .= $smarty->fetch('gcs/reg/additional.tpl');
 include '../events/_tabs.php';
 
 // render the page
-$smarty->assign('title', 'Register - U-Con Gaming Convention, Ann Arbor Michigan');
+$smarty->assign('title', $config['gcs']['sitetitle'] . ' - Register');
 $smarty->assign('content', $content);
 $smarty->display('base.tpl');
 
