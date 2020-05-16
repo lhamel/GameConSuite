@@ -38,11 +38,11 @@ $menu['items'] = array(
       // array('label'=>'Duplicates', 'link'=>'admin/gcs/memberduplicates/index.php'),
       // array('label'=>'Add Member', 'link'=>'admin/db/member/new.php'),
   )),
-  // array('label'=>'Operations', 'children'=>array(
-  //     array('label'=>'Purchase Items', 'link'=>'admin/gcs/config/purchaseitems.php'),
+  array('label'=>'Operations', 'children'=>array(
+      array('label'=>'Purchase Items', 'link'=>'admin/gcs/config/purchaseitems.php'),
   //     array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
   //     array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
-  // )),
+  )),
   // array('label'=>'Fates', 'children'=>array(
   //   array('label'=>'Fates', 'link'=>'admin/db/fates'),
   //   array('label'=>'Conventions', 'link'=>'admin/db/convention.php'), 
