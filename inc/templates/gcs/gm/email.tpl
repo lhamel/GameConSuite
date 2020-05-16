@@ -1,34 +1,19 @@
-U-Con {$config.gcs.year} Event Submission
+{$config.gcs.name} {$config.gcs.year} Event Submission
 {* above is the subject *}
 
-Thank you for registering for U-Con {$config.gcs.year}!
+Thank you for registering for {$config.gcs.name} {$config.gcs.year}!
 
-This is the confirmation email for the events you have 
-offered to run.  If you have received this email in error, 
-please contact {$config.email.registration} 
-and we will correct the situation.
+We have received an event submission.  This is the confirmation email for the 
+events you have offered to run.  If you have received this email in error, 
+please contact {$config.email.registration} and we will correct the situation.
 
-To make corrections to your events, please email 
-{$config.email.registration}.  If you need to cancel your 
-events for any reason, please contact the same email 
+If corrections are needed for your events, please email {$config.email.registration}.  
+If you need to cancel your events for any reason, please contact the same email 
 address.
 
-{* 
-Please submit a $10 GM deposit either by paypal (to 
-*{$config.email.paypal}*) or print this email and mail it 
-along with a check (payable to *U-Con Gaming Club*) to the 
-address below:
+We appreciate your continued support of {$config.gcs.name}!
 
-  U-Con Events
-  PO Box 130242
-  Ann Arbor, MI 48113-0242
-
-* Please do not send cash through the mail!
-
-*}We appreciate your continued support of U-Con!
-
---The U-Con Staff
-http://www.ucon-gaming.org/
+{$config.gcs.website}
 
 Member Information
 ------------------------------------------------------------

@@ -1,7 +1,7 @@
 <?php
 require '../inc/inc.php';
 $location = 'gcs/reg.php';
-$title = 'Account Information'; // override with name further down
+$title = $config['gcs']['sitetitle']. ' - Account Information'; // override with name further down
 
 require_once __DIR__.'/../inc/auth.php'; // TODO remove after moving to inc.php
 
