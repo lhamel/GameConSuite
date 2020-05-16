@@ -11,6 +11,24 @@ $idEvent = $_GET['id_event'];
 include_once (INC_PATH.'db/db.php');
 $events = $db->getAll($queries['GET_EVENT'], array($idEvent));
 if (!is_array($events)) die ("SQL Error: ".$db->ErrorMsg());
+
+
+// if no event is found, then display an error message
+if (count($events)==0) {
+  include INC_PATH.'resources/event/constants.php';
+  include INC_PATH.'smarty.php';
+  include INC_PATH.'layout/adminmenu.php';
+
+  $smarty->assign('title', $config['gcs']['admintitle']." - Event: $idEvent");
+  $smarty->assign('ribbon', "Event Not Found");
+  $smarty->assign('header', "Event: $idEvent");
+  $smarty->assign('content', "<h2>Event $idEvent not found</h2>");
+  $smarty->assign('config', $config);
+  $smarty->display('base.tpl');
+  exit;
+}
+
+
 $event = $events[0];
 session_start();
 $_SESSION['admin']['current']['event'] = $event;
