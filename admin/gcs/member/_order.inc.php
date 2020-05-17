@@ -54,9 +54,9 @@ switch ($action) {
   case 'updateQuantity':
     foreach ($_REQUEST['quantity'] as $itemId => $itemQuantity) {
       $itemReference =& $reader->getItemReference($itemId);
-      if ($itemReference['type' == 'Badge']) {
+      if ($itemReference['type'] == 'Badge') {
         $error = 'Badges must have a quantity of one';
-      } else if ($itemReference['type' == 'Payment']) {
+      } else if ($itemReference['type'] == 'Payment') {
         $error = 'Payments must have a quantity of one';
       } else if (!is_numeric($itemQuantity)) {
         $error = 'Ignoring non-integer quantities';
