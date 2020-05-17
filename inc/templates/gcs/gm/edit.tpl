@@ -56,7 +56,7 @@ $(document).ready(function() {
     </tr>
 
     <tr>
-        <td><span class="field_name">*Game System</span><br />
+        <td><span class="field_name">*Game or System</span><br />
           <input type="text" id="s_game" name="s_game" value="{$event.s_game|default:''|stripslashes}" {if isset($errors.s_game)} class="validation" {/if}/>
             {if isset($errors.s_game)}<span class="validation"><br/>*{$errors.s_game}</span>{/if}
         </td>
@@ -65,13 +65,12 @@ $(document).ready(function() {
     </tr>
 
     <tr>
-        <td><span class="field_name">Event Title</span><br />
+        <td><span class="field_name">Event Title</span>
+          <span class="description">optional</span><br />
           <input type="text" name="s_title" value="{$event.s_title|default:''|stripslashes}" {if isset($errors.s_title)} class="validation" {/if}/>
             {if isset($errors.s_title)}<span class="validation"><br/>*{$errors.s_title}</span>{/if}
         </td>
-        <td class="description">The title is the name of the event. In the case of
-        board games, you may wish to leave this blank to simply use the game
-        system name as the title.</td>
+        <td class="description">An optional title for the event, which will be appended to the game system like &lt;Game&gt;: &lt;Title&gt;.  Use this field to describe expansions or scenarios.</td>
     </tr>
 
     <tr>
