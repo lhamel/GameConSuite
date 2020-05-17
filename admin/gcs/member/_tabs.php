@@ -9,7 +9,7 @@ if (!is_numeric($_GET['id_member'])) {
 
 $tabs = array(
   array('link'=>'admin/gcs/member/index.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Member Summary'),
-  // array('link'=>'admin/gcs/member/order.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Order'),
+  array('link'=>'admin/gcs/member/order.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Order'),
   //array('link'=>'admin/gcs/member/addBadge.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Add Badge'),
   // array('link'=>'admin/gcs/member/addItem.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Add Item'),
   //array('link'=>'admin/gcs/member/addPayment.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Add Payment'),
