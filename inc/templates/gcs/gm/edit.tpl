@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   function updateCount() {
     var max = 200;
-    var len = $('#s_desc_web').val().length;
+    var len = $('#s_desc').val().length;
     console.log('count: '+len);
     var char = max - len;
     $('#charNum').text(char + ' characters left');
@@ -15,7 +15,7 @@ $(document).ready(function() {
     }
   }
 
-  $('#s_desc_web').keyup(updateCount);
+  $('#s_desc').keyup(updateCount);
   updateCount();
 });
 
@@ -72,20 +72,20 @@ $(document).ready(function() {
     </tr>
 
     <tr>
-        <td colspan="2"><span class="field_name">Description of your game</span>
-        <span class="description">provided with your event online (no character limit)</span><br />
-        <textarea style="width:100%;" name="s_desc" rows="3" cols="40"
+        <td colspan="2"><span class="field_name">Short description of your game</span>
+        <span class="description">provided in the convention book (limited to 200 characters)</span><br />
+        <textarea style="width:100%;" id="s_desc" name="s_desc" rows="3" cols="40"
         {if isset($errors.s_desc)} class="validation" {/if}>{$event.s_desc|default:''|stripslashes}</textarea>
-        {if isset($errors.s_desc)}<span class="validation"><br/>*{$errors.s_desc}</span>{/if}
+        <span id="charNum"></span>
+        {if isset($errors.s_desc)}<span class="validation"><br>*{$errors.s_desc}</span>{/if}
     </tr>
 
     <tr>
-        <td colspan="2"><span class="field_name">Short description of your game</span>
-        <span class="description">provided in the convention book (limited to 200 characters)</span><br />
-        <textarea style="width:100%;" id="s_desc_web" name="s_desc_web" rows="3" cols="40"
+        <td colspan="2"><span class="field_name">Longer description of your game</span>
+        <span class="description">provided with your event online (no character limit, leave blank to use short description)</span><br />
+        <textarea style="width:100%;" name="s_desc_web" rows="3" cols="40"
         {if isset($errors.s_desc_web)} class="validation" {/if}>{$event.s_desc_web|default:''|stripslashes}</textarea>
-        <span id="charNum"></span>
-        {if isset($errors.s_desc_web)}<span class="validation"><br/>*{$errors.s_desc_web}</span>{/if}
+        {if isset($errors.s_desc_web)}<span class="validation">*{$errors.s_desc_web}</span>{/if}
     </tr>
 
     <tr>
