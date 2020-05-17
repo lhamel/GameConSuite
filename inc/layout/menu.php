@@ -29,7 +29,7 @@ $menu['items'] = array(
     array('label'=>'Search', 'link'=>'admin/gcs/eventsearch/index.php'),
     array('label'=>'Submissions', 'link'=>'admin/gcs/submissions/unscheduled.php'),
     array('label'=>'Publishing', 'link'=>'admin/gcs/publish/unedited.php'),
-    // array('label'=>'Schedule', 'link'=>'admin/gcs/schedule/browse.php'),
+    array('label'=>'Schedule', 'link'=>'admin/gcs/schedule/browse.php'),
     // array('label'=>'Results', 'link'=>'admin/gcs/eventcheckin/bybarcode.php'),
   )),
   array('label'=>'Members', 'children'=>array(
@@ -43,14 +43,14 @@ $menu['items'] = array(
   //     array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
   //     array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
   )),
-  // array('label'=>'Fates', 'children'=>array(
+  array('label'=>'Scheduling Tools', 'children'=>array(
   //   array('label'=>'Fates', 'link'=>'admin/db/fates'),
   //   array('label'=>'Conventions', 'link'=>'admin/db/convention.php'), 
   //   array('label'=>'Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByCategory.php'),
   //   array('label'=>'Room Schedule', 'link'=>'admin/db/fates/scheduling/SlotsByRoom.php'),
   //   array('label'=>'Time Slot', 'link'=>'admin/db/fates/scheduling/RoomsByTime.php'),
-  //   array('label'=>'Event Location', 'link'=>'admin/db/fates/scheduling/roompicture.php'),
-  // )),
+    array('label'=>'Event Location', 'link'=>'admin/gcs/schedule/roompicture.php'),
+  )),
   // array('label'=>'Records', 'children'=>array(
   //   array('label'=>'All Preregistration', 'link'=>'admin/db/member/prereg.php'),
   //   array('label'=>'Gamemasters', 'link'=>'admin/db/member/prereg.php?type=gm'), 
@@ -62,7 +62,7 @@ $menu['items'] = array(
 } else {
 $menu['items'] = array(
   array('label'=>'General Info', 'children'=>array(
-    array('label'=>'Main Website', 'url'=>'/'),
+    array('label'=>'Main Website', 'url'=>$config['gcs']['website']),
     // array('label'=>'Subscribe to Email', 'url'=>'https://www.ucon-gaming.org/email/?p=subscribe&id=1'),
   )),
   array('label'=>'Event Submission', 'children'=>array(
