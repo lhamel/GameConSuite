@@ -4,7 +4,7 @@ if (!isset($smarty)) {
 }
 
 $tabs = array(
-  //array('link'=>'admin/gcs/schedule/browse.php', 'label'=>'Browse/Filter'),
+  array('link'=>'admin/gcs/schedule/browse.php', 'label'=>'Browse/Filter'),
   //array('link'=>'admin/gcs/schedule/games.php', 'label'=>'Unique Games'),
   array('link'=>'admin/gcs/schedule/roompicture.php', 'label'=>'Schedule Overview'),
 );
