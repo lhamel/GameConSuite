@@ -17,6 +17,9 @@ $(document).ready(function() {
 
   $('#s_desc').keyup(updateCount);
   updateCount();
+
+  $('#s_game').autocomplete({source: "autocomplete_game.php" });
+
 });
 
 {/literal}</script>
@@ -54,7 +57,7 @@ $(document).ready(function() {
 
     <tr>
         <td><span class="field_name">*Game System</span><br />
-          <input type="text" name="s_game" value="{$event.s_game|default:''|stripslashes}" {if isset($errors.s_game)} class="validation" {/if}/>
+          <input type="text" id="s_game" name="s_game" value="{$event.s_game|default:''|stripslashes}" {if isset($errors.s_game)} class="validation" {/if}/>
             {if isset($errors.s_game)}<span class="validation"><br/>*{$errors.s_game}</span>{/if}
         </td>
         <td class="description">The name of the game or game system to be used in
