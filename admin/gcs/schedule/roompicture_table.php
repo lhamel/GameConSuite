@@ -125,9 +125,7 @@ function canJoinLong($day1, $time1, $table1, $day2, $time2, $table2) {
   if (!is_array($obj2) || count($obj2)!=1) return false;
 
   //echo '<pre>'.print_r($matrix[$day1][$time1],1).'</pre>';
-  // echo "<hr>lookup $day2 $time2 $table2<hr>";
   //echo 'cmp: '.($obj1[0]['id_event']." == ".$obj2[0]['id_event'])."<br/>";
-  //echo "<hr>HERE<HR>";
   return ($obj1[0]['id_event'] == $obj2[0]['id_event']);
 }
 
@@ -137,7 +135,6 @@ foreach ($matrix as $day => $matrixDay) {
   $joinMatrix[$day] = array();
   foreach ($matrixDay as $time => $matrixTime) {
     foreach ($matrixTime as $table => $eventList) {
-//echo"<hr>$table<hr>";
 	  	$eventCount = count($eventList);
 			if ($eventCount == 0) {
 	  		$joinMatrix[$day][$time][$table] = array('class' => 'none');
@@ -155,6 +152,7 @@ foreach ($matrix as $day => $matrixDay) {
 	}
 }
 
+//echo "<pre style=\"text-align: left; font-size: 8pt;\">".print_r($matrix,1)."</pre>";
 //echo "<pre style=\"text-align: left; font-size: 8pt;\">".print_r($joinMatrix,1)."</pre>";
 
 //TODO remove/replace function "basename";
