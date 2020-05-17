@@ -26,7 +26,7 @@ function validateEvent($event) {
 
   if (isset($event['s_desc']) && $event['s_desc']) {
     $length = strlen($event['s_desc']);
-    if ($length > 350) {
+    if ($length > 200) {
       $errors['s_desc'] = 'Please reduce your description to 350 characters (currently ' . $length . ')';
     }
   }

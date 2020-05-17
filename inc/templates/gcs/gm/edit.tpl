@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   function updateCount() {
     var max = 200;
-    var len = $('#s_desc_web').val().length;
+    var len = $('#s_desc').val().length;
     console.log('count: '+len);
     var char = max - len;
     $('#charNum').text(char + ' characters left');
@@ -15,8 +15,11 @@ $(document).ready(function() {
     }
   }
 
-  $('#s_desc_web').keyup(updateCount);
+  $('#s_desc').keyup(updateCount);
   updateCount();
+
+  $('#s_game').autocomplete({source: "autocomplete_game.php" });
+
 });
 
 {/literal}</script>
@@ -53,8 +56,8 @@ $(document).ready(function() {
     </tr>
 
     <tr>
-        <td><span class="field_name">*Game System</span><br />
-          <input type="text" name="s_game" value="{$event.s_game|default:''|stripslashes}" {if isset($errors.s_game)} class="validation" {/if}/>
+        <td><span class="field_name">*Game or System</span><br />
+          <input type="text" id="s_game" name="s_game" value="{$event.s_game|default:''|stripslashes}" {if isset($errors.s_game)} class="validation" {/if}/>
             {if isset($errors.s_game)}<span class="validation"><br/>*{$errors.s_game}</span>{/if}
         </td>
         <td class="description">The name of the game or game system to be used in
@@ -62,30 +65,29 @@ $(document).ready(function() {
     </tr>
 
     <tr>
-        <td><span class="field_name">Event Title</span><br />
+        <td><span class="field_name">Event Title</span>
+          <span class="description">optional</span><br />
           <input type="text" name="s_title" value="{$event.s_title|default:''|stripslashes}" {if isset($errors.s_title)} class="validation" {/if}/>
             {if isset($errors.s_title)}<span class="validation"><br/>*{$errors.s_title}</span>{/if}
         </td>
-        <td class="description">The title is the name of the event. In the case of
-        board games, you may wish to leave this blank to simply use the game
-        system name as the title.</td>
-    </tr>
-
-    <tr>
-        <td colspan="2"><span class="field_name">Description of your game</span>
-        <span class="description">provided with your event online (no character limit)</span><br />
-        <textarea style="width:100%;" name="s_desc" rows="3" cols="40"
-        {if isset($errors.s_desc)} class="validation" {/if}>{$event.s_desc|default:''|stripslashes}</textarea>
-        {if isset($errors.s_desc)}<span class="validation"><br/>*{$errors.s_desc}</span>{/if}
+        <td class="description">An optional title for the event, which will be appended to the game system like &lt;Game&gt;: &lt;Title&gt;.  Use this field to describe expansions or scenarios.</td>
     </tr>
 
     <tr>
         <td colspan="2"><span class="field_name">Short description of your game</span>
         <span class="description">provided in the convention book (limited to 200 characters)</span><br />
-        <textarea style="width:100%;" id="s_desc_web" name="s_desc_web" rows="3" cols="40"
-        {if isset($errors.s_desc_web)} class="validation" {/if}>{$event.s_desc_web|default:''|stripslashes}</textarea>
+        <textarea style="width:100%;" id="s_desc" name="s_desc" rows="3" cols="40"
+        {if isset($errors.s_desc)} class="validation" {/if}>{$event.s_desc|default:''|stripslashes}</textarea>
         <span id="charNum"></span>
-        {if isset($errors.s_desc_web)}<span class="validation"><br/>*{$errors.s_desc_web}</span>{/if}
+        {if isset($errors.s_desc)}<span class="validation"><br>*{$errors.s_desc}</span>{/if}
+    </tr>
+
+    <tr>
+        <td colspan="2"><span class="field_name">Longer description of your game</span>
+        <span class="description">provided with your event online (no character limit, leave blank to use short description)</span><br />
+        <textarea style="width:100%;" name="s_desc_web" rows="3" cols="40"
+        {if isset($errors.s_desc_web)} class="validation" {/if}>{$event.s_desc_web|default:''|stripslashes}</textarea>
+        {if isset($errors.s_desc_web)}<span class="validation">*{$errors.s_desc_web}</span>{/if}
     </tr>
 
     <tr>
