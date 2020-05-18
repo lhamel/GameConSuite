@@ -7,14 +7,15 @@
     <meta name="description" content="Affordable gaming convention in south east lower Michigan, featuring a large variety of games, exhibitors hall and auction. Games include Role-playing, RPGA, CCGs, board, miniatures, historicals, card games." />
     <link rel="stylesheet" href="{$config.page.depth}css/style.css" type="text/css"/>
     <link rel="stylesheet" href="{$config.page.depth}css/flick/jquery-ui-1.10.3.custom.min.css"/>
+    <link rel="stylesheet" href="{$config.page.depth}js/tag-editor/jquery.tag-editor.css"/>
 
     <link rel="SHORTCUT ICON" href="{$config.page.depth}favicon.ico" />
     <script src="{$config.page.depth}js/jquery-1.10.2.min.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.checkbox.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery-ui-1.10.3.custom.min.js" type="text/javascript" ></script>
-    <script src="{$config.page.depth}js/jquery.autoGrowInput.js" type="text/javascript" ></script>
-    <script src="{$config.page.depth}js/jquery.tagedit.js" type="text/javascript" ></script>
+    <script src="{$config.page.depth}js/tag-editor/jquery.tag-editor.min.js" type="text/javascript" ></script>
+
     {*
     <script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />
     <script type="text/javascript">

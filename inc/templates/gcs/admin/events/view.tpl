@@ -17,8 +17,9 @@
 <script type="text/javascript">{literal}
 
 $(document).ready(function() {
+    var postUrl = 'ajax_edit.php?id_event={/literal}{$event.id_event}{literal}';
 
-    $('.editable').editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', {
+    $('.editable').editable(postUrl, {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...',
         //cancel    : 'Cancel',
@@ -31,7 +32,7 @@ $(document).ready(function() {
            alert(xhr.responseText);
         },
     });
-     $('.editableSpan').editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', {
+     $('.editableSpan').editable(postUrl, {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...',
         //cancel    : 'Cancel',
@@ -45,7 +46,7 @@ $(document).ready(function() {
            alert(xhr.responseText);
         },
     });
-    $('.editableArea').editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', { 
+    $('.editableArea').editable(postUrl, { 
         id : 'field',
         name : 'new',
         type      : 'textarea',
@@ -54,7 +55,7 @@ $(document).ready(function() {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...'
     });
-    $('#id_event_type').editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', {
+    $('#id_event_type').editable(postUrl, {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...',
         submit    : 'OK',
@@ -69,7 +70,7 @@ $(document).ready(function() {
         },
     });
 
-	$('#i_agerestriction').editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', {
+	$('#i_agerestriction').editable(postUrl, {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...',
         submit    : 'OK',
@@ -118,7 +119,7 @@ $(document).ready(function() {
           });
       }
     });
-    $("#expcomp").editable('ajax_edit.php?id_event={/literal}{$event.id_event}{literal}', {
+    $("#expcomp").editable(postUrl, {
       type: 'expcomp',
       id : 'field',
       name : 'new',
@@ -126,6 +127,41 @@ $(document).ready(function() {
       cancel    : 'Cancel',
       style : "display: inline",
       tooltip : "Click to edit..."
+    });
+
+    // set up the tagEditor for the tags field
+    var tagsValue = "{/literal}{$event.tags}{literal}";
+    var tagsArr = tagsValue.split(",");
+    var prevValue = tagsValue;
+    $('#tags').tagEditor({ 
+      initialTags: tagsArr, 
+      placeholder: 'Click to edit...',
+      position: { collision: 'flip' }, // automatic menu position up/down
+      autocomplete: { source: 'tags_ajax.php', minLength: 1 } ,
+      onChange: function(field, editor, tags) {
+        //alert("changed tags to "+tags);
+
+        // TODO check to see if any of the tags are new and ask for confirmation
+
+        // call script to save new value
+        $.ajax({
+          type: "POST",
+          url: postUrl,
+          data: {field: 'tags', new: tags},
+          done: function(data, textStatus, jqXHR) {
+            prevValue = tags;
+          },
+          fail: function(data, textStatus, jqXHR) {
+            // TODO how do you restore the previous value????
+            alert('failed: '+ data.errorMsg);
+
+            // TODO why are failures being squashed?
+          }
+          // dataType: dataType
+        });
+
+
+      }
     });
 
     $.editable.addInputType('players', {
@@ -255,6 +291,7 @@ $(document).ready(function() {
           style : "display: inline",
           tooltip : "Click to edit..."
       });
+
 });{/literal}</script>
 
 <div class="viewEvent">
@@ -358,8 +395,8 @@ $(document).ready(function() {
 </tr>
 <tr>
   <td class="left">Tags</td>
-  <td class="right"><div id="tags">{$event.tags}</div>
-    <input type="button" value="edit" onclick="window.open('tags_popup.php?id_event={$event.id_event}')"/>
+  <td class="right"><input id="tags" name="tags" value="{* filled in by javascript *}" type="text" size="40" />
+  <span style="color: gray; font-style: italic;">after editing press enter to save all tags</span>
   </td>
 </tr>
 
