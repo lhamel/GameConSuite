@@ -19,7 +19,7 @@ if (!is_array($tickets)) die ("SQL Error: ".$db->ErrorMsg());
 $game = $event['s_game'];
 $title = $event['s_title'];
 $name = $title && $title != $game ? $game.": ".$title : $game;
-$title = "Event: $name ($year) - U-Con Admin";
+$title = $config['gcs']['admintitle']." - Event: $name ($year)";
 
 
 // display the checkin form

@@ -348,7 +348,7 @@ EOD;
 
 <p>Refund owed: \$$refund</p>
 
-<p>Our records show that you have a refund due.  Feel free to add additional items into your U-Con account.  Please contact us to request an early refund.</p>
+<p>Our records show that you have a refund due.  Feel free to add additional items into your account.  Please contact us to request an early refund.</p>
 
 EOD;
 } else if ($pending > 0) {

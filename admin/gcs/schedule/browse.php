@@ -12,8 +12,9 @@ require_once INC_PATH.'resources/event/constants.php';
 require_once INC_PATH.'resources/cart/constants.php';
 
 
-$location = 'events/browse.php';
-$title = 'Browse Events - U-Con Gaming Convention, Ann Arbor Michigan';
+$location = 'admin/gcs/schedule/browse.php';
+$title = $config['gcs']['admintitle']." - Browse Events";
+
 
 $paramDay = isset($_REQUEST['day']) ? $_REQUEST['day'] : '';
 $paramCategory = isset($_REQUEST['category']) ? $_REQUEST['category'] : '';
