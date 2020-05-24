@@ -1,5 +1,12 @@
 <?php 
 
+// bug-fix: browser wouldn't run addTicket a second time until new session
+// prevent the browser from caching any action on orders
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+
 switch ($action) {
   case '':
     break;
@@ -101,6 +108,8 @@ unset($cart);
 function addTicket($id_member, $id_event) {
   if (!isset($id_event)) die("addTicket requires id_event");
   if (!isset($id_member)) die("addTicket requires id_member");
+
+echo "adding!"; exit;
 
   global $db, $queries, $config;
 

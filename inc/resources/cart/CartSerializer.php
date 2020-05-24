@@ -2,9 +2,6 @@
 
 class CartSerializer
 {
-	function CartSerializer() {
-	}
-
   static function saveToDatabase($db, $id_member, $year, &$cart) {
     // load the previous version of the cart
     $origCart = CartSerializer::loadFromDatabase($db, $id_member, $year);

@@ -5,7 +5,7 @@ class CartReader
     private $cart;
     private $nextBadgeId = 0;
 
-    function CartReader(&$cart) {
+    function __construct(&$cart) {
     	$this->cart = &$cart;
     }
 
