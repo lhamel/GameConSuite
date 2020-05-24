@@ -42,9 +42,9 @@ Miniatures, Train Games, Live Action RPGs, Video Games,
 Exhibitors' Hall, Auction, Specialty Tracks, and much more!
 EOD;
 
-$config['gcs']['sitetitle'] = "GameConSuite, Games for All";
 $config['gcs']['name'] = "GameConSuite";
-$config['gcs']['admintitle'] = $config['gcs']['sitetitle']." Admin";
+$config['gcs']['sitetitle'] = $config['gcs']['name'].", Games for All";
+$config['gcs']['admintitle'] = $config['gcs']['name']." Admin";
 $config['gcs']['website'] = "http://www.ucon-gaming.org/";
 $config['gcs']['location'] = "Ypsilanti, Michigan";
 $config['gcs']['dates']['all'] = 'November 22-24, 2019';
