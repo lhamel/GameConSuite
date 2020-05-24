@@ -7,7 +7,8 @@ include INC_PATH.'resources/event/constants.php';
 $idEvent = $_REQUEST['id_event'];
 $field = $_REQUEST['field'];
 //$oldValue = $_REQUEST['old'];
-$newValue = $_REQUEST['new'];
+$newValue = isset($_REQUEST['new']) ? $_REQUEST['new'] : ''; // new value could be empty
+if (is_array($newValue)) { $newValue = implode(',', $newValue); }
 
 //echo $newValue;
 //exit;
@@ -178,7 +179,111 @@ if ($field == "expcomp") {
     echo "\$$cost";
   }
   exit;
-}
+} else if ($field=='tags') {
+
+  // default values empty
+  $tagsArr = array();
+  $assocArray = array();
+
+  // look up ID values for any tags referenced
+  if ($newValue != '') {
+    $tagsArr = explode(',', $newValue);
+    $quotedTags = '"'.implode('","', $tagsArr).'"';
+    // identify tag IDs
+    // NOTE that tagEditor automatically converts tags to lower case, need to match that behavior in comparisons, tagEditor behavior can be changed with parameters
+    $sql = "select id_tag, LCASE(tag) from ucon_tag where tag in ($quotedTags)";
+    $assocArray = $db->GetAssoc($sql);
+    if (!is_array($assocArray)) { echo "SQL Error: ".$db->ErrorMsg(); exit;}
+
+    // if the input array size doesn't match the query result, then unknown tags were stripped
+    // and the modification should be halted
+    if (count($tagsArr) != count($assocArray)) {
+      $foundValues = array_values($assocArray);
+      // echo "<br>tagsArr: ".print_r($tagsArr,1);
+      // echo "<br>foundValues: ".print_r($foundValues,1);
+
+      $stripped = array_diff($tagsArr, $foundValues);
+      $unknownTags = implode(",", $stripped);
+      // echo "<br>stripped: ".print_r($stripped,1);
+      // echo "<br>unknownTags: ".print_r($unknownTags,1);
+
+      header('HTTP/1.1 400 Bad Input');
+      echo("{ 'success':'false', 'errorMsg':'did not save unknown tags $unknownTags' }");
+      exit;
+    }
+  }
+
+  // Note that any unknown tags are stripped here.  In the past I used automatic 
+  // insertion, but I think that will cause a lot of unnecessary data.
+
+  // Automatic insertion of new tags disabled
+  // $tagIds = array();
+  // $tags = isset($_POST['tags']) ? $_POST['tags'] : array();
+  // foreach ($tags as $key => $value) {
+  //   $keyLen = strlen($key);
+  //   if (substr($key, $keyLen-1, 1) == "a") {
+  //     $tagIds[] = substr($key, 0, $keyLen-2); // everything but "-a"
+  //   } else {
+  //     $sql = "insert into ucon_tag set tag=?";
+  //     $db->execute($sql, array($value));
+  //     // if it fails then a uniqueness constraint was violated, so just continue
+  //     $sql = "select id_tag from ucon_tag where tag=?";
+  //     $insertId = $db->getOne($sql, array($value));
+  //     if (!isset($insertId)) { echo "<br>SQL Error: " . $db->ErrorMsg(); exit; }
+  //     //echo "<br>".print_r($insertId,1);
+  //     $tagIds[] = $insertId['id_tag'];
+  //   }
+
+  // }
+  //echo "<br>".print_r($tagIds,1);
+
+
+
+  // echo "<pre>".print_r($assocArray, 1)."</pre>";
+
+  // discover the currently associated tags
+  $sql = "select group_concat(id_tag) from ucon_event_tag where id_event=?";
+  $currentTags = $db->getOne($sql, array($idEvent));
+  $currentTags = explode(',', $currentTags);
+  // echo "<br>currentTags: ".print_r($currentTags,1);
+
+  // discovered which tags were added and removed
+  $tagIds = array_keys($assocArray);
+  $insertTags = array_diff($tagIds, $currentTags);
+  $removedTags = array_diff($currentTags, $tagIds);
+  // echo "<br>insertTags: ".print_r($insertTags,1);
+  // echo "<br>removedTags: ".print_r($removedTags,1);
+
+
+  //
+  // finally, associate the tags with the event (ucon_event_tag)
+
+  // insert the new tags
+  $insertQuery = $db->prepare("insert into ucon_event_tag set id_event=?, id_tag=?");
+  foreach ($insertTags as $tagId) {
+    $success = $db->execute($insertQuery, array($idEvent, $tagId));
+    if (!$success) {
+      header('HTTP/1.1 500 Internal Server Error');
+      echo "Sql Error: ".$db->ErrorMsg();
+      exit;
+    }
+  }
+
+  // remove tags not included
+  $removeQuery = $db->prepare("delete from ucon_event_tag where id_event=? and id_tag=?");
+  foreach ($removedTags as $tagId) {
+    $success = $db->execute($removeQuery, array($idEvent, $tagId));
+    if (!$success) {
+      header('HTTP/1.1 500 Internal Server Error');
+      echo "Sql Error: ".$db->ErrorMsg();
+      exit;
+    }
+  }
+
+  // This result should match the input, as unknown tags result in an error, see above
+  echo implode(",",$assocArray);
+  exit;
+} 
 
 if (isset($sqlArray[$field])) {
 	//$sqlCheck = $sqlArray[$field]['check'];
@@ -217,6 +322,7 @@ if (isset($sqlArray[$field])) {
   	//}
 
 } else { // unknown field
+  header("HTTP/1.1 400 Bad Request");
 	echo("{ 'success':'false', 'errorMsg':'unknown field $field' }");
 	exit;
 }
