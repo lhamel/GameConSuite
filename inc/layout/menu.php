@@ -40,8 +40,8 @@ $menu['items'] = array(
   )),
   array('label'=>'Operations', 'children'=>array(
       array('label'=>'Purchase Items', 'link'=>'admin/gcs/config/purchaseitems.php'),
-  //     array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
-  //     array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
+      array('label'=>'Materials', 'link'=>'admin/gcs/ops/materials.php'),
+      array('label'=>'Popular Tickets', 'link'=>'admin/gcs/ops/popular.php'),
   )),
   array('label'=>'Scheduling Tools', 'children'=>array(
   //   array('label'=>'Fates', 'link'=>'admin/db/fates'),

@@ -32,7 +32,7 @@ $config['email']['registration'] = 'reg2019@ucon-gaming.org';
 // $config['email']['paypal'] = 'sendpaypal@ucon-gaming.org';
 
 
-// $config['reg']['generic_price'] = 2; // $2
+$config['gcs']['generic_price'] = 2; // $2
 
 
 
