@@ -400,7 +400,7 @@ components:
           type: string
       xml:
         name: Member
-    EventType:
+    Category:
       type: object
       properties:
         id:
@@ -414,7 +414,7 @@ components:
           type: integer
           format: int64
       xml:
-        name: EventType
+        name: Category
     Tag:
       type: object
       properties:
@@ -438,7 +438,7 @@ components:
     Event:
       required:
         - name
-        - eventType
+        - category
         - game
         - gm
       type: object
@@ -446,8 +446,8 @@ components:
         id:
           type: integer
           format: int64
-        eventType:
-          $ref: '#/components/schemas/EventType'
+        category:
+          $ref: '#/components/schemas/Category'
         gm:
           $ref: '#/components/schemas/Member'
         game:

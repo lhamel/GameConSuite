@@ -29,15 +29,15 @@ class Event implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "eventType", "game", "gm", "name" ],
+  "required" : [ "category", "game", "gm", "name" ],
   "type" : "object",
   "properties" : {
     "id" : {
       "type" : "integer",
       "format" : "int64"
     },
-    "eventType" : {
-      "$ref" : "#/components/schemas/EventType"
+    "category" : {
+      "$ref" : "#/components/schemas/Category"
     },
     "gm" : {
       "$ref" : "#/components/schemas/Member"
@@ -86,8 +86,8 @@ SCHEMA;
     /** @var int $id */
     public $id;
 
-    /** @var \OpenAPIServer\Model\EventType $eventType */
-    private $eventType;
+    /** @var \OpenAPIServer\Model\Category $category */
+    private $category;
 
     /** @var \OpenAPIServer\Model\Member $gm */
     public $gm;
