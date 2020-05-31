@@ -22,12 +22,12 @@ class EventRepository
     protected $roomRepository;
     protected $memberRepository;
 
-    public function __construct(\ADOConnection $db, EventTypeRepository $eventTypeRepository, MemberRepository $memberRepository /*, RoomRepository $roomRepository*/)
+    public function __construct(\ADOConnection $db, EventTypeRepository $eventTypeRepository, MemberRepository $memberRepository, RoomRepository $roomRepository)
     {
         $this->db = $db;
         $this->memberRepository = $memberRepository;
         $this->eventTypeRepository = $eventTypeRepository;
-        // $this->roomRepository = $roomRepository;
+        $this->roomRepository = $roomRepository;
     }
 
     // public function generateId(): PostId
@@ -38,7 +38,6 @@ class EventRepository
     /** Retrieve the Event by its Event Id */
     public function findById(int $id): Event
     {
-        // pull data from the roomRepository
         $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room'];
 
         $sql = 'select '.join(',', $fields).' from ucon_event where id_event=?';
@@ -56,19 +55,15 @@ class EventRepository
         $et = $this->eventTypeRepository->findById((int)$result[0]['id_event_type']);
 
         // optional fields
-        // $room = $this->roomRepository->findById($result['id_room']);
+        $room = $this->roomRepository->findById((int)$result[0]['id_room']);
 
         // map the data into the API model object
         $event = \OpenAPIServer\Model\Event::fromState($result[0]);
         $event->gm = $gm;
         $event->et = $et;
-        // $event->room = $room;
+        $event->room = $room;
 
         return $event;
-
-
-        //return Room::fromState($arrayData);
-
     }
 
     // public function save(Post $post)

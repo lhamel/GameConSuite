@@ -19,7 +19,7 @@ class RoomRepository
 {
     protected $db;
 
-    public function __construct(\ADOConnection::class $db)
+    public function __construct(\ADOConnection $db)
     {
         $this->db = $db;
     }
@@ -29,21 +29,23 @@ class RoomRepository
     //     return PostId::fromInt($this->persistence->generateId());
     // }
 
+    /** Retrieve the Event by its Event Id */
     public function findById(int $id): Room
     {
-
         $sql = "select id_room, s_room from ucon_room where id_room=?";
-        $result = $db->getAll($sql, [$id]);
+        $result = $this->db->getAll($sql, [$id]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$db->ErrMsg());
         }
 
-        if (count($result) < 1) {
-            throw new OutOfBoundsException(sprintf('Room with id %d does not exist', $id, 0);
+        if (count($result) == 0) {
+            throw new OutOfBoundsException(sprintf('Room with id %d does not exist', $id, 0));
         }
 
-        return new Room($result['id_room'], $result['s_room']);
-        //return Room::fromState($arrayData);
+        // map the data into the API model object
+        $arr = $result[0];
+        $room = new \OpenAPIServer\Model\Room((int)$arr['id_room'], $arr['s_room']);
+        return $room;
     }
 
     // public function save(Post $post)
@@ -56,3 +58,5 @@ class RoomRepository
     //     ]);
     // }
 }
+
+
