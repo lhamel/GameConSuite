@@ -42,7 +42,7 @@ class EventTypeRepository
         }
 
         if (count($result) == 0) {
-            throw new OutOfBoundsException(sprintf('Event with id %d does not exist', $id, 0));
+            throw new OutOfBoundsException(sprintf('EventType with id %d does not exist', $id, 0));
         }
 
         // map the data into the API model object
@@ -50,10 +50,6 @@ class EventTypeRepository
         $eventType = new \OpenAPIServer\Model\EventType((int) $arr['id_event_type'], $arr['s_abbr'], $arr['s_type'], (int) $arr['i_order']);
 
         return $eventType;
-
-
-        //return Room::fromState($arrayData);
-
     }
 
     // public function save(Post $post)
