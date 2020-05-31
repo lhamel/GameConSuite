@@ -109,21 +109,12 @@ $containerBuilder->addDefinitions([
             // ],
         ],
         'config' => $GLOBALS['config'],
-        NewADOConnection::class => function(ContainerInterface $c) {
+        \ADOConnection::class => function(ContainerInterface $c) {
             return $GLOBALS['db'];
         },
-        PDO::class => function (ContainerInterface $c) {
-            $dbSettings = $c->get('settings')['db'];
-            $dsn = 'mysql:host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['dbname'];
-            //$dsn = 'mysql:host=' . $dbSettings['host'] . ';dbname=' . $dbSettings['dbname'];
-            $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ];
-            return new PDO($dsn, $dbSettings['user'], $dbSettings['pass'], $options);
-        },
-
+        // \OpenAPIServer\Repository\EventRepository::class => function(ContainerInterface $c) {
+        //     return new \OpenAPIServer\Repository\EventRepository($GLOBALS['db'], null);
+        // }
 ]);
 
 //echo "<pre>".print_r($containerBuilder->build(), 1)."</pre>";

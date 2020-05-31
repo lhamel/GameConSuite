@@ -12,6 +12,8 @@
 
 namespace OpenAPIServer\Api;
 
+use OpenAPIServer\Repository\EventRepository;
+
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -31,23 +33,28 @@ class EventApi extends AbstractEventApi
      */
     protected $db;
 
+    protected $eventRepo;
+
     /**
      * Route Controller constructor receives container
      *
      * @param ContainerInterface|null $container Slim app container instance
      */
-    public function __construct(ContainerInterface $container = null)
+    public function __construct(\ADOConnection $db, EventRepository $eventRepo)
     {
-        $this->container = $GLOBALS['app']->getContainer();
-        $this->db = $this->container->get(\NewADOConnection::class);
-        $this->config = $this->container->get('config');
+        $this->db = $db;
 
-        // check for misconfiguration
-        if ($this->container == null) {
-            throw new Exception("missing container");
-        }
+        // $this->container = $GLOBALS['app']->getContainer();
+        // $this->db = $this->container->get(\ADOConnection::class);
+        // $this->config = $this->container->get('config');
+
+        $this->eventRepo = $eventRepo;
+
         if ($this->db == null) {
             throw new Exception("missing database");
+        }
+        if ($this->eventRepo == null) {
+            throw new Exception("missing eventRepo");
         }
     }
 
@@ -118,24 +125,42 @@ class EventApi extends AbstractEventApi
             throw new Exception("missing database");
         }
 
+        if ($this->eventRepo == null) {
+            throw new Exception("missing repository");
+        }
 
-        $publicFields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost'];
-
-        $sql = 'select '.join(',', $publicFields).' from ucon_event where id_event=?';
-        $result = $this->db->getAll($sql, [$eventId]);
-        if (!is_array($result)) {
-            $msg = 'SQL Error: '.$this->db->ErrorMsg();
-            throw new Exception($msg);
+        try {
+            $event = $this->eventRepo->findById($eventId);
+        } catch (\OutOfBoundsException $e) {
+            $response->getBody()->write( "Not found" );
+            return $response->withStatus(404);
         }
 
 
-        // if (!$this->container->has('db')) {
-        //     $message = "Database Service not found";
-        //     throw new Exception($message);
+        // // pull data from the repository
+        // $publicFields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type'];
+        // $memFields = ['s_lname','s_fname'];
+
+        // $sql = 'select '.join(',', $publicFields).','.join(',',$memFields).' from ucon_member as M, ucon_event as E where E.id_gm=M.id_member and id_event=?';
+        // $result = $this->db->getAll($sql, [$eventId]);
+        // if (!is_array($result)) {
+        //     $msg = 'SQL Error: '.$this->db->ErrorMsg();
+        //     throw new Exception($msg);
         // }
 
+        // if (count($result) == 0) {
+        //     $response->getBody()->write( "Not found" );
+        //     return $response->withStatus(404);
+        // }
 
-        $response->getBody()->write( json_encode($result) );
+        // // map the data into the API model object
+        // $event = \OpenAPIServer\Model\Event::fromState($result[0]);
+
+
+
+
+
+        $response->getBody()->write( json_encode($event) );
         return $response->withStatus(200)->withHeader('Content-type', 'application/json');
 
 
