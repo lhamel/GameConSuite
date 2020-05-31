@@ -3,7 +3,7 @@
 namespace OpenAPIServer\Repository;
 
 use OutOfBoundsException;
-use OpenAPIServer\Model\Event;
+use OpenAPIServer\Model\EventType;
 
 
 /**
@@ -15,17 +15,13 @@ use OpenAPIServer\Model\Event;
  * Repository also supports the objective of achieving a clean separation and one-way dependency
  * between the domain and data mapping layers
  */
-class EventRepository
+class EventTypeRepository
 {
     protected $db;
-    protected $eventTypeRepository;
-    protected $roomRepository;
 
-    public function __construct(\ADOConnection $db, EventTypeRepository $eventTypeRepository /*, RoomRepository $roomRepository*/)
+    public function __construct(\ADOConnection $db)
     {
         $this->db = $db;
-        $this->eventTypeRepository = $eventTypeRepository;
-        // $this->roomRepository = $roomRepository;
     }
 
     // public function generateId(): PostId
@@ -34,12 +30,12 @@ class EventRepository
     // }
 
     /** Retrieve the Event by its Event Id */
-    public function findById(int $id): Event
+    public function findById(int $id): EventType
     {
         // pull data from the roomRepository
-        $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room'];
+        $fields = ['id_event_type', 's_abbr', 's_type', 'i_order'];
 
-        $sql = 'select '.join(',', $fields).' from ucon_event where id_event=?';
+        $sql = 'select '.join(',', $fields).' from ucon_event_type where id_event_type=?';
         $result = $this->db->getAll($sql, [$id]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$db->ErrMsg());
@@ -49,20 +45,11 @@ class EventRepository
             throw new OutOfBoundsException(sprintf('Event with id %d does not exist', $id, 0));
         }
 
-        // required fields
-        // $gm = $this->roomRepository->memberRepo->findById($result['id_gm']);
-        $et = $this->eventTypeRepository->findById((int)$result[0]['id_event_type']);
-
-        // optional fields
-        // $room = $this->roomRepository->findById($result['id_room']);
-
         // map the data into the API model object
-        $event = \OpenAPIServer\Model\Event::fromState($result[0]);
-        // $event->gm = $gm;
-        $event->et = $et;
-        // $event->room = $room;
+        $arr = $result[0];
+        $eventType = new \OpenAPIServer\Model\EventType((int) $arr['id_event_type'], $arr['s_abbr'], $arr['s_type'], (int) $arr['i_order']);
 
-        return $event;
+        return $eventType;
 
 
         //return Room::fromState($arrayData);
