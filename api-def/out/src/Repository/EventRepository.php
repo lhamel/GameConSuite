@@ -20,10 +20,12 @@ class EventRepository
     protected $db;
     protected $eventTypeRepository;
     protected $roomRepository;
+    protected $memberRepository;
 
-    public function __construct(\ADOConnection $db, EventTypeRepository $eventTypeRepository /*, RoomRepository $roomRepository*/)
+    public function __construct(\ADOConnection $db, EventTypeRepository $eventTypeRepository, MemberRepository $memberRepository /*, RoomRepository $roomRepository*/)
     {
         $this->db = $db;
+        $this->memberRepository = $memberRepository;
         $this->eventTypeRepository = $eventTypeRepository;
         // $this->roomRepository = $roomRepository;
     }
@@ -50,7 +52,7 @@ class EventRepository
         }
 
         // required fields
-        // $gm = $this->roomRepository->memberRepo->findById($result['id_gm']);
+        $gm = $this->memberRepository->findById((int)$result[0]['id_gm']);
         $et = $this->eventTypeRepository->findById((int)$result[0]['id_event_type']);
 
         // optional fields
@@ -58,7 +60,7 @@ class EventRepository
 
         // map the data into the API model object
         $event = \OpenAPIServer\Model\Event::fromState($result[0]);
-        // $event->gm = $gm;
+        $event->gm = $gm;
         $event->et = $et;
         // $event->room = $room;
 
