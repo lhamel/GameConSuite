@@ -29,10 +29,8 @@ use Exception;
 class EventApi extends AbstractEventApi
 {
     /**
-     * @var NewADOConnection|null databasec connection
+     * @var EventRepository|null repository of events
      */
-    protected $db;
-
     protected $eventRepo;
 
     /**
@@ -40,19 +38,14 @@ class EventApi extends AbstractEventApi
      *
      * @param ContainerInterface|null $container Slim app container instance
      */
-    public function __construct(\ADOConnection $db, EventRepository $eventRepo)
+    public function __construct(EventRepository $eventRepo)
     {
-        $this->db = $db;
-
         // $this->container = $GLOBALS['app']->getContainer();
         // $this->db = $this->container->get(\ADOConnection::class);
         // $this->config = $this->container->get('config');
 
         $this->eventRepo = $eventRepo;
 
-        if ($this->db == null) {
-            throw new Exception("missing database");
-        }
         if ($this->eventRepo == null) {
             throw new Exception("missing eventRepo");
         }
@@ -120,10 +113,6 @@ class EventApi extends AbstractEventApi
     public function getEventById(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
         $eventId = $args['eventId'];
-
-        if ($this->db == null) {
-            throw new Exception("missing database");
-        }
 
         if ($this->eventRepo == null) {
             throw new Exception("missing repository");
