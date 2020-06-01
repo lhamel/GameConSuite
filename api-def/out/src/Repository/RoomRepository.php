@@ -19,6 +19,8 @@ class RoomRepository
 {
     protected $db;
 
+    private $cache;
+
     public function __construct(\ADOConnection $db)
     {
         $this->db = $db;
@@ -32,20 +34,49 @@ class RoomRepository
     /** Retrieve the Event by its Event Id */
     public function findById(int $id): Room
     {
-        $sql = "select id_room, s_room from ucon_room where id_room=?";
-        $result = $this->db->getAll($sql, [$id]);
+        $this->populateCache();
+
+        if (array_key_exists($id, $this->cache)) {
+            return $this->cache[$id];
+        }
+
+        throw new OutOfBoundsException(sprintf('Room with id %d does not exist', $id, 0));
+
+        // $sql = "select id_room, s_room from ucon_room where id_room=?";
+        // $result = $this->db->getAll($sql, [$id]);
+        // if (!is_array($result)) {
+        //     throw new \Exception("SQL Error: ".$db->ErrMsg());
+        // }
+
+        // if (count($result) == 0) {
+        //     throw new OutOfBoundsException(sprintf('Room with id %d does not exist', $id, 0));
+        // }
+
+        // // map the data into the API model object
+        // $arr = $result[0];
+        // $room = new \OpenAPIServer\Model\Room((int)$arr['id_room'], $arr['s_room']);
+
+        // return $room;
+    }
+
+    private function populateCache() {
+        if (isset($this->cache)) {
+            return;
+        }
+
+        $sql = "select id_room, s_room from ucon_room";
+        $result = $this->db->getAll($sql);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$db->ErrMsg());
         }
 
-        if (count($result) == 0) {
-            throw new OutOfBoundsException(sprintf('Room with id %d does not exist', $id, 0));
+        foreach($result as $arr)
+        {
+            $id = (int)$arr['id_room'];
+            $room = new \OpenAPIServer\Model\Room($id, $arr['s_room']);
+            $this->cache[$id] = $room;
         }
 
-        // map the data into the API model object
-        $arr = $result[0];
-        $room = new \OpenAPIServer\Model\Room((int)$arr['id_room'], $arr['s_room']);
-        return $room;
     }
 
     // public function save(Post $post)

@@ -86,6 +86,9 @@ EOD;
             $gmIds[$idGm] = $idGm;
         }
 
+        // The members repo much cache the GMs to prevent spawning 100s of Members
+        $this->memberRepository->cachePublicMembers($gmIds);
+
 
         // TODO use a full-text search???
         $events = [];

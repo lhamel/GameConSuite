@@ -19,6 +19,12 @@ class MemberRepository
 {
     protected $db;
 
+    private $publicFields = ['id_member', 's_lname', 's_fname', 's_group'];
+
+    /** Array of public members cached for performance purpose */
+    private $cachePublicMembers = [];
+
+
     public function __construct(\ADOConnection $db)
     {
         $this->db = $db;
@@ -34,10 +40,11 @@ class MemberRepository
     /** Retrieve the Event by its Event Id */
     public function findPublicMemberById(int $id): PublicMember
     {
-        // pull data from the roomRepository
-        $fields = ['id_member', 's_lname', 's_fname', 's_group'];
+        if (array_key_exists($id, $this->cachePublicMembers)) {
+            return $this->cachePublicMembers[$id];
+        }
 
-        $sql = 'select '.join(',', $fields).' from ucon_member where id_member=?';
+        $sql = 'select '.join(',', $this->publicFields).' from ucon_member where id_member=?';
         $result = $this->db->getAll($sql, [$id]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$db->ErrMsg());
@@ -76,6 +83,24 @@ class MemberRepository
     //     return $member;
     // }
 
+    /** Load the cache with a bulk of members to prevent bulk calls to DB */
+    public function cachePublicMembers(array $gmIds)
+    {
+        $idList = join(',',$gmIds);
+
+        $sql = 'select '.join(',', $this->publicFields)." from ucon_member where id_member in ($idList)";
+        $result = $this->db->getAll($sql);
+        if (!is_array($result)) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+
+        // map the data into the API model object
+        foreach ($result as $m) {
+            $mId = (int)$m['id_member'];
+            $member = new PublicMember($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
+            $this->cachePublicMembers[$mId] = $member;
+        }
+    }
 
     // public function save(Post $post)
     // {
