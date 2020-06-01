@@ -24,6 +24,22 @@ class EventRepository
     protected $memberRepository;
     protected $siteConfiguration;
 
+    private $publicDbfields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room' ];
+
+//     private $findGMsQuery = <<< EOD
+//         select id_member, s_lname, s_fname, s_group
+//         from ucon_member as M
+//         where (s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?)
+// EOD;
+    private $findEventsQuery = <<< EOD
+        select *
+        from ucon_event as E, ucon_member as M
+        where id_convention=?
+          and E.id_gm = M.id_member
+          and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?)
+          and b_approval=1
+EOD;
+
     public function __construct(\ADOConnection $db, CategoryRepository $categoryRepository, MemberRepository $memberRepository, RoomRepository $roomRepository)
     {
         $this->db = $db;
@@ -38,13 +54,52 @@ class EventRepository
     //     return PostId::fromInt($this->persistence->generateId());
     // }
 
+    /** Retrieve a list of events that match the filtere parameters
+     *  Note: category, ages, and tags are actually their identifiers
+     */
+    public function findPublicEvents($idConvention, $search, $day, $categoryId, $ages, $tags /*, string $sort */) : array
+    {
+        $wildcard = '%'.$search.'%';
+
+        // search for matching GMs and gather a list
+
+        // $result = $this->db->getAll($this->findGMsQuery, [$wildcard, $wildcard, $wildcard]);
+        // if (!is_array($result)) {
+        //     throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        // }
+
+        // search for matching events, including those with GMs listed above
+        // filter for all filter parameters
+
+        // TODO need to retrieve all the GM information can cache it for retrieval!!
+
+
+        $result = $this->db->getAll($this->findEventsQuery, [$idConvention, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard]);
+        if (!is_array($result)) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+
+        // cache GMs in the MemberRepository
+        $gmIds = [];
+        foreach ($result as $row) {
+            $idGm = $row['id_gm'];
+            $gmIds[$idGm] = $idGm;
+        }
+
+
+        // TODO use a full-text search???
+        $events = [];
+        foreach ($result as $row) {
+            $events[] = $this->createPublicEvent($row);
+        }
+
+        return $events;
+    }
 
     /** Retrieve the Event by its Event Id as long as it is approved and belongs in the current convention */
     public function findPublicEventById(int $id): PublicEvent
     {
-        $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room' ];
-
-        $sql = 'select '.join(',', $fields).' from ucon_event where id_event=? and b_approval=1 and id_convention=?';
+        $sql = 'select '.join(',', $this->publicDbfields).' from ucon_event where id_event=? and b_approval=1 and id_convention=?';
         $result = $this->db->getAll($sql, [$id, $this->siteConfiguration['gcs']['year']]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
@@ -89,8 +144,8 @@ class EventRepository
         ];
 
         foreach ($required as $k) {
-          if (!isset($state[$k])) {
-            throw new \Exception("Event data missing required field $k");
+          if (!array_key_exists($k, $state)) {
+            throw new \Exception("Event data missing required field $k ".print_r($state, true));
           }
         }
 
@@ -103,27 +158,37 @@ class EventRepository
         $e->minplayers = $state['i_minplayers'];
         $e->price = $state['i_cost'];
 
-
         // TODO Validate
         $e->day = $state['e_day'];
         $e->time = $state['i_time'];
 
         // TODO check that these are in the correct order
-        $e->desclong = $state['s_desc_web'];
-        $e->descshort = $state['s_desc'];
+        $d1 = $state['s_desc_web'];
+        $d2 = $state['s_desc'];
+
+        if (strlen($d1)>strlen($d2)) {
+            $e->desclong = $d1;
+            $e->descshort = $d2;
+        } else {
+            $e->desclong = $d2;
+            $e->descshort = $d1;
+        }
+
+        // TODO if member info is in the query, attach it, otherwise look it up (?)
 
         // required fields
         $gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
         $cat = $this->categoryRepository->findById((int)$state['id_event_type']);
-
-        // TODO allow this to be null depending on configuration
-        $room = $this->roomRepository->findById((int)$state['id_room']);
-
-        // TODO add price information
-
         $e->gm = $gm;
         $e->category = $cat;
-        $e->room = $room;
+
+        // TODO allow this to be null depending on configuration
+        try {
+            $room = $this->roomRepository->findById((int)$state['id_room']);
+            $e->room = $room;
+        } catch (OutOfBoundsException $ex) {
+            // ok to not have a room assigned
+        }
 
         return $e;
     }

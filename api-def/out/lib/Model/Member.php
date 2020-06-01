@@ -78,7 +78,7 @@ SCHEMA;
     public $phone;
 
 
-    public function __construct(int $id, string $lastName, string $firstName, string $groupName) {
+    public function __construct(int $id, string $lastName, string $firstName, $groupName) {
       // TODO call parent constructor
 
       $this->id = $id;

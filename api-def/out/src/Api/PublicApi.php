@@ -47,6 +47,8 @@ class PublicApi extends AbstractPublicApi
      */
     protected $eventRepo;
 
+    protected $siteConfig;
+
     /**
      * Route Controller constructor receives container
      *
@@ -55,6 +57,7 @@ class PublicApi extends AbstractPublicApi
     public function __construct(EventRepository $eventRepo)
     {
         $this->eventRepo = $eventRepo;
+        $this->siteConfig = $GLOBALS['config'];
 
         if ($this->eventRepo == null) {
             throw new Exception("missing eventRepo");
@@ -84,13 +87,16 @@ class PublicApi extends AbstractPublicApi
         $ages = (key_exists('ages', $queryParams)) ? $queryParams['ages'] : null;
         $tags = (key_exists('tags', $queryParams)) ? $queryParams['tags'] : null;
 
+        $idConvention = $this->siteConfig['gcs']['year'];
+        $events = $this->eventRepo->findPublicEvents($idConvention, $search, $day, $category, $ages, $tags);
 
+        if ($events == null || count($events)==0) {
+            $response->getBody()->write('No matching events found');
+            return $response->withStatus(401);
+        }
 
-        $message = "How about implementing getFilteredEvents as a GET method in OpenAPIServer\Api\PublicApi class?";
-        throw new Exception($message);
-
-        $response->getBody()->write($message);
-        return $response->withStatus(501);
+        $response->getBody()->write( json_encode($events) );
+        return $response->withStatus(200)->withHeader('Content-type', 'application/json');
     }
 
     /**
