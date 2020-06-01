@@ -40,10 +40,6 @@ class EventApi extends AbstractEventApi
      */
     public function __construct(EventRepository $eventRepo)
     {
-        // $this->container = $GLOBALS['app']->getContainer();
-        // $this->db = $this->container->get(\ADOConnection::class);
-        // $this->config = $this->container->get('config');
-
         $this->eventRepo = $eventRepo;
 
         if ($this->eventRepo == null) {

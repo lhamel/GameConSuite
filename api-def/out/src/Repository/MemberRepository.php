@@ -3,7 +3,7 @@
 namespace OpenAPIServer\Repository;
 
 use OutOfBoundsException;
-use OpenAPIServer\Model\Member;
+use OpenAPIServer\Model\PublicMember;
 
 
 /**
@@ -29,11 +29,13 @@ class MemberRepository
     //     return PostId::fromInt($this->persistence->generateId());
     // }
 
+
+
     /** Retrieve the Event by its Event Id */
-    public function findById(int $id): Member
+    public function findPublicMemberById(int $id): PublicMember
     {
         // pull data from the roomRepository
-        $fields = ['id_member', 's_lname', 's_fname', 's_email', 's_group'];
+        $fields = ['id_member', 's_lname', 's_fname', 's_group'];
 
         $sql = 'select '.join(',', $fields).' from ucon_member where id_member=?';
         $result = $this->db->getAll($sql, [$id]);
@@ -47,9 +49,33 @@ class MemberRepository
 
         // map the data into the API model object
         $m = $result[0];
-        $member = new \OpenAPIServer\Model\Member((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
+        $member = new PublicMember((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
         return $member;
     }
+
+
+    // /** Retrieve the Event by its Event Id */
+    // public function findById(int $id): Member
+    // {
+    //     // pull data from the roomRepository
+    //     $fields = ['id_member', 's_lname', 's_fname', 's_email', 's_group'];
+
+    //     $sql = 'select '.join(',', $fields).' from ucon_member where id_member=?';
+    //     $result = $this->db->getAll($sql, [$id]);
+    //     if (!is_array($result)) {
+    //         throw new \Exception("SQL Error: ".$db->ErrMsg());
+    //     }
+
+    //     if (count($result) == 0) {
+    //         throw new OutOfBoundsException(sprintf('Member with id %d does not exist', $id, 0));
+    //     }
+
+    //     // map the data into the API model object
+    //     $m = $result[0];
+    //     $member = new \OpenAPIServer\Model\Member((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
+    //     return $member;
+    // }
+
 
     // public function save(Post $post)
     // {

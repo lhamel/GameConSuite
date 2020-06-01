@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EventType
+ * Category
  *
  * PHP version 7.1
  *
@@ -19,13 +19,13 @@ namespace OpenAPIServer\Model;
 use OpenAPIServer\Interfaces\ModelInterface;
 
 /**
- * EventType
+ * Category
  *
  * @package OpenAPIServer\Model
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class EventType implements ModelInterface
+class Category implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
@@ -47,7 +47,7 @@ class EventType implements ModelInterface
     }
   },
   "xml" : {
-    "name" : "EventType"
+    "name" : "Category"
   }
 }
 SCHEMA;

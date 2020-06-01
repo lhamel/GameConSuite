@@ -25,11 +25,11 @@ use OpenAPIServer\Interfaces\ModelInterface;
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class Event implements ModelInterface
+class Event extends PublicEvent implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "category", "game", "gm", "name" ],
+  "required" : [ "category", "desclong", "descshort", "game", "gm", "maxplayers", "minplayers", "name" ],
   "type" : "object",
   "properties" : {
     "id" : {
@@ -75,6 +75,22 @@ class Event implements ModelInterface
     },
     "table" : {
       "type" : "string"
+    },
+    "maxplayers" : {
+      "type" : "integer",
+      "description" : "the number of seats available in the game, must be larger than minplayers",
+      "format" : "int64"
+    },
+    "minplayers" : {
+      "type" : "integer",
+      "description" : "the minimum number of player required to play the game",
+      "format" : "int64"
+    },
+    "desclong" : {
+      "type" : "string"
+    },
+    "descshort" : {
+      "type" : "string"
     }
   },
   "xml" : {
@@ -87,7 +103,7 @@ SCHEMA;
     public $id;
 
     /** @var \OpenAPIServer\Model\Category $category */
-    private $category;
+    public $category;
 
     /** @var \OpenAPIServer\Model\Member $gm */
     public $gm;
@@ -99,13 +115,13 @@ SCHEMA;
     public $title;
 
     /** @var \OpenAPIServer\Model\Tag[] $tags */
-    private $tags;
+    public $tags;
 
     /** @var string $day day of the event*/
-    private $day;
+    public $day;
 
     /** @var int $time first 2 digits of event time in 24 hour clock*/
-    private $time;
+    public $time;
 
     /** @var \OpenAPIServer\Model\Room $room */
     public $room;
@@ -113,56 +129,17 @@ SCHEMA;
     /** @var string $table */
     public $table;
 
+    /** @var int $maxplayers the number of seats available in the game, must be larger than minplayers*/
+    public $maxplayers;
 
-    public static function fromState(array $state): Event
-    {
-        // TEMPORARY
-        $state['s_room'] = "ROOM LABEL REMOVE Model\Event.php";
+    /** @var int $minplayers the minimum number of player required to play the game*/
+    public $minplayers;
 
+    /** @var string $desclong */
+    public $desclong;
 
-        // validate required fields
-        $required = [
-          'id_event', 's_game', 's_title','s_table',
-          'id_gm', //'s_lname', 's_fname',
-          'id_event_type', //'s_type',
-          'id_room', //'s_room'
-        ];
-
-        foreach ($required as $k) {
-          if (!isset($state[$k])) {
-            throw new \Exception("Event data missing required field $k");
-          }
-        }
-
-
-        // $m = new Member($state['id_gm'], $state['s_lname'], $state['s_fname']);
-        // $r = new Room($state['id_room'], $state['s_room']);
-
-        $e = new Event();
-        $e->id = $state['id_event'];
-        $e->game = $state['s_game'];
-        $e->title = $state['s_title'];
-        $e->table = $state['s_table'];
-        // $e->gm = $m;
-        // $e->room = $r;
-
-
-
-        // TODO finish filling out events
-
-        return $e;
-    }
-
-    public function toState() {
-        $arr = [
-          'id_event'=>$this->id,
-          's_game'  =>$this->game,
-          's_title' =>$this->title,
-          's_table' =>$this->table,
-
-        ];
-        return $arr;
-    }
+    /** @var string $descshort */
+    public $descshort;
 
 
     /**

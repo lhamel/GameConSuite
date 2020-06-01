@@ -25,7 +25,7 @@ use OpenAPIServer\Interfaces\ModelInterface;
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class Member implements ModelInterface
+class Member extends PublicMember implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
@@ -79,6 +79,8 @@ SCHEMA;
 
 
     public function __construct(int $id, string $lastName, string $firstName, string $groupName) {
+      // TODO call parent constructor
+
       $this->id = $id;
       $this->lastName = $lastName;
       $this->firstName = $firstName;
