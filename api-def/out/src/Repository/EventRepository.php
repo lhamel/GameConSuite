@@ -22,6 +22,7 @@ class EventRepository
     protected $categoryRepository;
     protected $roomRepository;
     protected $memberRepository;
+    protected $siteConfiguration;
 
     public function __construct(\ADOConnection $db, CategoryRepository $categoryRepository, MemberRepository $memberRepository, RoomRepository $roomRepository)
     {
@@ -29,6 +30,7 @@ class EventRepository
         $this->memberRepository = $memberRepository;
         $this->categoryRepository = $categoryRepository;
         $this->roomRepository = $roomRepository;
+        $this->siteConfiguration = $GLOBALS['config']; // TODO pass through dependency injection
     }
 
     // public function generateId(): PostId
@@ -37,13 +39,13 @@ class EventRepository
     // }
 
 
-    /** Retrieve the Event by its Event Id */
+    /** Retrieve the Event by its Event Id as long as it is approved and belongs in the current convention */
     public function findPublicEventById(int $id): PublicEvent
     {
         $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room' ];
 
-        $sql = 'select '.join(',', $fields).' from ucon_event where id_event=?';
-        $result = $this->db->getAll($sql, [$id]);
+        $sql = 'select '.join(',', $fields).' from ucon_event where id_event=? and b_approval=1 and id_convention=?';
+        $result = $this->db->getAll($sql, [$id, $this->siteConfiguration['gcs']['year']]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
         }
@@ -159,16 +161,16 @@ class EventRepository
         $e->descshort = $state['s_desc_web'];
 
         // required fields
-        $gm = $this->memberRepository->findPublicMemberById((int)$result[0]['id_gm']);
-        $cat = $this->categoryRepository->findById((int)$result[0]['id_event_type']);
+        $gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
+        $cat = $this->categoryRepository->findById((int)$state['id_event_type']);
 
         // TODO allow this to be null depending on configuration
-        $room = $this->roomRepository->findById((int)$result[0]['id_room']);
+        $room = $this->roomRepository->findById((int)$state['id_room']);
 
 
-        $event->gm = $gm;
-        $event->category = $cat;
-        $event->room = $room;
+        $e->gm = $gm;
+        $e->category = $cat;
+        $e->room = $room;
 
         return $e;
     }
