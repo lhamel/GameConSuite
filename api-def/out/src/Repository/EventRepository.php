@@ -4,7 +4,9 @@ namespace OpenAPIServer\Repository;
 
 use OutOfBoundsException;
 use OpenAPIServer\Model\Event;
+use OpenAPIServer\Model\FormatEvent;
 use OpenAPIServer\Model\PublicEvent;
+use OpenAPIServer\Model\PublicMember;
 
 
 /**
@@ -138,7 +140,7 @@ EOD;
     }
 
 
-    private function createPublicEvent(array $state) : PublicEvent
+    private function createPublicEvent(array $state) : FormatEvent
     {
 
         // validate required fields
@@ -152,18 +154,27 @@ EOD;
           }
         }
 
-        $e = new PublicEvent();
+        $e = new FormatEvent();
         $e->id = $state['id_event'];
-        $e->game = $state['s_game'];
-        $e->title = $state['s_title'];
         $e->table = $state['s_table'];
         $e->maxplayers = $state['i_maxplayers'];
         $e->minplayers = $state['i_minplayers'];
         $e->price = $state['i_cost'];
 
-        // TODO Validate
-        $e->day = $state['e_day'];
-        $e->time = $state['i_time'];
+        // TODO format the title
+        $title = trim($state['s_title']);
+        $game = trim($state['s_game']);
+        if (isset($title) && isset($game)) {
+            $e->formatTitle = $title.': '.$game;
+        } elseif (isset($title)) {
+            $e->formatTitle = $title;
+        } else {
+            $e->formatTitle = $game;
+        }
+
+        // // TODO Validate
+        $e->day = ucfirst(strtolower(''.$state['e_day']));
+        // $e->time = $state['i_time'];
 
         // TODO check that these are in the correct order
         $d1 = $state['s_desc_web'];
@@ -171,24 +182,28 @@ EOD;
 
         if (strlen($d1)>strlen($d2)) {
             $e->desclong = $d1;
-            $e->descshort = $d2;
+            // $e->descshort = $d2;
         } else {
             $e->desclong = $d2;
-            $e->descshort = $d1;
+            // $e->descshort = $d1;
         }
 
-        // TODO if member info is in the query, attach it, otherwise look it up (?)
+        // // TODO if member info is in the query, attach it, otherwise look it up (?)
 
         // required fields
         $gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
         $cat = $this->categoryRepository->findById((int)$state['id_event_type']);
-        $e->gm = $gm;
-        $e->category = $cat;
+
+        // format the GM name
+        $e->gmName = PublicMember::formatName($gm);
+
+        //  select the category field
+        $e->categoryName = $cat->label;
 
         // TODO allow this to be null depending on configuration
         try {
             $room = $this->roomRepository->findById((int)$state['id_room']);
-            $e->room = $room;
+            $e->roomName = $room->label;
         } catch (OutOfBoundsException $ex) {
             // ok to not have a room assigned
         }
