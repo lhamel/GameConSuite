@@ -15,6 +15,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Psr\Container\ContainerInterface;
 
+use PHPAuth\Auth as PHPAuth;
 
 use OpenAPIServer\SlimRouter;
 use Psr\Http\Message\ServerRequestInterface;
@@ -95,6 +96,7 @@ $dbSettings = [
 
 
 require_once __DIR__.'/../../inc/db/db.php';
+require_once __DIR__.'/../../inc/auth.php';
 
 $containerBuilder = new \DI\ContainerBuilder();
 
@@ -112,9 +114,7 @@ $containerBuilder->addDefinitions([
         \ADOConnection::class => function(ContainerInterface $c) {
             return $GLOBALS['db'];
         },
-        // \OpenAPIServer\Repository\EventRepository::class => function(ContainerInterface $c) {
-        //     return new \OpenAPIServer\Repository\EventRepository($GLOBALS['db'], null);
-        // }
+        PHPAuth::class=> $auth,
 ]);
 
 //echo "<pre>".print_r($containerBuilder->build(), 1)."</pre>";
