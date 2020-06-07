@@ -44,14 +44,14 @@ class BasicAuthenticator extends AbstractAuthenticator
 {
 
     /**
-     * @var Auth|null Member Repository for retrieving envelops
-     */
-    protected $auth;
-
-    /**
      * @var ContainerInterface|null Slim app container instance
      */
     protected $container;
+
+    /**
+     * @var Auth|null Member Repository for retrieving envelops
+     */
+    protected $auth;
 
     /**
      * @var string[]|null List of required scopes
@@ -80,8 +80,6 @@ class BasicAuthenticator extends AbstractAuthenticator
             throw new \Exception("bad wiring: auth is null");
         }
 
-        // throw new \Exception("hey over here!");
-
     }
 
 
@@ -101,44 +99,4 @@ class BasicAuthenticator extends AbstractAuthenticator
         return $this->auth->getCurrentUser();
     }
 
-//     /**
-//      * Makes the api key validation of your application
-//      *
-//      * Just an example of implementation. Override this method to fit your needs
-//      *
-//      * @param ServerRequestInterface $request     HTTP request
-//      * @param TokenSearch            $tokenSearch Middleware instance which contains api key in token
-//      *
-//      * @return bool Must return either true or false
-//      * @throws UnauthorizedExceptionInterface when cannot parse token
-//      */
-//     public function __invoke(ServerRequestInterface &$request, TokenSearch $tokenSearch)
-//     {
-
-
-// echo "__invoke";
-
-// throw new \Exception("hey over here!");
-
-// return false;
-
-//        /**
-//         * Try find authorization token via header, parameters, cookie or attribute
-//         * If token not found, return response with status 401 (unauthorized)
-//         */
-//         $token = $tokenSearch->getToken($request);
-
-//         /**
-//          * Verify if token is valid on database
-//          * If token isn't valid, expired or has insufficient scope must throw an UnauthorizedExceptionInterface
-//          */
-//         $user = $this->getUserByToken($token);
-
-//         /**
-//          * Set authenticated user at attributes
-//          */
-//         $request = $request->withAttribute('authenticated_user', $user);
-
-//         return true;
-//     }
 }
