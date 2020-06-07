@@ -115,6 +115,7 @@ $containerBuilder->addDefinitions([
             return $GLOBALS['db'];
         },
         PHPAuth::class=> $auth,
+        \Associates::class=>$associates,
 ]);
 
 //echo "<pre>".print_r($containerBuilder->build(), 1)."</pre>";

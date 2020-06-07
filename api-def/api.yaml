@@ -22,6 +22,10 @@ tags:
       url: 'https://gameconsuite.com'
   - name: public
     description: Publically available event search and browse
+  - name: authentication
+    description: Login and operations for managing authentication
+  - name: attendee
+    description: Operations available to logged in users
   - name: event
     description: Operations about events
   - name: member
@@ -50,6 +54,8 @@ paths:
           schema:
             type: string
             enum:
+              - MON
+              - TUE
               - WED
               - THU
               - FRI
@@ -121,6 +127,136 @@ paths:
         '404':
           description: Event not found
           content: {}
+  /user/login:
+    put:
+      tags:
+        - authentication
+      summary: Login with username and password
+      description: Begin authentication session
+      operationId: login
+      requestBody:
+        description: login credentials
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginBody'
+      responses:
+        '401':
+          description: Invalid credentials
+          content: {}
+
+  # /user/credentials/create:
+  #   post:
+  #     tags:
+  #       - authentication
+  #     summary: Create a login with the given username and password
+  #     description: Create authentication credentials
+  #     operationId: createCredentials
+  #     requestBody:
+  #       description: create login credentials
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/LoginBody'
+  #     responses:
+  #       '401':
+  #         description: Invalid credentials
+  #         content: {}
+
+# TODO create account
+# TODO reset password
+# TODO activate account
+# TODO change password
+# TODO resend authentication
+  /user/logout:
+    put:
+      tags:
+        - authentication
+      summary: Log out
+      description: End authentication session
+      operationId: logout
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+          - 'admin'
+      #       - 'write:events'
+      #       - 'read:events'
+
+  /user/envelop:
+    get:
+      tags:
+        - attendee
+      summary: Get list of attendees envelopes
+      description: List the attendees envelopes for the logged in user
+      operationId: getUserEnvelopes
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+          - 'admin'
+    post:
+      tags:
+        - attendee
+      summary: Create envelope
+      description: create an envelope for current user
+      operationId: createUserEnvelope
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Created successfully
+          content: {}
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+          - 'admin'
+
+
+# TODO create envelope
+# TODO modify envelope (note: limit?  email? archive it?)
+# TODO destroy envelope (note: restricted)
+# TODO get envelope
+
+# TODO submit event
+# TODO get events
+
+# TODO get cart of items
+# TODO add item
+# TODO add ticket
+# TODO add badge
+# TODO change item quantity
+# TODO remove item or ticket
+
   /event:
     put:
       tags:
@@ -151,7 +287,7 @@ paths:
         # - gameconsuite_auth:
         #     - 'write:events'
         #     - 'read:events'
-      x-codegen-request-body-name: body
+      # x-codegen-request-body-name: body
     post:
       tags:
         - event
@@ -175,7 +311,7 @@ paths:
       #   - gameconsuite_auth:
       #       - 'write:events'
       #       - 'read:events'
-      x-codegen-request-body-name: body
+      # x-codegen-request-body-name: body
   '/event/{eventId}':
     get:
       tags:
@@ -692,6 +828,8 @@ components:
         day:
           type: string
           enum:
+            - Mon
+            - Tue
             - Wed
             - Thu
             - Fri
@@ -727,6 +865,15 @@ components:
           example: a game of skill
       xml:
         name: FormatEvent
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "me@me.com"
+        password:
+          type: string
+          example: "p@ssw0rd"
     ApiResponse:
       type: object
       properties:
@@ -737,7 +884,11 @@ components:
           type: string
         message:
           type: string
-  # securitySchemes:
+  securitySchemes:
+    GCS_Auth:
+      type: http
+      scheme: bearer
+      
   #   gameconsuite_auth:
   #     type: oauth2
   #     flows:
