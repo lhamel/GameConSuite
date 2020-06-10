@@ -84,12 +84,11 @@ paths:
         '200':
           description: successful operation
           content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/FormatEvent'
             application/json:
               schema:
-                $ref: '#/components/schemas/FormatEvent'
+                type: array
+                items:
+                  $ref: '#/components/schemas/FormatEvent'
         '400':
           description: Invalid ID supplied
           content: {}
@@ -186,69 +185,438 @@ paths:
       #       - 'write:events'
       #       - 'read:events'
 
-  /user/envelop:
+  /user/envelope:
     get:
       tags:
         - attendee
-      summary: Get list of attendees envelopes
+      summary: Get list of attendee envelopes
       description: List the attendees envelopes for the logged in user
       operationId: getUserEnvelopes
-      parameters:
-        - name: userId
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '401':
           description: Not logged in
           content: {}
-        '403':
-          description: Forbidden
-          content: {}
+        '200':
+          description: A list of envelopes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Envelope'
       security:
         - GCS_Auth:
           - 'attendee'
-          - 'admin'
     post:
       tags:
         - attendee
       summary: Create envelope
       description: create an envelope for current user
       operationId: createUserEnvelope
+      responses:
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '401':
+          description: Not logged in
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+  '/user/envelope/{memberId}':
+    get:
+      tags:
+        - attendee
+      summary: Get the envelop details for the logged in user
+      operationId: getEnvelopeByMember
       parameters:
-        - name: userId
+        - name: memberId
           in: path
-          description: ID of user
+          description: ID of the member/envelope
           required: true
           schema:
             type: integer
             format: int64
       responses:
+        '401':
+          description: Not logged in
+          content: {}
         '200':
           description: Created successfully
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    put:
+      tags:
+        - attendee
+      summary: Modify envelop details authorized for the current logged in user
+      operationId: editEnvelopeByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Event object that needs to be added to the convention
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Envelope'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Envelope'
+        required: true
+      responses:
+        '401':
+          description: Not logged in
           content: {}
+        '400':
+          description: Malformed body
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    delete:
+      tags:
+        - attendee
+      summary: Remove the envelope for the logged in user
+      description: Remove or archive the envelope for the current user under certain conditions
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
         '401':
           description: Not logged in
           content: {}
         '403':
-          description: Forbidden
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Deleted successfully
+      security:
+        - GCS_Auth:
+          - 'attendee'
+  '/user/envelope/{memberId}/authorization':
+    get:
+      tags:
+        - attendee
+      summary: Get the authorization list for the specified member
+      operationId: getAuthorizationByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Authorization'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+
+# TODO remove authorizations on each envelope
+# TODO add authorizations on each envelope
+
+# TODO submit event
+# TODO get events
+  '/user/envelope/{memberId}/event':
+    get:
+      tags:
+        - attendee
+      summary: Get the list of GM events for the specified member
+      operationId: getGMEventsByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    put:
+      tags:
+        - attendee
+      summary: Submit an event for the specified member
+      operationId: submitGMEventsByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Event object that needs to be added to the convention
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+        '405':
+          description: Validation exception
           content: {}
       security:
         - GCS_Auth:
           - 'attendee'
-          - 'admin'
+  '/user/envelope/{memberId}/schedule':
+    get:
+      tags:
+        - attendee
+      summary: Get the complete schedule for the specified member
+      operationId: getScheduleByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+  '/user/envelope/{memberId}/cart':
+    get:
+      tags:
+        - attendee
+      summary: Get the cart for the specified member
+      operationId: getCartByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    put:
+      tags:
+        - attendee
+      summary: Add an item to the cart
+      operationId: addItemToCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Item to be added to the cart
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CartItem'
+                - $ref: '#/components/schemas/Badge'
+                - $ref: '#/components/schemas/Ticket'
+        required: true
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '400':
+          description: Invalid Cart Item
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+  '/user/envelope/{memberId}/cart/{itemId}':
+    patch:
+      tags:
+        - attendee
+      summary: Change the quantity of an item in the cart
+      operationId: updateItemFromCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: itemId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '404':
+          description: Item not found
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    delete:
+      tags:
+        - attendee
+      summary: Remove item from cart
+      operationId: removeItemFromCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: itemId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '404':
+          description: Item not found
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+      security:
+        - GCS_Auth:
+          - 'attendee'
 
 
-# TODO create envelope
-# TODO modify envelope (note: limit?  email? archive it?)
-# TODO destroy envelope (note: restricted)
-# TODO get envelope
-
-# TODO submit event
-# TODO get events
 
 # TODO get cart of items
 # TODO add item
@@ -874,6 +1242,38 @@ components:
         password:
           type: string
           example: "p@ssw0rd"
+    Envelope:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - groupName
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        groupName:
+          type: string
+        email:
+          type: string
+        # TODO add licenceName
+      xml:
+        name: PublicMember
+    Cart:
+      type: object
+    CartItem:
+      type: object
+    Badge:
+      type: object
+    Ticket:
+      type: object
+    Authorization:
+      type: object
     ApiResponse:
       type: object
       properties:
