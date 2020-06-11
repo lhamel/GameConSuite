@@ -1,4 +1,4 @@
-{if $actions.ajax}
+{if isset($actions.ajax)}
 <script type="text/javascript">{literal}
 
 var alterPriceDialog;
@@ -84,7 +84,7 @@ Error: {$error}
 {/if}
 {/strip}
 
-{if $actions.updateQuantity}
+{if isset($actions.updateQuantity)}
 <form action="{$actions.updateQuantity}{if $member}?id_member={$member.id_member}{/if}" method="POST">
 <input type="hidden" name="action" value="updateQuantity" />
 {/if}
@@ -109,22 +109,22 @@ Error: {$error}
 {foreach from=$cart.items key=k item=item}
 <tr class="item">{* TODO move action info to template *}
   <td class="removeCol">{strip}
-  {if $actions.updateQuantity && $item.type!="Payment"}
+  {if isset($actions.updateQuantity) && $item.type!="Payment"}
   <a href="{$actions.updateQuantity}?{if $member}id_member={$member.id_member}&{/if}action=removeItem&cartId={$k}"><img src="{$config.page.depth}images/gcs/reg/remove.png" title="remove from cart"></a>
   {/if}
   {/strip}</td>
   <td class="itemsCol">{$item.type} - {strip}
     {if $item.event|default:0}
       {$item.event.s_game}
-      {if $item.event.s_title!=$item.event.s_game}: {$item.event.s_title}{/if} {if $actions.viewEvent}<a href="{$actions.viewEvent}{$item.subtype}">#{$item.subtype}</a>{else}#{$item.subtype}{/if}
+      {if $item.event.s_title!=$item.event.s_game}: {$item.event.s_title}{/if} {if isset($actions.viewEvent)}<a href="{$actions.viewEvent}{$item.subtype}">#{$item.subtype}</a>{else}#{$item.subtype}{/if}
     {else}
       {$item.subtype}
     {/if}
-  {/strip}{if $item.type=='Badge'}<br/><span {if $actions.ajax}class="editable"{/if} id="special-{$item.id_order}">{$item.special}</span>{/if}
+  {/strip}{if $item.type=='Badge'}<br/><span {if isset($actions.ajax)}class="editable"{/if} id="special-{$item.id_order}">{$item.special}</span>{/if}
   </td>
   <td class="quantityCol">{strip}
 {if $item.type=='Payment'}
-{elseif $actions.updateQuantity && $item.type!='Badge'}
+{elseif isset($actions.updateQuantity) && $item.type!='Badge'}
   <input class="numeric" type="text" name="quantity[{$k}]" value="{$item.quantity}" size="2"/>
 {else}
   {$item.quantity}
@@ -132,9 +132,9 @@ Error: {$error}
   {/strip}</td>
   <td class="priceCol">{if $item.type!='Payment'}
 
-{if $actions.alterPrice}<a href="javascript:alterPriceDialog({$item.id_order})" id="unitPrice{$item.id_order}" name="unitPrice{$item.id_order}">{/if}
+{if isset($actions.alterPrice)}<a href="javascript:alterPriceDialog({$item.id_order})" id="unitPrice{$item.id_order}" name="unitPrice{$item.id_order}">{/if}
 ${$item.price|string_format:"%.2f"}
-{if $actions.alterPrice}</a>{/if}
+{if isset($actions.alterPrice)}</a>{/if}
 
 {/if}</td>
   <td class="totalCol">${$item.quantity*$item.price|string_format:"%.2f"}</td>
@@ -151,7 +151,7 @@ ${$item.price|string_format:"%.2f"}
 <tr class="itemTotal">
   <td class="itemsCol" colspan="2">Total for Items</td>
   <td class="quantityCol">{strip}
-{if $actions.updateQuantity}
+{if isset($actions.updateQuantity)}
   <input type="submit" class="button" value="Update Quantity"/>
 {/if}
   {/strip}</td>
@@ -186,7 +186,7 @@ ${$item.price|string_format:"%.2f"}
 </table>
 </form>
 
-{if $actions.addPayment}
+{if isset($actions.addPayment)}
 
 <h2>Add Payment</h2>
 <form method="GET" action="{$actions.addPayment}">
@@ -200,7 +200,7 @@ ${$item.price|string_format:"%.2f"}
 
 {/if}
 
-{if $actions.alterPrice}
+{if isset($actions.alterPrice)}
 <div id="dialog-form" title="Alter Price">
   <p class="validateTips">Please enter the password and the new price:</p>
 

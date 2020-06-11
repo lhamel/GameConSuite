@@ -15,7 +15,7 @@ $tabs = array(
   //array('link'=>'admin/gcs/member/addPayment.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Add Payment'),
   //array('link'=>'admin/gcs/member/checkin.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Check In'),
   //array('link'=>'admin/gcs/member/history.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'History'),
-  // array('link'=>'admin/gcs/member/confirm.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Confirm'),
+  array('link'=>'admin/gcs/member/confirm.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Confirm'),
   //array('link'=>'admin/gcs/member/print.php', 'querystring'=>'?id_member='.$_GET['id_member'], 'label'=>'Prereg Print'),
 );
 $smarty->assign('tabs', $tabs);

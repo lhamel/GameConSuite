@@ -109,8 +109,6 @@ function addTicket($id_member, $id_event) {
   if (!isset($id_event)) die("addTicket requires id_event");
   if (!isset($id_member)) die("addTicket requires id_member");
 
-echo "adding!"; exit;
-
   global $db, $queries, $config;
 
   $sql = "select * from ucon_order where id_convention=? and id_member=? and s_type=? and s_subtype=?";

@@ -29,7 +29,9 @@ $config['allow']['message'] = ''; //<span style="font-size:18pt">Pregistration O
 
 $config['email']['registration'] = 'reg2019@ucon-gaming.org';
 // $config['email']['webmaster'] = 'webmaster@ucon-gaming.org';
-// $config['email']['paypal'] = 'sendpaypal@ucon-gaming.org';
+
+// comment this out to disable the paypal address in the administrative confirmation email
+$config['email']['paypal'] = 'sendpaypal@ucon-gaming.org';
 
 
 $config['gcs']['generic_price'] = 2; // $2

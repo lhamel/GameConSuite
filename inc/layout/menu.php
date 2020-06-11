@@ -35,7 +35,7 @@ $menu['items'] = array(
   array('label'=>'Members', 'children'=>array(
       array('label'=>'Search', 'link'=>'admin/gcs/membersearch/index.php'),
       // array('label'=>'Registration', 'link'=>'admin/gcs/registration/index.php'),
-      // array('label'=>'Duplicates', 'link'=>'admin/gcs/memberduplicates/index.php'),
+      array('label'=>'Duplicates', 'link'=>'admin/gcs/memberduplicates/index.php'),
       // array('label'=>'Add Member', 'link'=>'admin/db/member/new.php'),
   )),
   array('label'=>'Operations', 'children'=>array(
