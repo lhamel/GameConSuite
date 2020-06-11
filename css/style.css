@@ -32,3 +32,4 @@ img.logo {display: block; margin: 0 auto;}
 .footer2 { float: right; }
 .ads { }
 .ads img { border-width: 1px; border-color: black; }
+.ribbon { background: #008800; color: white; font-size: 18pt; }
