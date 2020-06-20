@@ -26,6 +26,8 @@ tags:
     description: Login and operations for managing authentication
   - name: attendee
     description: Operations available to logged in users
+  - name: gamemaster
+    description: Event submission and edit capabilities for logged in users
   - name: event
     description: Operations about events
   - name: member
@@ -396,15 +398,17 @@ paths:
       security:
         - GCS_Auth:
           - 'attendee'
-    put:
+  '/user/gmSubmission/{memberId}/finalize':
+    post:
       tags:
-        - attendee
-      summary: Submit an event for the specified member
+        - gamemaster
+      summary: Finalize and submit the current session event
+      description: Submit the current event and send an email to the submitter and to registration
       operationId: submitGMEventsByMember
       parameters:
         - name: memberId
           in: path
-          description: ID of the member/envelope
+          description: ID of the gamemater (member/envelope)
           required: true
           schema:
             type: integer
@@ -414,12 +418,103 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/SubmitEvent'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/SubmitEvent'
         required: true
       responses:
+        '200':
+          description: Operation succeeded
+          content: {}
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+        '405':
+          description: Validation exception
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+  '/user/envelope/{memberId}/event/{eventId}':
+    get:
+      tags:
+        - gamemaster
+      summary: Find event by ID
+      description: Returns a single event
+      operationId: getGMEvent
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of gamemaster
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+      security:
+        - GCS_Auth:
+          - 'attendee'
+    patch:
+      tags:
+        - gamemaster
+      summary: Send allowed modifications for the specified event
+      description: Gamemasters of the event may modify VTT information after submission
+      operationId: updateGMEvent
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the gamemaster (member envelope)
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: eventId
+          in: path
+          description: ID of the gamemaster (member envelope)
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: subset of event fields allowed to be modified
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventVTT'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EventVTT'
+        required: true
+      responses:
+        '200':
+          description: Operation succeeded
+          content: {}
         '400':
           description: Invalid ID supplied
           content: {}
@@ -1284,6 +1379,70 @@ components:
           type: string
         message:
           type: string
+    EventVTT:
+      type: object
+      required:
+        - vttLink
+        - vttInfo
+      properties:
+        vttLink:
+          type: string
+        vttInfo:
+          type: string
+    SubmitEvent:
+      required:
+        - category
+        - game
+        - descshort
+        - maxplayers
+        - minplayers
+        - duration
+        - agerec
+
+        - eventcomment
+        - schedulecomment
+        - title
+        - desclong
+        - exper
+        - complex
+        - pref1
+        - pref2
+        - pref3
+        - numtables
+        - tabletype
+      type: object
+      properties:
+        category:
+          type: integer
+          format: int64
+        game:
+          type: string
+          example: 7 Wonders
+        title:
+          type: string
+          example: Leaders
+        duration:
+          type: integer
+          format: int64
+          description: intended duration of the game in hours
+        maxplayers:
+          type: integer
+          format: int64
+          description: the number of seats available in the game, must be larger than minplayers
+        minplayers:
+          type: integer
+          format: int64
+          description: the minimum number of player required to play the game
+        agerec:
+          type: integer
+          format: int64
+          description: the recommended age for play as 7, 13, 18, 19 - where 19 is mature content
+        desclong:
+          type: string
+        descshort:
+          type: string
+      xml:
+        name: SubmitEvent
   securitySchemes:
     GCS_Auth:
       type: http
