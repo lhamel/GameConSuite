@@ -118,7 +118,7 @@ $(document).ready(function() {
 </div>
 
 <h2>Gamemaster Events</h2>
-{if $events}
+{if isset($events)}
 	{include file="gcs/event/list-table.tpl"}
 {else}
 	None.
@@ -133,12 +133,12 @@ $(document).ready(function() {
 {else}
 <ul>
 {foreach from=$authorizations key=k item=auth}
-  <li>{if $actions.showAuths}<a href="{$actions.showAuths}?uid={$auth.uid}">{/if}{$auth.email}{if $actions.showAuths}</a>{/if}{if $actions.modAuth} <input type="button" value="remove" onClick="showRemoveDialog({$auth.uid},{$member.id_member},'{$auth.email}','{$actions.modAuth}')"/>{/if}</li>
+  <li>{if isset($actions.showAuths)}<a href="{$actions.showAuths}?uid={$auth.uid}">{/if}{$auth.email}{if isset($actions.showAuths)}</a>{/if}{if isset($actions.modAuth)} <input type="button" value="remove" onClick="showRemoveDialog({$auth.uid},{$member.id_member},'{$auth.email}','{$actions.modAuth}')"/>{/if}</li>
 {/foreach}
 </ul>
 {/if}
 
-{if $actions.modAuth}<input type="button" value="add" onClick="showAddDialog({$member.id_member},'{$actions.modAuth}')"/>{/if}
+{if isset($actions.modAuth)}<input type="button" value="add" onClick="showAddDialog({$member.id_member},'{$actions.modAuth}')"/>{/if}
 
 <div id="addDialog" title="Add Authorized User" style="display:none">
 Add Authorized User
@@ -152,7 +152,7 @@ Remove Authorized User?
 </div>
 
 
-{if $yearsOfInterest}
+{if isset($yearsOfInterest)}
 <h2>Years of Activity</h2>
 <p>
 {foreach from=$yearsOfInterest item=y}
