@@ -122,6 +122,11 @@ class GamemasterApi extends AbstractGamemasterApi
         $memberId = $args['memberId'];
         $eventId = $args['eventId'];
 
+        if (!$this->auth->isLogged()) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
+
         // get logged in user
         $userId = $this->auth->getCurrentUser()['uid'];
 
@@ -165,9 +170,56 @@ class GamemasterApi extends AbstractGamemasterApi
      * @return ResponseInterface
      * @throws Exception to force implementation class to override this method
      */
+    public function updateGMEvent(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $memberId = $args['memberId'];
+        $eventId = $args['eventId'];
+        $body = $request->getParsedBody();
 
+        if (isset($body) == 0) {
+            $response->getBody()->write("Body and Content-type header required");
+            return $response->withStatus(400);
+        }
 
+        if (!$this->auth->isLogged()) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
 
+        // get logged in user
+        $userId = $this->auth->getCurrentUser()['uid'];
 
+        // test the the member is listed in the associates
+        $members = $this->associates->listAssociates($userId);
+        // echo print_r($members, 1)."\n\n";
+        if (!isset($members[$memberId])) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
 
+        // test the event belongs to the gamemaster
+        try {
+            $event = $this->eventRepo->findById($eventId);
+        } catch (\OutOfBoundsException $e) {
+            $response->getBody()->write( "Not found" );
+            return $response->withStatus(404);
+        }
+
+        if ($event->gm->id != $memberId) {
+            $response->getBody()->write('Unauthorized '.print_r($event->gm,1));
+            return $response->withStatus(401);
+        }
+
+        $event->vttLink = $body['vttLink'];
+        $event->vttInfo = $body['vttInfo'];
+
+        // TODO VALIDATE VTT info!!!
+
+        // save only the VTT information
+        $this->eventRepo->saveEventVTT($event);
+
+        $response = $response->withHeader('Content-type', 'application/json');
+        $response->getBody()->write(json_encode($event));
+        return $response->withStatus(200);
+    }
 }

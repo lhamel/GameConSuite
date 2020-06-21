@@ -119,6 +119,23 @@ EOD;
         return $this->createPublicEvent($result[0]);
     }
 
+    public function saveEventVTT(Event $event)
+    {
+        if (!isset($event->id)) {
+            throw new Exception("Can only save VTT information to event that already exists");
+        }
+
+        $year = $this->siteConfiguration['gcs']['year'];
+
+        $sql = "update ucon_event set s_vttlink=?, s_vttinfo=? where id_event=? and id_convention=?";
+        $params = [$event->vttLink, $event->vttInfo, $event->id, $year];
+        $ok = $this->db->execute($sql, $params);
+        if (!$ok) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+        return true;
+    }
+
     /** Retrieve the Event by its Event Id */
     public function findById(int $id): Event
     {
