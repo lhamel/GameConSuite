@@ -369,7 +369,7 @@ paths:
   '/user/envelope/{memberId}/event':
     get:
       tags:
-        - attendee
+        - gamemaster
       summary: Get the list of GM events for the specified member
       operationId: getGMEventsByMember
       parameters:

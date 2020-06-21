@@ -156,13 +156,37 @@ EOD;
         return $this->createEvent($result[0]);
     }
 
+    /** return a list of events belonging to the specified GM */
+    public function findCurrentEventsByGM(int $idGm) : array
+    {
+        $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room', 's_table'];
+        $idConvention = $this->siteConfiguration['gcs']['year'];
+
+
+        $sql = 'select '.join(',', $fields).' from ucon_event where id_gm=? and id_convention=?';
+        $result = $this->db->getAll($sql, [$idGm, $idConvention]);
+        if (!is_array($result)) {
+            throw new \Exception("SQL Error: ".$db->ErrMsg());
+        }
+
+// echo "<pre>\n".print_r($result,true)."\n";
+
+        // map the data into the API model object
+        $events = [];
+        foreach ($result as $row) {
+// echo "<pre>\n".print_r($row,true)."\n";
+            $events[] = $this->createEvent($row);
+        }
+
+        return $events;
+    }
 
     private function createPublicEvent(array $state) : FormatEvent
     {
 
         // validate required fields
         $required = [
-          'id_event', 's_game', 's_title','s_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
+          'id_event', 's_game', 's_title', 's_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
         ];
 
         foreach ($required as $k) {
@@ -234,11 +258,11 @@ EOD;
 
         // validate required fields
         $required = [
-          'id_event', 's_game', 's_title','s_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
+          'id_event', 's_game', 's_title', 's_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
         ];
 
         foreach ($required as $k) {
-          if (!isset($state[$k])) {
+          if (!array_key_exists($k, $state)) {
             throw new \Exception("Event data missing required field $k");
           }
         }
@@ -261,16 +285,15 @@ EOD;
         $e->descshort = $state['s_desc_web'];
 
         // required fields
-        $gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
-        $cat = $this->categoryRepository->findById((int)$state['id_event_type']);
+        $e->gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
+        $e->category = $this->categoryRepository->findById((int)$state['id_event_type']);
 
         // TODO allow this to be null depending on configuration
-        $room = $this->roomRepository->findById((int)$state['id_room']);
-
-
-        $e->gm = $gm;
-        $e->category = $cat;
-        $e->room = $room;
+        try {
+            $e->room = $this->roomRepository->findById((int)$state['id_room']);
+        } catch (OutOfBoundsException $ex) {
+            // ok to not have a room assigned
+        }
 
         return $e;
     }
