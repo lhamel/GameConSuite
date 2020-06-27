@@ -571,35 +571,45 @@ $content .= <<< EOD
         },
         created: function() {
 
-          // set up the bearer-token for all calls
-          $.ajaxSetup({
-              beforeSend: function(xhr) {
-                  xhr.setRequestHeader('Authorization', 'Bearer b64ac660dbe005f381079c67147e443e9b8b8f40');
-              }
-          });
 
-          // Assign handlers immediately after making the request,
-          // and remember the jqxhr object for this request
-          var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/event")
+          // Request the token from previous login
+          var jqxhr = $.get( "/GameConSuite/api/user/token")
             .done(function(data) {
-              console.log( "success" );
-              console.log( data );
+              console.log(data);
+              let t = (data);
+              console.log( "retrieved token " + t );
+              localStorage.setItem('token', t);
 
-              data = data.slice().sort(function(a, b) {
-                a = a.day + a.time + a.id;
-                b = b.day + b.time + b.id;
-                return (a === b ? 0 : a > b ? 1 : -1);
+              // set up the bearer-token for all calls
+              $.ajaxSetup({
+                  beforeSend: function(xhr) {
+                      xhr.setRequestHeader('Authorization', 'Bearer '+t);
+                  }
               });
-              demo.gridData = data;
+
+              // retrieve the GM events list
+              var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/event")
+                .done(function(data) {
+                  console.log( "success" );
+                  console.log( data );
+
+                  data = data.slice().sort(function(a, b) {
+                    a = a.day + a.time + a.id;
+                    b = b.day + b.time + b.id;
+                    return (a === b ? 0 : a > b ? 1 : -1);
+                  });
+                  demo.gridData = data;
+
+                })
+                .fail(function(data) {
+                  console.log( "error" );
+                  console.log( data );
+                });
+
 
             })
             .fail(function(data) {
-              console.log( "error" );
-              console.log( data );
-            // })
-            // .always(function(data) {
-            //   console.log( "finished" );
-            //   console.log( data );
+              console.log( "not logged in" );
             });
 
         }

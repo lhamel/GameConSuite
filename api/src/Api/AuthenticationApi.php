@@ -214,7 +214,7 @@ class AuthenticationApi extends AbstractAuthenticationApi
         if ($this->auth->isLogged()) {
             $hash = $this->auth->getCurrentSessionHash();
             $response->getBody()->write(json_encode($hash));
-            return $response->withStatus(200);
+            return $response->withStatus(200)->withHeader('Content-type', 'application/json');
         }
 
         $response->getBody()->write("login required");
