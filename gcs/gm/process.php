@@ -94,6 +94,8 @@ if ($_POST['action'] == 'selectMember') {
     $event['i_minplayers'] = $tmp;
   }
 
+  // TODO swap short and long description if backwards
+
   // save values in the session
   $_SESSION['gm']['events'][$idx] = $event;
 }
