@@ -27,7 +27,7 @@ use OpenAPIServer\Interfaces\ModelInterface;
  */
 class FormatEvent implements ModelInterface
 {
-    public const MODEL_SCHEMA = <<<'SCHEMA'
+    private const MODEL_SCHEMA = <<<'SCHEMA'
 {
   "required" : [ "categoryName", "formatTitle", "gmName", "id", "price" ],
   "type" : "object",
@@ -56,7 +56,7 @@ class FormatEvent implements ModelInterface
     },
     "day" : {
       "type" : "string",
-      "enum" : [ "Wed", "Thu", "Fri", "Sat", "Sun" ]
+      "enum" : [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
     },
     "starttime" : {
       "type" : "string",

@@ -91,6 +91,10 @@ class Event extends PublicEvent implements ModelInterface
     },
     "descshort" : {
       "type" : "string"
+    },
+    "duration" : {
+      "type" : "number",
+      "format" : "float"
     }
   },
   "xml" : {
@@ -141,6 +145,8 @@ SCHEMA;
     /** @var string $descshort */
     public $descshort;
 
+    /** @var float $duration */
+    private $duration;
 
     /**
      * Returns model schema.

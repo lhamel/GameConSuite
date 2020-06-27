@@ -28,6 +28,7 @@ namespace OpenAPIServer\Api;
 
 use OpenAPIServer\Repository\MemberRepository;
 use OpenAPIServer\Repository\EventRepository;
+use OpenAPIServer\Repository\TicketRepository;
 
 use PHPAuth\Auth as PHPAuth;
 
@@ -72,16 +73,22 @@ class GamemasterApi extends AbstractGamemasterApi
     protected $eventRepo;
 
     /**
+     * TicketRepository|null Ticket Repository for ticketing information
+     */
+    protected $ticketRepo;
+
+    /**
      * Route Controller constructor receives container
      *
      * @param ContainerInterface|null $container Slim app container instance
      */
-    public function __construct(PHPAuth $auth, \Associates $associates, MemberRepository $memberRepository, EventRepository $eventRepo)
+    public function __construct(PHPAuth $auth, \Associates $associates, MemberRepository $memberRepository, EventRepository $eventRepo, TicketRepository $ticketRepo)
     {
         $this->auth = $auth;
         $this->associates = $associates;
         $this->memberRepository = $memberRepository;
         $this->eventRepo = $eventRepo;
+        $this->ticketRepo = $ticketRepo;
     }
 
 
@@ -168,15 +175,14 @@ class GamemasterApi extends AbstractGamemasterApi
     {
         $memberId = $args['memberId'];
 
+        // check that the user is logged in
         if (!$this->auth->isLogged()) {
             $response->getBody()->write('Unauthorized');
             return $response->withStatus(401);
         }
 
-        // get logged in user
+        // test the member is listed in the associates for the logged in user
         $userId = $this->auth->getCurrentUser()['uid'];
-
-        // test the the member is listed in the associates
         $members = $this->associates->listAssociates($userId);
         // echo print_r($members, 1)."\n\n";
         if (!isset($members[$memberId])) {
@@ -184,7 +190,7 @@ class GamemasterApi extends AbstractGamemasterApi
             return $response->withStatus(401);
         }
 
-        // test the event belongs to the gamemaster
+        // find events that belong to the gamemaster
         // try {
         $events = $this->eventRepo->findCurrentEventsByGM($memberId);
         // } catch (\OutOfBoundsException $e) {
@@ -192,12 +198,15 @@ class GamemasterApi extends AbstractGamemasterApi
         //     return $response->withStatus(404);
         // }
 
-        // if ($event->gm->id != $memberId) {
-        //     $response->getBody()->write('Unauthorized '.print_r($event->gm,1));
-        //     return $response->withStatus(401);
-        // }
-
         // TODO limit response to information available to GMs
+
+        // add ticket information to each event
+        $eventIds = array_column($events, 'id');
+        $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        foreach ($events as $k => $event) {
+            $id = $event->id;
+            $event->prereg = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
+        }
 
         $response->getBody()->write( json_encode($events) );
         return $response->withStatus(200)->withHeader('Content-type', 'application/json');

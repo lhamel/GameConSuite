@@ -376,21 +376,22 @@ EOD;
 if (count($events)>0) {
 
   // List GM events
-  $events = formatEventTitles($events, 'title');
-  $events = formatEventTimes($events, 'time');
-  $events = formatEventPlayers($events, 'players');
-  $smarty->assign('additional', array('prereg'=>'Prereg'));
-  $smarty->assign('events', $events);
-  $smarty->assign('columns', array(
-    'id_event'=>'#',
-    'title'=>'System/Title',
-    'gamemaster'=>'Gamemaster',
-    'players'=>'Players',
-    'time'=>'Day/Time',
-    'prereg'=>'Prereg',
-  ));
-  $smarty->assign('columnsAlign', array());
-  $content .= '<h3>GM Events</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
+  // $events = formatEventTitles($events, 'title');
+  // $events = formatEventTimes($events, 'time');
+  // $events = formatEventPlayers($events, 'players');
+  // $smarty->assign('additional', array('prereg'=>'Prereg'));
+  // $smarty->assign('events', $events);
+  // $smarty->assign('columns', array(
+  //   'id_event'=>'#',
+  //   'title'=>'System/Title',
+  //   'gamemaster'=>'Gamemaster',
+  //   'players'=>'Players',
+  //   'time'=>'Day/Time',
+  //   'prereg'=>'Prereg',
+  // ));
+  // $smarty->assign('columnsAlign', array());
+  $content .= '<h3>GM Events</h3>';
+  // $content .= $smarty->fetch('gcs/common/general-table.tpl');
 
 $content .= <<< EOD
 
@@ -456,13 +457,13 @@ $content .= <<< EOD
 
   <tr v-for="entry in formattedGmEvents">
 
-<td>{{ entry['id'] }}</td>
-<td>{{ entry['formatTitle'] }}</td>
-<td>{{ entry['formatGM'] }}</td>
-<td>{{ entry['formatPlayers'] }}</td>
-<td>{{ entry['formatTime'] }}</td>
-<td>-</td>
-<td><button id="show-modal" @click="currEvent = entry; showVTTDialog = true">Provide VTT</button>
+<td>{{ entry.id }}</td>
+<td>{{ entry.formatTitle }}</td>
+<td>{{ entry.formatGM }}</td>
+<td>{{ entry.formatPlayers }}</td>
+<td>{{ entry.formatTime }}</td>
+<td>{{ entry.prereg }}</td>
+<td><button @click="currEvent = entry; showVTTDialog = true">Provide VTT</button></td>
 
   </tr>
 </tbody>
