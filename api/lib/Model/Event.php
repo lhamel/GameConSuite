@@ -146,7 +146,7 @@ SCHEMA;
     public $descshort;
 
     /** @var float $duration */
-    private $duration;
+    public $duration;
 
     /**
      * Returns model schema.

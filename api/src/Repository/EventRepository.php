@@ -272,13 +272,14 @@ EOD;
         $e->game = $state['s_game'];
         $e->title = $state['s_title'];
         $e->table = $state['s_table'];
-        $e->maxplayers = $state['i_maxplayers'];
-        $e->minplayers = $state['i_minplayers'];
-        $e->price = $state['i_cost'];
+        $e->maxplayers = (float) $state['i_maxplayers'];
+        $e->minplayers = (float) $state['i_minplayers'];
+        $e->price = (float) $state['i_cost'];
 
         // TODO Validate
         $e->day = $state['e_day'];
-        $e->time = $state['i_time'];
+        $e->time = (float) $state['i_time'];
+        $e->duration = (float) $state['i_length'];
 
         // TODO check that these are in the correct order
         $e->desclong = $state['s_desc'];

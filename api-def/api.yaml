@@ -1216,6 +1216,9 @@ components:
           type: string
         descshort:
           type: string
+        duration:
+          type: number
+          format: float
       xml:
         name: Event
     PublicEvent:
