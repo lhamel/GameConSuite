@@ -438,6 +438,8 @@ $content .= '<h3>Combined Schedule</h3>'.$smarty->fetch('gcs/common/general-tabl
 $content .= <<< EOD
 
 <script type="text/x-template" id="gamemaster-events-template">
+<div>
+
 <table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
 <thead>
   <tr>
@@ -447,6 +449,7 @@ $content .= <<< EOD
     <th>Players</th>
     <th>Day/Time</th>
     <th>Prereg</th>
+    <th></th>
   </tr>
 </thead>
 <tbody>
@@ -459,31 +462,82 @@ $content .= <<< EOD
 <td>{{ entry['formatPlayers'] }}</td>
 <td>{{ entry['formatTime'] }}</td>
 <td>-</td>
+<td><button id="show-modal" @click="currEvent = entry; showVTTDialog = true">Provide VTT</button>
 
   </tr>
 </tbody>
 </table>
+
+<vtt-dialog v-if="showVTTDialog" :event="currEvent" @saveAndClose="saveEvent(); showVTTDialog = false" @close="showVTTDialog = false"></vtt-dialog>
+
+</div>
 </script>
+
+    <script type="text/x-template" id="vtt-dialog-template">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+
+              <div class="modal-header">
+                <h3>Title: {{event.formatTitle}}</h3>
+              </div>
+
+              <div class="modal-body">
+                <p>Time: {{event.formatTime}}</p>
+
+                <p>Provide VTT Link</p>
+                <input type="text" id="vttlink">
+
+                <p>Provide Other VTT Information</p>
+                <textarea id=vttinfo></textarea>
+              </div>
+
+              <div class="modal-footer">
+                <slot name="footer">
+                  &nbsp;
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Cancel
+                  </button>
+                  <button class="modal-default-button" @click="\$emit('saveAndClose')">
+                    OK
+                  </button>
+                </slot>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </script>
 
 
     <script>
       // register the grid component
+
+      Vue.component("vtt-dialog", {
+        template: "#vtt-dialog-template",
+        props: {
+          event: Object,
+        },
+      });
 
       Vue.component("gamemaster-events", {
         template: "#gamemaster-events-template",
         props: {
           gmevents: Array
         },
-        // data: function() {
+        data: function() {
         //   var sortOrders = {};
         //   this.columns.forEach(function(key) {
         //     sortOrders[key] = 1;
         //   });
-        //   return {
-        //     sortKey: "",
-        //     sortOrders: sortOrders
-        //   };
-        // },
+          return {
+            showVTTDialog: false,
+            currEvent: Object,
+            // sortKey: "",
+            // sortOrders: sortOrders
+          };
+        },
         computed: {
           formattedGmEvents: function() {
             var events = this.gmevents;
@@ -554,6 +608,12 @@ $content .= <<< EOD
           }
         },
         methods: {
+          saveEvent: function() {
+            console.log("save click");
+
+            // TODO save values back to event
+
+          },
           sortBy: function(key) {
             this.sortKey = key;
             this.sortOrders[key] = this.sortOrders[key] * -1;
@@ -565,7 +625,7 @@ $content .= <<< EOD
       var demo = new Vue({
         el: "#demo",
         data: {
-          searchQuery: "",
+          //searchQuery: "",
           gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
           gridData: []
         },
