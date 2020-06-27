@@ -19,7 +19,7 @@ $now = date("Y-m-d-H");// central time
 $config['allow']['submit_events'] = true; // enables accepting GMs
 $config['allow']['view_events'] = true; ($now > '2018-09-16-20');   // enables read access to events
 $config['allow']['buy_events'] = false; ($now < '2018-11-01-00');    // enables use of the shopping cart
-$config['allow']['see_location'] = false; ($now > '2018-11-01-00');
+$config['allow']['see_location'] = false; ($now > '2018-11-01-00');  // enabled gms and all users to see location information, including VTT info from the GM for ticketed players
 $config['allow']['live_data'] = false; // enables the use of cash register data to determine sold-out icon
 $config['allow']['message'] = ''; //<span style="font-size:18pt">Pregistration Open!  More events to be added later.</span> ';
 

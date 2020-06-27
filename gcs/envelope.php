@@ -391,6 +391,19 @@ if (count($events)>0) {
   ));
   $smarty->assign('columnsAlign', array());
   $content .= '<h3>GM Events</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
+
+$content .= <<< EOD
+
+    <!-- demo root element -->
+    <div id="demo">
+      <gamemaster-events
+        :gmevents="gridData"
+      >
+      </gamemaster-events>
+    </div>
+
+EOD;
+
 }
 
 
@@ -421,6 +434,180 @@ $smarty->assign('columns', $columns);
 $smarty->assign('events', $schedule);
 $content .= '<h3>Combined Schedule</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
 
+
+$content .= <<< EOD
+
+<script type="text/x-template" id="gamemaster-events-template">
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>System/Title</th>
+    <th>Gamemaster</th>
+    <th>Players</th>
+    <th>Day/Time</th>
+    <th>Prereg</th>
+  </tr>
+</thead>
+<tbody>
+
+  <tr v-for="entry in formattedGmEvents">
+
+<td>{{ entry['id'] }}</td>
+<td>{{ entry['formatTitle'] }}</td>
+<td>{{ entry['formatGM'] }}</td>
+<td>{{ entry['formatPlayers'] }}</td>
+<td>{{ entry['formatTime'] }}</td>
+<td>-</td>
+
+  </tr>
+</tbody>
+</table>
+</script>
+
+
+    <script>
+      // register the grid component
+
+      Vue.component("gamemaster-events", {
+        template: "#gamemaster-events-template",
+        props: {
+          gmevents: Array
+        },
+        // data: function() {
+        //   var sortOrders = {};
+        //   this.columns.forEach(function(key) {
+        //     sortOrders[key] = 1;
+        //   });
+        //   return {
+        //     sortKey: "",
+        //     sortOrders: sortOrders
+        //   };
+        // },
+        computed: {
+          formattedGmEvents: function() {
+            var events = this.gmevents;
+
+            events.forEach(e => {
+              e.formatTitle = this.\$options.filters.formatTitle(e);
+              e.formatPlayers = this.\$options.filters.formatPlayers(e);
+              e.formatGM = this.\$options.filters.formatGmObj(e.gm);
+              e.formatTime = this.\$options.filters.formatTime(e);
+            });
+            return events;
+          },
+          filteredGmEvents: function() {
+            var sortKey = this.sortKey;
+            var order = this.sortOrders[sortKey] || 1;
+            var events = this.gmevents;
+            if (sortKey) {
+              events = events.slice().sort(function(a, b) {
+                a = a[sortKey];
+                b = b[sortKey];
+                return (a === b ? 0 : a > b ? 1 : -1) * order;
+              });
+            }
+            return events;
+          }
+        },
+        filters: {
+          capitalize: function(str) {
+            if (!str) { return str; }
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+          },
+          formatTitle: function(eventObj) {
+            if (!eventObj) {
+              console.error("Missing eventObj");
+            }
+            let name = eventObj.game;
+            if (eventObj.title) {
+              name += (name ? ': ' : '') + eventObj.title
+            }
+            return name;
+          },
+          formatGmObj: function(obj) {
+            if (!obj) { return '' };
+            let name = obj.lastName;
+            if (obj.firstName) {
+              name = obj.firstName + ' ' + name;
+            }
+            if (obj.groupName) {
+              name += ' (' + obj.groupName + ')';
+            }
+            return name;
+          },
+          formatPlayers: function(obj) {
+            if (!obj) { return '' };
+            let players = obj['maxplayers'];
+            let minplayers = obj['minplayers'];
+            if (minplayers && minplayers>0 && minplayers != players) {
+              players = minplayers + " - " + players;
+            }
+            return players;
+          },
+          formatTime: function(eventObj) {
+            //{{ entry['day'] | capitalize }} {{ entry['time'] }}
+
+            let day = eventObj.day ? this.capitalize(eventObj.day) : '';
+            let time = eventObj.time ? eventObj.time : '';
+            return day + ' ' + time + (time?'00 EDT':'');
+          }
+        },
+        methods: {
+          sortBy: function(key) {
+            this.sortKey = key;
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+          }
+        }
+      });
+
+      // bootstrap the demo
+      var demo = new Vue({
+        el: "#demo",
+        data: {
+          searchQuery: "",
+          gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
+          gridData: []
+        },
+        created: function() {
+
+          // set up the bearer-token for all calls
+          $.ajaxSetup({
+              beforeSend: function(xhr) {
+                  xhr.setRequestHeader('Authorization', 'Bearer b64ac660dbe005f381079c67147e443e9b8b8f40');
+              }
+          });
+
+          // Assign handlers immediately after making the request,
+          // and remember the jqxhr object for this request
+          var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/event")
+            .done(function(data) {
+              console.log( "success" );
+              console.log( data );
+
+              data = data.slice().sort(function(a, b) {
+                a = a.day + a.time + a.id;
+                b = b.day + b.time + b.id;
+                return (a === b ? 0 : a > b ? 1 : -1);
+              });
+              demo.gridData = data;
+
+            })
+            .fail(function(data) {
+              console.log( "error" );
+              console.log( data );
+            // })
+            // .always(function(data) {
+            //   console.log( "finished" );
+            //   console.log( data );
+            });
+
+        }
+      });
+</script>
+
+
+EOD;
 
 $smarty->assign('content', $content);
 $smarty->display('base.tpl');

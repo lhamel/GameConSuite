@@ -48,6 +48,17 @@
 
 .content ul, .content ol { margin-left: 0; padding-left: 0.25in; }
 
+.content .striped td {
+	border-bottom: solid black 1px;
+}
+
+.content .striped tr:nth-child(odd) td{
+	background-color: #FFFFE0; 
+}
+.content .striped tr:nth-child(even) td{
+	background-color: white;
+}
+
 .content .altcolor1 {
 	background-color: white;
 	border-bottom: solid black 1px;
