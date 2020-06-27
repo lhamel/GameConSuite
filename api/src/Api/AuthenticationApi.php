@@ -193,4 +193,31 @@ class AuthenticationApi extends AbstractAuthenticationApi
         $response->getBody()->write("Logout succeeded");
         return $response->withStatus(200);
     }
+
+
+
+    /**
+     * GET getToken
+     * Summary: if logged in, get the auth token
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getToken(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        // if the user is currently logged in, this is an error
+        if ($this->auth->isLogged()) {
+            $hash = $this->auth->getCurrentSessionHash();
+            $response->getBody()->write(json_encode($hash));
+            return $response->withStatus(200);
+        }
+
+        $response->getBody()->write("login required");
+        return $response->withStatus(403);
+    }
 }

@@ -145,6 +145,23 @@ paths:
         '401':
           description: Invalid credentials
           content: {}
+  /user/token:
+    get:
+      tags:
+        - authentication
+      summary: if logged in, get the auth token
+      operationId: getToken
+      responses:
+        '200':
+          description: token
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "123456789abcdef"
+        '401':
+          description: Invalid credentials
+          content: {}
 
   # /user/credentials/create:
   #   post:
