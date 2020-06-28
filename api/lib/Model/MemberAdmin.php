@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Room
+ * MemberAdmin
  *
  * PHP version 7.1
  *
@@ -19,13 +19,13 @@ namespace OpenAPIServer\Model;
 use OpenAPIServer\Interfaces\ModelInterface;
 
 /**
- * Room
+ * MemberAdmin
  *
  * @package OpenAPIServer\Model
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class Room implements ModelInterface
+class MemberAdmin extends MemberPrivate implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
@@ -33,28 +33,54 @@ class Room implements ModelInterface
   "properties" : {
     "id" : {
       "type" : "integer",
-      "format" : "int32"
+      "format" : "int64"
     },
-    "label" : {
+    "firstName" : {
+      "type" : "string"
+    },
+    "lastName" : {
+      "type" : "string"
+    },
+    "groupName" : {
+      "type" : "string"
+    },
+    "addr1" : {
+      "type" : "string"
+    },
+    "addr2" : {
+      "type" : "string"
+    },
+    "addr3" : {
+      "type" : "string"
+    },
+    "city" : {
+      "type" : "string"
+    },
+    "state" : {
+      "type" : "string"
+    },
+    "zip" : {
+      "type" : "string"
+    },
+    "international" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string"
+    },
+    "phone" : {
+      "type" : "string"
+    },
+    "notes" : {
       "type" : "string"
     }
-  },
-  "xml" : {
-    "name" : "Room"
   }
 }
 SCHEMA;
 
-    /** @var int $id */
-    public $id;
 
-    /** @var string $label */
-    public $label;
-
-    public function __construct(int $id, string $label) {
-       $this->id = $id;
-       $this->label = $label;
-    }
+    /** @var string $notes */
+    public $notes;
 
     /**
      * Returns model schema.

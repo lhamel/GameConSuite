@@ -25,16 +25,20 @@ use OpenAPIServer\Interfaces\ModelInterface;
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class Event extends PublicEvent implements ModelInterface
+class Event implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "category", "desclong", "descshort", "game", "gm", "maxplayers", "minplayers", "name" ],
+  "required" : [ "category", "conventionId", "duration", "game", "gm", "id", "maxplayers" ],
   "type" : "object",
   "properties" : {
     "id" : {
       "type" : "integer",
       "format" : "int64"
+    },
+    "conventionId" : {
+      "type" : "integer",
+      "format" : "int32"
     },
     "category" : {
       "$ref" : "#/components/schemas/Category"
@@ -63,28 +67,31 @@ class Event extends PublicEvent implements ModelInterface
     "day" : {
       "type" : "string",
       "description" : "day of the event",
-      "enum" : [ "FRI", "SAT", "SUN" ]
+      "enum" : [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
     },
     "time" : {
-      "type" : "integer",
-      "description" : "first 2 digits of event time in 24 hour clock",
-      "format" : "int64"
+      "type" : "number",
+      "description" : "Start time of event, as first 2 digits of event time in 24 hour clock",
+      "format" : "float"
     },
-    "room" : {
-      "$ref" : "#/components/schemas/Room"
+    "endtime" : {
+      "type" : "number",
+      "description" : "End time of event, as first 2 digits of event time in 24 hour clock",
+      "format" : "float"
     },
-    "table" : {
-      "type" : "string"
+    "duration" : {
+      "type" : "number",
+      "format" : "float"
     },
     "maxplayers" : {
       "type" : "integer",
       "description" : "the number of seats available in the game, must be larger than minplayers",
-      "format" : "int64"
+      "format" : "int32"
     },
     "minplayers" : {
       "type" : "integer",
       "description" : "the minimum number of player required to play the game",
-      "format" : "int64"
+      "format" : "int32"
     },
     "desclong" : {
       "type" : "string"
@@ -92,15 +99,37 @@ class Event extends PublicEvent implements ModelInterface
     "descshort" : {
       "type" : "string"
     },
-    "duration" : {
+    "exper" : {
+      "type" : "string",
+      "description" : "experience rating (1, 3, 5), where 1 is the least experience",
+      "enum" : [ "1", "3", "5" ]
+    },
+    "complex" : {
+      "type" : "string",
+      "description" : "complexity rating (A, C, E), where A is the least complex",
+      "enum" : [ "A", "C", "E" ]
+    },
+    "room" : {
+      "$ref" : "#/components/schemas/Room"
+    },
+    "table" : {
+      "type" : "string"
+    },
+    "cost" : {
       "type" : "number",
+      "description" : "Price of event ticket",
       "format" : "float"
     },
     "vttLink" : {
-      "type" : "string"
+      "type" : "string",
+      "description" : "A link to VTT information, available only to GMs and ticketed players"
     },
     "vttInfo" : {
-      "type" : "string"
+      "type" : "string",
+      "description" : "Additional VTT information, available only to GMs and ticketed players"
+    },
+    "adminInfo" : {
+      "$ref" : "#/components/schemas/EventAdmin"
     }
   },
   "xml" : {
@@ -111,6 +140,9 @@ SCHEMA;
 
     /** @var int $id */
     public $id;
+
+    /** @var int $conventionId */
+    public $conventionId;
 
     /** @var \OpenAPIServer\Model\Category $category */
     public $category;
@@ -130,14 +162,14 @@ SCHEMA;
     /** @var string $day day of the event*/
     public $day;
 
-    /** @var int $time first 2 digits of event time in 24 hour clock*/
+    /** @var float $time Start time of event, as first 2 digits of event time in 24 hour clock*/
     public $time;
 
-    /** @var \OpenAPIServer\Model\Room $room */
-    public $room;
+    /** @var float $endtime End time of event, as first 2 digits of event time in 24 hour clock*/
+    public $endtime;
 
-    /** @var string $table */
-    public $table;
+    /** @var float $duration */
+    public $duration;
 
     /** @var int $maxplayers the number of seats available in the game, must be larger than minplayers*/
     public $maxplayers;
@@ -151,14 +183,29 @@ SCHEMA;
     /** @var string $descshort */
     public $descshort;
 
-    /** @var float $duration */
-    public $duration;
+    /** @var string $exper experience rating (1, 3, 5), where 1 is the least experience*/
+    public $exper;
 
-    /** @var string $vttLink */
+    /** @var string $complex complexity rating (A, C, E), where A is the least complex*/
+    public $complex;
+
+    /** @var \OpenAPIServer\Model\Room $room */
+    public $room;
+
+    /** @var string $table */
+    public $table;
+
+    /** @var float $cost Price of event ticket*/
+    public $cost;
+
+    /** @var string $vttLink A link to VTT information, available only to GMs and ticketed players*/
     public $vttLink;
 
-    /** @var string $vttInfo */
+    /** @var string $vttInfo Additional VTT information, available only to GMs and ticketed players*/
     public $vttInfo;
+
+    /** @var \OpenAPIServer\Model\EventAdmin $adminInfo */
+    public $adminInfo;
 
     /**
      * Returns model schema.

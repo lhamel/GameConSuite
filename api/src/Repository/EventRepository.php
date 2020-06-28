@@ -4,8 +4,8 @@ namespace OpenAPIServer\Repository;
 
 use OutOfBoundsException;
 use OpenAPIServer\Model\Event;
-use OpenAPIServer\Model\FormatEvent;
-use OpenAPIServer\Model\PublicEvent;
+use OpenAPIServer\Model\EventPrivate;
+use OpenAPIServer\Model\EventAdmin;
 use OpenAPIServer\Model\PublicMember;
 
 
@@ -109,7 +109,7 @@ EOD;
     }
 
     /** Retrieve the Event by its Event Id as long as it is approved and belongs in the current convention */
-    public function findPublicEventById(int $id): FormatEvent
+    public function findPublicEventById(int $id): Event
     {
         $fields = self::PUBLIC_DB_FIELDS;
         if ($this->siteConfiguration['allow']['see_location']) {
@@ -151,7 +151,7 @@ EOD;
     /** Retrieve the Event by its Event Id */
     public function findById(int $id): Event
     {
-        $fields = self::PUBLIC_DB_FIELDS;
+        $fields = array_merge(self::PUBLIC_DB_FIELDS, self::LIMITED_DB_FIELDS);
         if ($this->siteConfiguration['allow']['see_location']) {
             $fields = array_merge($fields, self::COND_DB_FIELDS);
         }
@@ -168,14 +168,16 @@ EOD;
 
 
         // map the data into the API model object
-        return $this->createEvent($result[0]);
+        return $this->createPrivateEvent($result[0]);
     }
 
     /** return a list of events belonging to the specified GM */
-    public function findCurrentEventsByGM(int $idGm) : array
+    public function findCurrentPrivateEventsByGM(int $idGm) : array
     {
-        $fields = self::PUBLIC_DB_FIELDS + self::LIMITED_DB_FIELDS;
-
+        $fields = array_merge(self::PUBLIC_DB_FIELDS, self::LIMITED_DB_FIELDS);
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $fields = array_merge($fields, self::COND_DB_FIELDS);
+        }
 
         $idConvention = $this->siteConfiguration['gcs']['year'];
 
@@ -192,13 +194,13 @@ EOD;
         $events = [];
         foreach ($result as $row) {
 // echo "<pre>\n".print_r($row,true)."\n";
-            $events[] = $this->createEvent($row);
+            $events[] = $this->createPrivateEvent($row);
         }
 
         return $events;
     }
 
-    private function createPublicEvent(array $state) : FormatEvent
+    private function createPublicEvent(array $state) : Event
     {
 
         // validate required fields
@@ -213,27 +215,25 @@ EOD;
           }
         }
 
-        $e = new FormatEvent();
-        $e->id = $state['id_event'];
-        $e->table = isset($state['s_table']) ? $state['s_table'] : '';
-        $e->maxplayers = $state['i_maxplayers'];
-        $e->minplayers = $state['i_minplayers'];
-        $e->price = $state['i_cost'];
+        $e = new Event();
+        $e->id = (int) $state['id_event'];
+        $e->conventionId = (int) $state['id_convention'];
+        $e->game = $state['s_game'];
+        $e->title = $state['s_title'];
 
-        // TODO format the title
-        $title = trim($state['s_title']);
-        $game = trim($state['s_game']);
-        if (isset($title) && isset($game)) {
-            $e->formatTitle = $title.': '.$game;
-        } elseif (isset($title)) {
-            $e->formatTitle = $title;
-        } else {
-            $e->formatTitle = $game;
-        }
+        $e->maxplayers = (int) $state['i_maxplayers'];
+        $e->minplayers = (int) $state['i_minplayers'];
+        $e->cost = (float) $state['i_cost'];
+        $e->exper = $state['e_exper'];
+        $e->complex = $state['e_complex'];
 
         // // TODO Validate
         $e->day = ucfirst(strtolower(''.$state['e_day']));
-        // $e->time = $state['i_time'];
+        $e->time = (float) $state['i_time'];
+        $e->duration = (float) $state['i_length'];
+        if (is_numeric($e->time) && $e->time > 0) {
+            $e->endtime = $e->time + $e->duration;
+        }
 
         // TODO check that these are in the correct order
         $d1 = $state['s_desc_web'];
@@ -241,100 +241,53 @@ EOD;
 
         if (strlen($d1)>strlen($d2)) {
             $e->desclong = $d1;
-            // $e->descshort = $d2;
+            $e->descshort = $d2;
         } else {
             $e->desclong = $d2;
-            // $e->descshort = $d1;
+            $e->descshort = $d1;
         }
 
-        // // TODO if member info is in the query, attach it, otherwise look it up (?)
-
         // required fields
-        $gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
-        $cat = $this->categoryRepository->findById((int)$state['id_event_type']);
+        $e->gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
+        $e->category = $this->categoryRepository->findById((int)$state['id_event_type']);
 
-        // format the GM name
-        $e->gmName = PublicMember::formatName($gm);
-
-        //  select the category field
-        $e->categoryName = $cat->label;
+        // TODO add tags
 
         // TODO allow this to be null depending on configuration
-        $e->roomName = '';
-        if (isset($state['id_room'])) {
-            try {
-                $room = $this->roomRepository->findById((int)$state['id_room']);
-                $e->roomName = $room->label;
-            } catch (OutOfBoundsException $ex) {
-                // ok to not have a room assigned
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $e->table = isset($state['s_table']) ? $state['s_table'] : '';
+            if (isset($state['id_room'])) {
+                try {
+                    $e->room = $this->roomRepository->findById((int)$state['id_room']);
+                } catch (OutOfBoundsException $ex) {
+                    // ok to not have a room assigned
+                }
             }
         }
 
         return $e;
     }
 
-    private function createEvent(array $state) : Event
+    private function createPrivateEvent(array $state) : Event
     {
-        // TODO reduce duplication
-
         // validate required fields
-        $required = self::PUBLIC_DB_FIELDS;
-        if ($this->siteConfiguration['allow']['see_location']) {
-            $required = array_merge($required, self::COND_DB_FIELDS);
-        }
-
+        $required = self::LIMITED_DB_FIELDS;
         foreach ($required as $k) {
           if (!array_key_exists($k, $state)) {
             throw new \Exception("Event data missing required field $k");
           }
         }
 
-        $e = new Event();
-        $e->id = $state['id_event'];
-        $e->game = $state['s_game'];
-        $e->title = $state['s_title'];
-        $e->table = isset($state['s_table']) ? $state['s_table'] : '';
-        $e->maxplayers = (float) $state['i_maxplayers'];
-        $e->minplayers = (float) $state['i_minplayers'];
-        $e->price = (float) $state['i_cost'];
+        $e = $this->createPublicEvent($state);
+
+        // add private fields visible to GMs and players
+        $e->vttLink = $state['s_vttlink'];
+        $e->vttInfo = $state['s_vttinfo'];
 
         // TODO Validate
-        $e->day = $state['e_day'];
-        $e->time = (float) $state['i_time'];
-        $e->duration = (float) $state['i_length'];
-
-        // TODO check that these are in the correct order
-        $e->desclong = $state['s_desc'];
-        $e->descshort = $state['s_desc_web'];
-
-        // required fields
-        $e->gm = $this->memberRepository->findPublicMemberById((int)$state['id_gm']);
-        $e->category = $this->categoryRepository->findById((int)$state['id_event_type']);
-
-        // TODO allow this to be null depending on configuration
-        try {
-            $e->room = $this->roomRepository->findById((int)$state['id_room']);
-        } catch (OutOfBoundsException $ex) {
-            // ok to not have a room assigned
-        }
 
         return $e;
     }
-
-    // /** @var \OpenAPIServer\Model\Tag[] $tags */
-    // public $tags;
-
-    // public function save(Post $post)
-    // {
-    //     $this->persistence->persist([
-    //         'id' => $post->getId()->toInt(),
-    //         'statusId' => $post->getStatus()->toInt(),
-    //         'text' => $post->getText(),
-    //         'title' => $post->getTitle(),
-    //     ]);
-    // }
-
-
 
 }
 

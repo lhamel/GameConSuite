@@ -192,7 +192,7 @@ class GamemasterApi extends AbstractGamemasterApi
 
         // find events that belong to the gamemaster
         // try {
-        $events = $this->eventRepo->findCurrentEventsByGM($memberId);
+        $events = $this->eventRepo->findCurrentPrivateEventsByGM($memberId);
         // } catch (\OutOfBoundsException $e) {
         //     $response->getBody()->write( "Not found" );
         //     return $response->withStatus(404);

@@ -33,7 +33,7 @@ class Category implements ModelInterface
   "properties" : {
     "id" : {
       "type" : "integer",
-      "format" : "int64"
+      "format" : "int32"
     },
     "abbr" : {
       "type" : "string"
@@ -43,7 +43,7 @@ class Category implements ModelInterface
     },
     "order" : {
       "type" : "integer",
-      "format" : "int64"
+      "format" : "int32"
     }
   },
   "xml" : {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Member
+ * MemberPrivate
  *
  * PHP version 7.1
  *
@@ -19,13 +19,13 @@ namespace OpenAPIServer\Model;
 use OpenAPIServer\Interfaces\ModelInterface;
 
 /**
- * Member
+ * MemberPrivate
  *
  * @package OpenAPIServer\Model
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class Member implements ModelInterface
+class MemberPrivate extends Member implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
@@ -43,55 +43,64 @@ class Member implements ModelInterface
     },
     "groupName" : {
       "type" : "string"
+    },
+    "addr1" : {
+      "type" : "string"
+    },
+    "addr2" : {
+      "type" : "string"
+    },
+    "addr3" : {
+      "type" : "string"
+    },
+    "city" : {
+      "type" : "string"
+    },
+    "state" : {
+      "type" : "string"
+    },
+    "zip" : {
+      "type" : "string"
+    },
+    "international" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string"
+    },
+    "phone" : {
+      "type" : "string"
     }
   }
 }
 SCHEMA;
 
-    /** @var int $id */
-    public $id;
+    /** @var string $addr1 */
+    public $addr1;
 
-    /** @var string $firstName */
-    public $firstName;
+    /** @var string $addr2 */
+    public $addr2;
 
-    /** @var string $lastName */
-    public $lastName;
+    /** @var string $addr3 */
+    public $addr3;
 
-    /** @var string $groupName */
-    public $groupName;
+    /** @var string $city */
+    public $city;
 
-    public function __construct(int $id, string $lastName, string $firstName, $groupName) {
-      $this->id = $id;
-      $this->lastName = $lastName;
-      $this->firstName = $firstName;
-      $this->groupName = $groupName;
-    }
+    /** @var string $state */
+    public $state;
 
-/*
-    public static function formatName(PublicMember $m) {
-        $name = '';
-        $name .= $m->firstName;
-        if (strlen($m->lastName)>0)
-        {
-          if (strlen($name)>0) {
-            $name .= ' ';
-          }
-          $name .= $m->lastName;
-        }
-        if (strlen($m->groupName)>0)
-        {
-          if (strlen($name)>0)
-          {
-            $name .= ' ('.$m->groupName.')';
-          }
-          else 
-          {
-            $name = $m->groupName;
-          }
-        }
-        return $name;
-    }
-*/
+    /** @var string $zip */
+    public $zip;
+
+    /** @var string $international */
+    public $international;
+
+    /** @var string $email */
+    public $email;
+
+    /** @var string $phone */
+    public $phone;
 
     /**
      * Returns model schema.
