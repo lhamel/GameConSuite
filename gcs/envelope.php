@@ -570,6 +570,14 @@ $content .= <<< EOD
             if (!str) { return str; }
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
           },
+          formatSingleTime: function (time) {
+            if (!time) return "";
+            if (time < 12) return time+"a";
+            else if (time == 12) return "12p";
+            else if (time < 24) return (time-12)+"p";
+            else if (time == 24) return "12a";
+            else return (time-24)+"a";
+          },
           formatTitle: function(eventObj) {
             if (!eventObj) {
               console.error("Missing eventObj");
@@ -601,11 +609,10 @@ $content .= <<< EOD
             return players;
           },
           formatTime: function(eventObj) {
-            //{{ entry['day'] | capitalize }} {{ entry['time'] }}
-
             let day = eventObj.day ? this.capitalize(eventObj.day) : '';
             let time = eventObj.time ? eventObj.time : '';
-            return day + ' ' + time + (time?'00 EDT':'');
+            let endtime = eventObj.endtime ? eventObj.endtime : '';
+            return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' EDT':'');
           }
         },
         methods: {
