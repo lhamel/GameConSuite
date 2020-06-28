@@ -485,13 +485,21 @@ $content .= <<< EOD
               </div>
 
               <div class="modal-body">
-                <p>Time: {{event.formatTime}}</p>
 
-                <p>Provide VTT Link</p>
-                <input type="text" id="vttlink">
+                <!-- event details -->
+                <ul>
+                <li>Event #{{event.id}}</li>
+                <li>Price: \${{event.cost}}</li>
+                <li>Seats: {{event.formatPlayers}}</li>
+                <li>Time: {{event.formatTime}}</span></li>
+                </ul>
+                <hr>
+
+                <p>Provide VTT Link (e.g. Roll20 or Zoom link)</p>
+                <input id="vttlink" type="text" :value="event.vttLink">
 
                 <p>Provide Other VTT Information</p>
-                <textarea id=vttinfo></textarea>
+                <textarea id="vttinfo">{{event.vttInfo}}</textarea>
               </div>
 
               <div class="modal-footer">
