@@ -495,10 +495,10 @@ $content .= <<< EOD
                 </ul>
                 <hr>
 
-                <p>Provide VTT Link (e.g. Roll20 or Zoom link)</p>
+                <p>Provide <em>Virtual Table Top (VTT)</em> link (e.g. Roll20 or Zoom link)</p>
                 <input id="vttlink" type="text" :value="event.vttLink">
 
-                <p>Provide Other VTT Information</p>
+                <p>Provide additional instructions or information for players</p>
                 <textarea id="vttinfo">{{event.vttInfo}}</textarea>
               </div>
 

@@ -61,3 +61,18 @@
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+
+.modal-body p {
+  margin: 12px 0 2px 0;
+  font-size: 10pt;
+}
+
+.modal-body input {
+  width: 100%;
+}
+
+.modal-body textarea {
+  height: 60px;
+  width: 100%;
+}
+
