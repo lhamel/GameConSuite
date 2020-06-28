@@ -31,11 +31,11 @@ class EventRepository
     const ROLE_ADMIN = 3;
 
     const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', ];
-    const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo'];
+    const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo', 'b_approval'];
 
     const COND_DB_FIELDS = ['id_room', 's_table'];
 
-    const ADMIN_DB_FIELDS = ['s_comments', 's_setup', 's_table_type', 's_eventcom', 'b_approval', 'b_edited', 'i_c1', 'i_c2', 'i_c3', 'i_actual', 'b_showed_up', 'd_updated', 'd_created', 'b_prize', 'i_profit', 's_note'] + self::COND_DB_FIELDS;
+    const ADMIN_DB_FIELDS = ['s_comments', 's_setup', 's_table_type', 's_eventcom', 'b_edited', 'i_c1', 'i_c2', 'i_c3', 'i_actual', 'b_showed_up', 'd_updated', 'd_created', 'b_prize', 'i_profit', 's_note'] + self::COND_DB_FIELDS;
 
     // const FIELDS = [
     //     self::ROLE_GENERAL => self::PUBLIC_DB_FIELDS,
@@ -282,9 +282,16 @@ EOD;
 
         $e = $this->createPublicEvent($state, new EventPrivate);
 
-        // add private fields visible to GMs and players
+        // add VTT fields visible to GMs and players
         $e->vttLink = $state['s_vttlink'];
         $e->vttInfo = $state['s_vttinfo'];
+
+        // only show schedule information if the event is approved
+        if (!$state['b_approval']) {
+            $e->day = null;
+            $e->time = null;
+            $e->endtime = null;
+        }
 
         // TODO Validate
 
