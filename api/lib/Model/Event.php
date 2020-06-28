@@ -95,6 +95,12 @@ class Event extends PublicEvent implements ModelInterface
     "duration" : {
       "type" : "number",
       "format" : "float"
+    },
+    "vttLink" : {
+      "type" : "string"
+    },
+    "vttInfo" : {
+      "type" : "string"
     }
   },
   "xml" : {
@@ -147,6 +153,12 @@ SCHEMA;
 
     /** @var float $duration */
     public $duration;
+
+    /** @var string $vttLink */
+    public $vttLink;
+
+    /** @var string $vttInfo */
+    public $vttInfo;
 
     /**
      * Returns model schema.

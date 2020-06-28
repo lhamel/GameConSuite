@@ -1219,6 +1219,10 @@ components:
         duration:
           type: number
           format: float
+        vttLink:
+          type: string
+        vttInfo:
+          type: string
       xml:
         name: Event
     PublicEvent:

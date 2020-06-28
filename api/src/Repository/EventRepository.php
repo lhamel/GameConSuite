@@ -26,13 +26,24 @@ class EventRepository
     protected $memberRepository;
     protected $siteConfiguration;
 
-    private $publicDbfields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room' ];
+    const ROLE_GENERAL = 1;
+    const ROLE_PLAYER_OR_THE_GM = 2;
+    const ROLE_ADMIN = 3;
 
-//     private $findGMsQuery = <<< EOD
-//         select id_member, s_lname, s_fname, s_group
-//         from ucon_member as M
-//         where (s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?)
-// EOD;
+    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', ];
+    const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo'];
+
+    const COND_DB_FIELDS = ['id_room', 's_table'];
+
+    const ADMIN_DB_FIELDS = ['s_comments', 's_setup', 's_table_type', 's_eventcom', 'b_approval', 'b_edited', 'i_c1', 'i_c2', 'i_c3', 'i_actual', 'b_showed_up', 'd_updated', 'd_created', 'b_prize', 'i_profit', 's_note'] + self::COND_DB_FIELDS;
+
+    // const FIELDS = [
+    //     self::ROLE_GENERAL => self::PUBLIC_DB_FIELDS,
+    //     self::ROLE_PLAYER_OR_THE_GM => self::PUBLIC_DB_FIELDS + self::LIMITED_DB_FIELDS,
+    //     self::ROLE_ADMIN => self::PUBLIC_DB_FIELDS + self::LIMITED_DB_FIELDS + self::ADMIN_DB_FIELDS,
+    // ];
+
+
     private $findEventsQuery = <<< EOD
         select *
         from ucon_event as E, ucon_member as M
@@ -51,10 +62,6 @@ EOD;
         $this->siteConfiguration = $GLOBALS['config']; // TODO pass through dependency injection
     }
 
-    // public function generateId(): PostId
-    // {
-    //     return PostId::fromInt($this->persistence->generateId());
-    // }
 
     /** Retrieve a list of events that match the filtere parameters
      *  Note: category, ages, and tags are actually their identifiers
@@ -102,9 +109,14 @@ EOD;
     }
 
     /** Retrieve the Event by its Event Id as long as it is approved and belongs in the current convention */
-    public function findPublicEventById(int $id): PublicEvent
+    public function findPublicEventById(int $id): FormatEvent
     {
-        $sql = 'select '.join(',', $this->publicDbfields).' from ucon_event where id_event=? and b_approval=1 and id_convention=?';
+        $fields = self::PUBLIC_DB_FIELDS;
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $fields = array_merge($fields, self::COND_DB_FIELDS);
+        }
+
+        $sql = 'select '.join(',', $fields).' from ucon_event where id_event=? and b_approval=1 and id_convention=?';
         $result = $this->db->getAll($sql, [$id, $this->siteConfiguration['gcs']['year']]);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
@@ -139,12 +151,15 @@ EOD;
     /** Retrieve the Event by its Event Id */
     public function findById(int $id): Event
     {
-        $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room'];
+        $fields = self::PUBLIC_DB_FIELDS;
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $fields = array_merge($fields, self::COND_DB_FIELDS);
+        }
 
         $sql = 'select '.join(',', $fields).' from ucon_event where id_event=?';
         $result = $this->db->getAll($sql, [$id]);
         if (!is_array($result)) {
-            throw new \Exception("SQL Error: ".$db->ErrMsg());
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
         }
 
         if (count($result) == 0) {
@@ -159,7 +174,9 @@ EOD;
     /** return a list of events belonging to the specified GM */
     public function findCurrentEventsByGM(int $idGm) : array
     {
-        $fields = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'id_room', 's_table', 'i_cost', 'id_event_type', 'id_room', 's_table'];
+        $fields = self::PUBLIC_DB_FIELDS + self::LIMITED_DB_FIELDS;
+
+
         $idConvention = $this->siteConfiguration['gcs']['year'];
 
 
@@ -185,9 +202,10 @@ EOD;
     {
 
         // validate required fields
-        $required = [
-          'id_event', 's_game', 's_title', 's_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
-        ];
+        $required = self::PUBLIC_DB_FIELDS;
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $required = array_merge($required, self::COND_DB_FIELDS);
+        }
 
         foreach ($required as $k) {
           if (!array_key_exists($k, $state)) {
@@ -197,7 +215,7 @@ EOD;
 
         $e = new FormatEvent();
         $e->id = $state['id_event'];
-        $e->table = $state['s_table'];
+        $e->table = isset($state['s_table']) ? $state['s_table'] : '';
         $e->maxplayers = $state['i_maxplayers'];
         $e->minplayers = $state['i_minplayers'];
         $e->price = $state['i_cost'];
@@ -242,11 +260,14 @@ EOD;
         $e->categoryName = $cat->label;
 
         // TODO allow this to be null depending on configuration
-        try {
-            $room = $this->roomRepository->findById((int)$state['id_room']);
-            $e->roomName = $room->label;
-        } catch (OutOfBoundsException $ex) {
-            // ok to not have a room assigned
+        $e->roomName = '';
+        if (isset($state['id_room'])) {
+            try {
+                $room = $this->roomRepository->findById((int)$state['id_room']);
+                $e->roomName = $room->label;
+            } catch (OutOfBoundsException $ex) {
+                // ok to not have a room assigned
+            }
         }
 
         return $e;
@@ -257,9 +278,10 @@ EOD;
         // TODO reduce duplication
 
         // validate required fields
-        $required = [
-          'id_event', 's_game', 's_title', 's_table', 'i_minplayers', 'i_maxplayers', 'e_day', 'i_time', 's_desc_web', 's_desc', 'i_cost'
-        ];
+        $required = self::PUBLIC_DB_FIELDS;
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $required = array_merge($required, self::COND_DB_FIELDS);
+        }
 
         foreach ($required as $k) {
           if (!array_key_exists($k, $state)) {
@@ -271,7 +293,7 @@ EOD;
         $e->id = $state['id_event'];
         $e->game = $state['s_game'];
         $e->title = $state['s_title'];
-        $e->table = $state['s_table'];
+        $e->table = isset($state['s_table']) ? $state['s_table'] : '';
         $e->maxplayers = (float) $state['i_maxplayers'];
         $e->minplayers = (float) $state['i_minplayers'];
         $e->price = (float) $state['i_cost'];
