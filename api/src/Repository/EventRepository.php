@@ -149,7 +149,7 @@ EOD;
     }
 
     /** Retrieve the Event by its Event Id */
-    public function findById(int $id): Event
+    public function findById(int $id): EventPrivate
     {
         $fields = array_merge(self::PUBLIC_DB_FIELDS, self::LIMITED_DB_FIELDS);
         if ($this->siteConfiguration['allow']['see_location']) {
@@ -200,7 +200,7 @@ EOD;
         return $events;
     }
 
-    private function createPublicEvent(array $state) : Event
+    private function createPublicEvent(array $state, Event $e = null) : Event
     {
 
         // validate required fields
@@ -215,7 +215,9 @@ EOD;
           }
         }
 
-        $e = new Event();
+        if ($e == null) {
+            $e = new Event();
+        }
         $e->id = (int) $state['id_event'];
         $e->conventionId = (int) $state['id_convention'];
         $e->game = $state['s_game'];
@@ -268,7 +270,7 @@ EOD;
         return $e;
     }
 
-    private function createPrivateEvent(array $state) : Event
+    private function createPrivateEvent(array $state) : EventPrivate
     {
         // validate required fields
         $required = self::LIMITED_DB_FIELDS;
@@ -278,7 +280,7 @@ EOD;
           }
         }
 
-        $e = $this->createPublicEvent($state);
+        $e = $this->createPublicEvent($state, new EventPrivate);
 
         // add private fields visible to GMs and players
         $e->vttLink = $state['s_vttlink'];

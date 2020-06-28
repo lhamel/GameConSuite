@@ -29,49 +29,11 @@ class MemberPrivate extends Member implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "type" : "object",
-  "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "firstName" : {
-      "type" : "string"
-    },
-    "lastName" : {
-      "type" : "string"
-    },
-    "groupName" : {
-      "type" : "string"
-    },
-    "addr1" : {
-      "type" : "string"
-    },
-    "addr2" : {
-      "type" : "string"
-    },
-    "addr3" : {
-      "type" : "string"
-    },
-    "city" : {
-      "type" : "string"
-    },
-    "state" : {
-      "type" : "string"
-    },
-    "zip" : {
-      "type" : "string"
-    },
-    "international" : {
-      "type" : "string"
-    },
-    "email" : {
-      "type" : "string"
-    },
-    "phone" : {
-      "type" : "string"
-    }
-  }
+  "allOf" : [ {
+    "$ref" : "#/components/schemas/Member"
+  }, {
+    "$ref" : "#/components/schemas/MemberPrivate_allOf"
+  } ]
 }
 SCHEMA;
 

@@ -119,17 +119,6 @@ class Event implements ModelInterface
       "type" : "number",
       "description" : "Price of event ticket",
       "format" : "float"
-    },
-    "vttLink" : {
-      "type" : "string",
-      "description" : "A link to VTT information, available only to GMs and ticketed players"
-    },
-    "vttInfo" : {
-      "type" : "string",
-      "description" : "Additional VTT information, available only to GMs and ticketed players"
-    },
-    "adminInfo" : {
-      "$ref" : "#/components/schemas/EventAdmin"
     }
   },
   "xml" : {
@@ -197,15 +186,6 @@ SCHEMA;
 
     /** @var float $cost Price of event ticket*/
     public $cost;
-
-    /** @var string $vttLink A link to VTT information, available only to GMs and ticketed players*/
-    public $vttLink;
-
-    /** @var string $vttInfo Additional VTT information, available only to GMs and ticketed players*/
-    public $vttInfo;
-
-    /** @var \OpenAPIServer\Model\EventAdmin $adminInfo */
-    public $adminInfo;
 
     /**
      * Returns model schema.

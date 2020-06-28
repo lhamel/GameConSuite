@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MemberAdmin
+ * EventPrivate
  *
  * PHP version 7.1
  *
@@ -19,27 +19,29 @@ namespace OpenAPIServer\Model;
 use OpenAPIServer\Interfaces\ModelInterface;
 
 /**
- * MemberAdmin
+ * EventPrivate
  *
  * @package OpenAPIServer\Model
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class MemberAdmin extends MemberPrivate implements ModelInterface
+class EventPrivate extends Event implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
   "allOf" : [ {
-    "$ref" : "#/components/schemas/MemberPrivate"
+    "$ref" : "#/components/schemas/Event"
   }, {
-    "$ref" : "#/components/schemas/MemberAdmin_allOf"
+    "$ref" : "#/components/schemas/EventPrivate_allOf"
   } ]
 }
 SCHEMA;
 
+    /** @var string $vttLink A link to VTT information, available only to GMs and ticketed players*/
+    public $vttLink;
 
-    /** @var string $notes */
-    public $notes;
+    /** @var string $vttInfo Additional VTT information, available only to GMs and ticketed players*/
+    public $vttInfo;
 
     /**
      * Returns model schema.

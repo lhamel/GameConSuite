@@ -748,10 +748,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/EventAdmin'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/EventAdmin'
         required: true
       responses:
         '400':
@@ -778,10 +778,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/EventAdmin'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/EventAdmin'
         required: true
       responses:
         '405':
@@ -813,10 +813,10 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/Event'
+                $ref: '#/components/schemas/EventAdmin'
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                $ref: '#/components/schemas/EventAdmin'
         '400':
           description: Invalid ID supplied
           content: {}
@@ -1103,69 +1103,35 @@ components:
         groupName:
           type: string
     MemberPrivate:
-      # inherit from Member
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        groupName:
-          type: string
-        addr1:
-          type: string
-        addr2:
-          type: string
-        addr3:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-        international:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
+      allOf:     # inherit from Member
+        - $ref: '#/components/schemas/Member'
+        - type: object
+          properties:
+            addr1:
+              type: string
+            addr2:
+              type: string
+            addr3:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            zip:
+              type: string
+            international:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
     MemberAdmin:
-      # inherit from MemberPrivate
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        groupName:
-          type: string
-        addr1:
-          type: string
-        addr2:
-          type: string
-        addr3:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-        international:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        notes:
-          type: string
+      allOf:     # inherit from MemberPrivate
+        - $ref: '#/components/schemas/MemberPrivate'
+        - type: object
+          properties:
+            notes:
+              type: string
     Category:
       type: object
       properties:
@@ -1291,76 +1257,77 @@ components:
           description: Price of event ticket
           type: number
           format: float
-        vttLink:
-          type: string
-          description: A link to VTT information, available only to GMs and ticketed players
-        vttInfo:
-          type: string
-          description: Additional VTT information, available only to GMs and ticketed players
-        adminInfo:
-          $ref: '#/components/schemas/EventAdmin'
       xml:
         name: Event
     EventPrivate:
       allOf:     # Combines the BasicErrorModel and the inline model
         - $ref: '#/components/schemas/Event'
         - type: object
+          properties:
+            vttLink:
+              type: string
+              description: A link to VTT information, available only to GMs and ticketed players
+            vttInfo:
+              type: string
+              description: Additional VTT information, available only to GMs and ticketed players
     EventAdmin:
-      type: object
-      properties:
-        s_comments:
-          type: string
-          description: Comments from GM to scheduler about event
-        s_setup:
-          description: Request from GM about space setup
-        s_table_type:
-          type: string
-          description: Request from GM about type of table
-        s_eventcom:
-          type: string
-          description: Comments from GM to scheduler about scheduling
-        b_approval:
-          type: boolean
-          description: true if event is approved for public release
-        b_edited:
-          type: boolean
-          description: true if copy editing is complete
-        i_c1:
-          type: integer
-          format: int32
-          description: 1st choice for time slot
-        i_c2:
-          type: integer
-          format: int32
-          description: 2nd choice for time slot
-        i_c3:
-          type: integer
-          format: int32
-          description: 3rd choice for time slot
-        i_profit:
-          type: number
-          format: float
-        i_actual:
-          type: integer
-          format: int32
-          description: Event attendance entered by event runner
-        b_showed_up:
-          type: boolean
-          description: Entered by event runner, true if GM showed up
-        b_prize:
-          type: integer
-          format: int32
-          description: Entered by event runner, number of prize tokens awarded
-        s_note:
-          type: string
-        d_updated:
-          type: string
-          format: date-time
-          description: Date the event was last updated
-        d_created:
-          type: string
-          format: date-time
-          description: Date the event was submitted
+      allOf:     # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/EventPrivate'
+        - type: object
+          properties:
+            s_comments:
+              type: string
+              description: Comments from GM to scheduler about event
+            s_setup:
+              description: Request from GM about space setup
+            s_table_type:
+              type: string
+              description: Request from GM about type of table
+            s_eventcom:
+              type: string
+              description: Comments from GM to scheduler about scheduling
+            b_approval:
+              type: boolean
+              description: true if event is approved for public release
+            b_edited:
+              type: boolean
+              description: true if copy editing is complete
+            i_c1:
+              type: integer
+              format: int32
+              description: 1st choice for time slot
+            i_c2:
+              type: integer
+              format: int32
+              description: 2nd choice for time slot
+            i_c3:
+              type: integer
+              format: int32
+              description: 3rd choice for time slot
+            i_profit:
+              type: number
+              format: float
+            i_actual:
+              type: integer
+              format: int32
+              description: Event attendance entered by event runner
+            b_showed_up:
+              type: boolean
+              description: Entered by event runner, true if GM showed up
+            b_prize:
+              type: integer
+              format: int32
+              description: Entered by event runner, number of prize tokens awarded
+            s_note:
+              type: string
+            d_updated:
+              type: string
+              format: date-time
+              description: Date the event was last updated
+            d_created:
+              type: string
+              format: date-time
+              description: Date the event was submitted
     # FormatEvent:
     #   required:
     #     - id
