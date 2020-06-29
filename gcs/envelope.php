@@ -469,7 +469,7 @@ $content .= <<< EOD
 </tbody>
 </table>
 
-<vtt-dialog v-if="showVTTDialog" :event="currEvent" @saveAndClose="saveEvent(); showVTTDialog = false" @close="showVTTDialog = false"></vtt-dialog>
+<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" @close="showVTTDialog = false" @saveAndClose="saveEvent"></vtt-dialog>
 
 </div>
 </script>
@@ -481,25 +481,25 @@ $content .= <<< EOD
             <div class="modal-container">
 
               <div class="modal-header">
-                <h3>Title: {{event.formatTitle}}</h3>
+                <h3>Title: {{eventData.formatTitle}}</h3>
               </div>
 
               <div class="modal-body">
 
                 <!-- event details -->
                 <ul>
-                <li>Event #{{event.id}}</li>
-                <li>Price: \${{event.cost}}</li>
-                <li>Seats: {{event.formatPlayers}}</li>
-                <li>Time: {{event.formatTime}}</span></li>
+                <li>Event #{{eventData.id}}</li>
+                <li>Price: \${{eventData.cost}}</li>
+                <li>Seats: {{eventData.formatPlayers}}</li>
+                <li>Time: {{eventData.formatTime}}</span></li>
                 </ul>
                 <hr>
 
                 <p>Provide <em>Virtual Table Top (VTT)</em> link (e.g. Roll20 or Zoom link)</p>
-                <input id="vttlink" type="text" :value="event.vttLink">
+                <input id="vttlink" type="text" v-model="vttLink">
 
-                <p>Provide additional instructions or information for players</p>
-                <textarea id="vttinfo">{{event.vttInfo}}</textarea>
+                <p>Provide additional instructions or information for players, including platforms as well as required accounts and software.</p>
+                <textarea id="vttinfo" v-model="vttInfo"></textarea>
               </div>
 
               <div class="modal-footer">
@@ -508,7 +508,7 @@ $content .= <<< EOD
                   <button class="modal-default-button" @click="\$emit('close')">
                     Cancel
                   </button>
-                  <button class="modal-default-button" @click="\$emit('saveAndClose')">
+                  <button class="modal-default-button" @click="\$emit('saveAndClose', vttLink, vttInfo)">
                     OK
                   </button>
                 </slot>
@@ -526,7 +526,13 @@ $content .= <<< EOD
       Vue.component("vtt-dialog", {
         template: "#vtt-dialog-template",
         props: {
-          event: Object,
+          eventData : Object
+        },
+        data: function () {
+          return {
+            vttLink: this.eventData.vttLink,
+            vttInfo: this.eventData.vttInfo,
+          }
         },
       });
 
@@ -624,10 +630,51 @@ $content .= <<< EOD
           }
         },
         methods: {
-          saveEvent: function() {
+          saveEvent: function(vttLinkValue, vttInfoValue) {
             console.log("save click");
+            console.log(this.currEvent.id);
+            console.log(vttLinkValue);
+            console.log(vttInfoValue);
 
-            // TODO save values back to event
+            this.currEvent.vttLink = vttLinkValue;
+            this.currEvent.vttInfo = vttInfoValue;
+            var self = this;
+
+            let patch = {
+              'vttLink' : vttLinkValue,
+              'vttInfo' : vttInfoValue
+            }
+
+            // TODO save values back to event with call to API
+            $.ajax({
+               type: 'PATCH',
+               url: "/GameConSuite/api/user/envelope/{$id_member}/event/" + this.currEvent.id,
+               data: JSON.stringify(patch),
+               processData: false,
+               contentType: 'application/json',
+
+               done: function(data) {
+                console.log( "success" );
+                console.log( data );
+                this.showVTTDialog = false;
+               },
+               fail: function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: values can not be saved");
+                },
+            })
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                self.showVTTDialog = false;
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: values can not be saved");
+              });
 
           },
           sortBy: function(key) {
