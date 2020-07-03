@@ -26,6 +26,8 @@
 namespace OpenAPIServer\Api;
 
 use OpenAPIServer\Repository\MemberRepository;
+use OpenAPIServer\Repository\EventRepository;
+use OpenAPIServer\Repository\TicketRepository;
 
 use PHPAuth\Auth as PHPAuth;
 
@@ -64,17 +66,29 @@ class AttendeeApi extends AbstractAttendeeApi
      */
     protected $memberRepository;
 
+    /**
+     * @var EventRepository|null Event Repository for retrieving ticket info
+     */
+    protected $eventRepo;
+
+    /**
+     * @var TicketRepository|null Ticket Repository for retrieving tickets
+     */
+    protected $ticketRepo;
+
 
     /**
      * Route Controller constructor receives container
      *
      * @param ContainerInterface|null $container Slim app container instance
      */
-    public function __construct(PHPAuth $auth, \Associates $associates, MemberRepository $memberRepository, ContainerInterface $container = null)
+    public function __construct(PHPAuth $auth, \Associates $associates, MemberRepository $memberRepository, EventRepository $eventRepo, TicketRepository $ticketRepo, ContainerInterface $container = null)
     {
         $this->auth = $auth;
         $this->associates = $associates;
         $this->memberRepository = $memberRepository;
+        $this->eventRepo = $eventRepo;
+        $this->ticketRepo = $ticketRepo;
         $this->container = $container;
     }
 
@@ -141,5 +155,89 @@ class AttendeeApi extends AbstractAttendeeApi
 
         $response->getBody()->write($message);
         return $response->withStatus(501);
+    }
+
+
+    /**
+     * GET getScheduleByMember
+     * Summary: Get the complete schedule for the specified member
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getScheduleByMember(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $memberId = $args['memberId'];
+
+        // check that the user is logged in
+        if (!$this->auth->isLogged()) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
+
+        // test the member is listed in the associates for the logged in user
+        $userId = $this->auth->getCurrentUser()['uid'];
+        $members = $this->associates->listAssociates($userId);
+        // echo print_r($members, 1)."\n\n";
+        if (!isset($members[$memberId])) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
+
+        // find events that belong to the gamemaster
+        // try {
+        $events = $this->eventRepo->findCurrentPrivateEventsByGM($memberId);
+        // } catch (\OutOfBoundsException $e) {
+        //     $response->getBody()->write( "Not found" );
+        //     return $response->withStatus(404);
+        // }
+
+        // add ticket information to each event
+        // $eventIds = array_column($events, 'id');
+        // $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        // foreach ($events as $k => $event) {
+        //     $id = $event->id;
+        //     $event->prereg = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
+        // }
+
+        // find games where I have a ticket
+        $ticketItems = $this->ticketRepo->findMemberTickets($memberId);
+        $eventIds = array_column($ticketItems, 's_subtype');
+        $indexedEvents = $this->eventRepo->findIndexedEvents($eventIds);
+
+        // merge the GM events and tickets
+        $schedule = [];
+        foreach ($events as $e) {
+            $schedule[] = ['event'=>$e, 'ticket'=>null ];
+        }
+        foreach ($ticketItems as $t) {
+            $e = $indexedEvents[$t['s_subtype']];
+            $schedule[] = [ 'event'=>$e, 'ticket'=>$t ];
+        }
+
+        // sort by day an time
+        usort($schedule, array($this, 'sortScheduleByTime'));
+
+        $response->getBody()->write( json_encode($schedule) );
+        return $response->withStatus(200)->withHeader('Content-type', 'application/json');
+    }
+
+
+    private function sortScheduleByTime($a, $b) {
+        $a1 = $a['event'];
+        $b1 = $b['event'];
+        // TODO fix to work with Mon-Thurs
+        if ($a1->day != $b1->day) {
+            return ($a1->day > $b1->day) ? 1 : -1;
+        }
+        if ($a1->time != $b1->time) {
+            return ($a1->time > $b1->time) ? 1 : -1;
+        }
+        return ($a1->id > $b1->id) ? 1 : -1;
     }
 }

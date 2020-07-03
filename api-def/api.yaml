@@ -566,13 +566,13 @@ paths:
           description: Unauthorized to access the specified envelope
           content: {}
         '200':
-          description: Created successfully
+          description: Retrieved successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Event'
+                  $ref: '#/components/schemas/ScheduleItem'
       security:
         - GCS_Auth:
           - 'attendee'
@@ -1509,6 +1509,13 @@ components:
           type: string
       xml:
         name: SubmitEvent
+    ScheduleItem:
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/CartItem'
+        event:
+          $ref: '#/components/schemas/EventPrivate'
   securitySchemes:
     GCS_Auth:
       type: http

@@ -171,6 +171,41 @@ EOD;
         return $this->createPrivateEvent($result[0]);
     }
 
+    /** retrieve a list of PrivateEvents events according to their Ids */
+    public function findIndexedEvents(array $eventIds) : array
+    {
+        if (count($eventIds) == 0) {
+            return [];
+        }
+
+        //validate that all the eventIds are numeric
+        foreach ($eventIds as $id) {
+            if (!is_numeric($id)) {
+                throw new \Exception("findIndexedEvents invalid Id provided $id");
+            }
+        }
+
+        $fields = array_merge(self::PUBLIC_DB_FIELDS, self::LIMITED_DB_FIELDS);
+        if ($this->siteConfiguration['allow']['see_location']) {
+            $fields = array_merge($fields, self::COND_DB_FIELDS);
+        }
+
+        $sql = 'select '.join(',', $fields).' from ucon_event where id_event in ('.join(',',$eventIds).')';
+        $result = $this->db->getArray($sql);
+        if (!is_array($result)) {
+            throw new \Exception("SQL Error: \n$sql\n".$this->db->ErrorMsg());
+        }
+
+        // map the data into the API model object
+        $events = [];
+        foreach ($result as $row) {
+            $id = $row['id_event'];
+            $events[$id] = $this->createPrivateEvent($row);
+        }
+
+        return $events;
+    }
+
     /** return a list of events belonging to the specified GM */
     public function findCurrentPrivateEventsByGM(int $idGm) : array
     {

@@ -84,6 +84,25 @@ EOD;
         return $preregOrders;
     }
 
+    /* find the tickets that belong this member, and fill in the event information */
+    public function findMemberTickets($memberId) {
+
+        // find sum of ticket quantities in prereg data
+        $sql = <<< EOD
+select id_order, id_convention, id_member, s_subtype, i_quantity, i_price
+from ucon_order as O
+where id_convention=?
+  and s_type = 'Ticket'
+  and id_member=?
+EOD;
+        $preregOrders = $this->db->getAssoc($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
+        if (!is_array($preregOrders)) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+
+        return $preregOrders;
+    }
+
 }
 
 
