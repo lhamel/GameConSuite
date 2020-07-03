@@ -207,7 +207,7 @@ class AttendeeApi extends AbstractAttendeeApi
 
         // find games where I have a ticket
         $ticketItems = $this->ticketRepo->findMemberTickets($memberId);
-        $eventIds = array_column($ticketItems, 's_subtype');
+        $eventIds = array_column($ticketItems, 'subtype');
         $indexedEvents = $this->eventRepo->findIndexedEvents($eventIds);
 
         // merge the GM events and tickets
@@ -216,7 +216,7 @@ class AttendeeApi extends AbstractAttendeeApi
             $schedule[] = ['event'=>$e, 'ticket'=>null ];
         }
         foreach ($ticketItems as $t) {
-            $e = $indexedEvents[$t['s_subtype']];
+            $e = $indexedEvents[$t['subtype']];
             $schedule[] = [ 'event'=>$e, 'ticket'=>$t ];
         }
 

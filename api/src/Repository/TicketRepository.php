@@ -89,7 +89,7 @@ EOD;
 
         // find sum of ticket quantities in prereg data
         $sql = <<< EOD
-select id_order, id_convention, id_member, s_subtype, i_quantity, i_price
+select id_order as id, id_convention as conventionId, id_member as memberId, s_type as type, s_subtype as subtype, i_quantity as quantity, i_price as price
 from ucon_order as O
 where id_convention=?
   and s_type = 'Ticket'

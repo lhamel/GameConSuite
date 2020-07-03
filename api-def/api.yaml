@@ -1429,6 +1429,27 @@ components:
       type: object
     CartItem:
       type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        conventionId:
+          type: integer
+          format: int32
+        memberId:
+          type: integer
+          format: int64
+        type:
+          type: string
+        subtype:
+          type: string
+          description: for tickets, this is the id of the event
+        quantity:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: float
     Badge:
       type: object
     Ticket:
