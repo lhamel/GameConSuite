@@ -390,19 +390,27 @@ if (count($events)>0) {
   //   'prereg'=>'Prereg',
   // ));
   // $smarty->assign('columnsAlign', array());
-  $content .= '<h3>GM Events</h3>';
+  // $content .= '<h3>GM Events</h3>';
   // $content .= $smarty->fetch('gcs/common/general-table.tpl');
 
 $content .= <<< EOD
 
     <!-- demo root element -->
     <div id="demo">
+      <h3>GM Events</h3>
       <gamemaster-events
         :gmevents="gridData"
+        :event-formatter="eventFormatter"
       >
       </gamemaster-events>
-    </div>
 
+      <h3>Combined Schedule</h3>
+      <schedule-list
+        :schedule="scheduleData"
+        :event-formatter="eventFormatter"
+      >
+      </schedule-list>
+    </div>
 EOD;
 
 }
@@ -519,9 +527,101 @@ $content .= <<< EOD
       </transition>
     </script>
 
+    <script type="text/x-template" id="schedule-list-template">
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th>Time</th>
+    <th>Type</th>
+    <th>System/Title</th>
+    <th>Gamemaster</th>
+  </tr>
+</thead>
+<tbody>
+  <tr v-for="entry in formatSchedule">
+    <td>{{entry.event.formatTime}}</td>
+    <td><span v-if="entry.ticket">{{entry.ticket.quantity}} Ticket</span><span v-else>GM</span></td>
+    <td>{{entry.event.formatTitle}}</td>
+    <td>{{entry.event.formatGM}}</td>
+  </tr>
+</tbody>
+</table>
+    </script>
+
 
     <script>
-      // register the grid component
+      var eventFormatter = {
+        capitalize: function(str) {
+          if (!str) { return str; }
+          return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        },
+        formatTitle: function(eventObj) {
+          if (!eventObj) {
+            console.error("Missing eventObj");
+          }
+          let name = eventObj.game;
+          if (eventObj.title) {
+            name += (name ? ': ' : '') + eventObj.title
+          }
+          return name;
+        },
+        formatGmObj: function(obj) {
+          if (!obj) { return '' };
+          let name = obj.lastName;
+          if (obj.firstName) {
+            name = obj.firstName + ' ' + name;
+          }
+          if (obj.groupName) {
+            name += ' (' + obj.groupName + ')';
+          }
+          return name;
+        },
+        formatPlayers: function(obj) {
+          if (!obj) { return '' };
+          let players = obj['maxplayers'];
+          let minplayers = obj['minplayers'];
+          if (minplayers && minplayers>0 && minplayers != players) {
+            players = minplayers + " - " + players;
+          }
+          return players;
+        },
+        formatSingleTime: function (time) {
+          if (!time) return "";
+          if (time < 12) return time+"a";
+          else if (time == 12) return "12p";
+          else if (time < 24) return (time-12)+"p";
+          else if (time == 24) return "12a";
+          else return (time-24)+"a";
+        },
+        formatTime: function(eventObj) {
+          let day = eventObj.day ? this.capitalize(eventObj.day) : '';
+          let time = eventObj.time ? eventObj.time : '';
+          let endtime = eventObj.endtime ? eventObj.endtime : '';
+          return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' EDT':'');
+        }
+      }
+
+
+      Vue.component("schedule-list", {
+        template: "#schedule-list-template",
+        props: {
+          schedule: Array,
+          eventFormatter: Object,
+        },
+        computed: {
+          formatSchedule :function() {
+            let s = this.schedule;
+            s.forEach(e => {
+              e.event.formatTitle = this.eventFormatter.formatTitle(e.event);
+              e.event.formatPlayers = this.eventFormatter.formatPlayers(e.event);
+              e.event.formatGM = this.eventFormatter.formatGmObj(e.event.gm);
+              e.event.formatTime = this.eventFormatter.formatTime(e.event);
+            });
+            console.log(s);
+            return s;
+          }
+        }
+      });
 
       Vue.component("vtt-dialog", {
         template: "#vtt-dialog-template",
@@ -539,7 +639,8 @@ $content .= <<< EOD
       Vue.component("gamemaster-events", {
         template: "#gamemaster-events-template",
         props: {
-          gmevents: Array
+          gmevents: Array,
+          eventFormatter: eventFormatter
         },
         data: function() {
         //   var sortOrders = {};
@@ -558,10 +659,10 @@ $content .= <<< EOD
             var events = this.gmevents;
 
             events.forEach(e => {
-              e.formatTitle = this.\$options.filters.formatTitle(e);
-              e.formatPlayers = this.\$options.filters.formatPlayers(e);
-              e.formatGM = this.\$options.filters.formatGmObj(e.gm);
-              e.formatTime = this.\$options.filters.formatTime(e);
+              e.formatTitle = this.eventFormatter.formatTitle(e);
+              e.formatPlayers = this.eventFormatter.formatPlayers(e);
+              e.formatGM = this.eventFormatter.formatGmObj(e.gm);
+              e.formatTime = this.eventFormatter.formatTime(e);
             });
             return events;
           },
@@ -577,56 +678,6 @@ $content .= <<< EOD
               });
             }
             return events;
-          }
-        },
-        filters: {
-          capitalize: function(str) {
-            if (!str) { return str; }
-            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-          },
-          formatSingleTime: function (time) {
-            if (!time) return "";
-            if (time < 12) return time+"a";
-            else if (time == 12) return "12p";
-            else if (time < 24) return (time-12)+"p";
-            else if (time == 24) return "12a";
-            else return (time-24)+"a";
-          },
-          formatTitle: function(eventObj) {
-            if (!eventObj) {
-              console.error("Missing eventObj");
-            }
-            let name = eventObj.game;
-            if (eventObj.title) {
-              name += (name ? ': ' : '') + eventObj.title
-            }
-            return name;
-          },
-          formatGmObj: function(obj) {
-            if (!obj) { return '' };
-            let name = obj.lastName;
-            if (obj.firstName) {
-              name = obj.firstName + ' ' + name;
-            }
-            if (obj.groupName) {
-              name += ' (' + obj.groupName + ')';
-            }
-            return name;
-          },
-          formatPlayers: function(obj) {
-            if (!obj) { return '' };
-            let players = obj['maxplayers'];
-            let minplayers = obj['minplayers'];
-            if (minplayers && minplayers>0 && minplayers != players) {
-              players = minplayers + " - " + players;
-            }
-            return players;
-          },
-          formatTime: function(eventObj) {
-            let day = eventObj.day ? this.capitalize(eventObj.day) : '';
-            let time = eventObj.time ? eventObj.time : '';
-            let endtime = eventObj.endtime ? eventObj.endtime : '';
-            return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' EDT':'');
           }
         },
         methods: {
@@ -690,7 +741,9 @@ $content .= <<< EOD
         data: {
           //searchQuery: "",
           gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
-          gridData: []
+          gridData: [],
+          scheduleData: [],
+          eventFormatter: eventFormatter
         },
         created: function() {
 
@@ -729,6 +782,17 @@ $content .= <<< EOD
                   console.log( data );
                 });
 
+              // retrieve the GM events list
+              var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/schedule")
+                .done(function(data) {
+                  console.log( "success" );
+                  console.log( data );
+                  demo.scheduleData = data;
+                })
+                .fail(function(data) {
+                  console.log( "error" );
+                  console.log( data );
+                });
 
             })
             .fail(function(data) {
