@@ -3,7 +3,7 @@
 namespace OpenAPIServer\Repository;
 
 use OutOfBoundsException;
-use OpenAPIServer\Model\PublicMember;
+use OpenAPIServer\Model\Member;
 
 
 /**
@@ -38,7 +38,7 @@ class MemberRepository
 
 
     /** Retrieve the Event by its Event Id */
-    public function findPublicMemberById(int $id): PublicMember
+    public function findPublicMemberById(int $id): Member
     {
         if (array_key_exists($id, $this->cachePublicMembers)) {
             return $this->cachePublicMembers[$id];
@@ -56,7 +56,7 @@ class MemberRepository
 
         // map the data into the API model object
         $m = $result[0];
-        $member = new PublicMember((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
+        $member = new Member((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
         return $member;
     }
 

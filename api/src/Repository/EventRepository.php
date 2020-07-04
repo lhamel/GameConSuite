@@ -6,7 +6,7 @@ use OutOfBoundsException;
 use OpenAPIServer\Model\Event;
 use OpenAPIServer\Model\EventPrivate;
 use OpenAPIServer\Model\EventAdmin;
-use OpenAPIServer\Model\PublicMember;
+use OpenAPIServer\Model\Member;
 
 
 /**
