@@ -222,7 +222,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Envelope'
+                  $ref: '#/components/schemas/MemberPrivate'
       security:
         - GCS_Auth:
           - 'attendee'
@@ -238,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/MemberPrivate'
         '401':
           description: Not logged in
           content: {}
@@ -268,10 +268,10 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/MemberPrivate'
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/MemberPrivate'
       security:
         - GCS_Auth:
           - 'attendee'
@@ -293,10 +293,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Envelope'
+              $ref: '#/components/schemas/MemberPrivate'
           application/xml:
             schema:
-              $ref: '#/components/schemas/Envelope'
+              $ref: '#/components/schemas/MemberPrivate'
         required: true
       responses:
         '401':
@@ -313,10 +313,10 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/MemberPrivate'
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/MemberPrivate'
       security:
         - GCS_Auth:
           - 'attendee'
@@ -1337,28 +1337,6 @@ components:
         password:
           type: string
           example: "p@ssw0rd"
-    Envelope:
-      type: object
-      required:
-        - id
-        - firstName
-        - lastName
-        - groupName
-      properties:
-        id:
-          type: integer
-          format: int64
-        firstName:
-          type: string
-        lastName:
-          type: string
-        groupName:
-          type: string
-        email:
-          type: string
-        # TODO add licenceName
-      xml:
-        name: PublicMember
     Cart:
       type: object
     CartItem:
