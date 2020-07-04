@@ -477,7 +477,7 @@ $content .= <<< EOD
 </tbody>
 </table>
 
-<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" @close="showVTTDialog = false" @saveAndClose="saveEvent"></vtt-dialog>
+<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" v-bind:edit="true" @close="showVTTDialog = false" @saveAndClose="saveEvent"></vtt-dialog>
 
 </div>
 </script>
@@ -503,22 +503,36 @@ $content .= <<< EOD
                 </ul>
                 <hr>
 
+                <div v-if="edit">
                 <p>Provide <em>Virtual Table Top (VTT)</em> link (e.g. Roll20 or Zoom link)</p>
                 <input id="vttlink" type="text" v-model="vttLink">
-
                 <p>Provide additional instructions or information for players, including platforms as well as required accounts and software.</p>
                 <textarea id="vttinfo" v-model="vttInfo"></textarea>
+                </div>
+                <div v-else>
+                <p>This is the information which your GM provided for connecting.  Note: not reviewed by staff; please report any abuse to staff.</p>
+                <hr>
+                <a :href="vttLink">{{vttLink}}</a>
+                <p>{{vttInfo}}</p>
+                </div>
               </div>
 
               <div class="modal-footer">
                 <slot name="footer">
                   &nbsp;
+                  <span v-if="edit">
                   <button class="modal-default-button" @click="\$emit('close')">
                     Cancel
                   </button>
                   <button class="modal-default-button" @click="\$emit('saveAndClose', vttLink, vttInfo)">
                     OK
                   </button>
+                  </span>
+                  <span v-else>
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Close
+                  </button>
+                  </span>
                 </slot>
               </div>
             </div>
@@ -528,6 +542,7 @@ $content .= <<< EOD
     </script>
 
     <script type="text/x-template" id="schedule-list-template">
+<div>
 <table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
 <thead>
   <tr>
@@ -535,6 +550,7 @@ $content .= <<< EOD
     <th>Type</th>
     <th>System/Title</th>
     <th>Gamemaster</th>
+    <th>Location</th>
   </tr>
 </thead>
 <tbody>
@@ -543,9 +559,18 @@ $content .= <<< EOD
     <td><span v-if="entry.ticket">{{entry.ticket.quantity}} Ticket</span><span v-else>GM</span></td>
     <td>{{entry.event.formatTitle}}</td>
     <td>{{entry.event.formatGM}}</td>
+    <td>
+      <span v-if="entry.event.room">{{entry.event.room}} {{entry.event.table}}</span>
+      <span v-if="entry.event.vttLink"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
+      <span v-else-if="entry.event.vttInfo"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
+    </td>
   </tr>
 </tbody>
 </table>
+
+<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" v-bind:edit="false" @close="showVTTDialog = false"></vtt-dialog>
+
+</div>
     </script>
 
 
@@ -608,6 +633,12 @@ $content .= <<< EOD
           schedule: Array,
           eventFormatter: Object,
         },
+        data : function () {
+          return {
+            showVTTDialog: false,
+            currEvent : null,
+          };
+        },
         computed: {
           formatSchedule :function() {
             let s = this.schedule;
@@ -626,7 +657,8 @@ $content .= <<< EOD
       Vue.component("vtt-dialog", {
         template: "#vtt-dialog-template",
         props: {
-          eventData : Object
+          eventData : Object,
+          edit: Boolean,
         },
         data: function () {
           return {
