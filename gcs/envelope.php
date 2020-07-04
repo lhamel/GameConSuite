@@ -175,24 +175,24 @@ function formatRemoveBtn($orders, $fieldname) {
 
 
 // remove time information from unapproved events
-foreach ($events as $k => $v) {
-  if (!$events[$k]['b_approval']) {
-    $events[$k]['e_day'] = '';
-    $events[$k]['i_time'] = '';
-    $events[$k]['endtime'] = '';
-  }
-}
-foreach ($schedule as $k => $v) {
-  if (!$schedule[$k]['b_approval']) {
-    $schedule[$k]['e_day'] = '';
-    $schedule[$k]['i_time'] = '';
-    $schedule[$k]['endtime'] = '';
-  }
-}
+// foreach ($events as $k => $v) {
+//   if (!$events[$k]['b_approval']) {
+//     $events[$k]['e_day'] = '';
+//     $events[$k]['i_time'] = '';
+//     $events[$k]['endtime'] = '';
+//   }
+// }
+// foreach ($schedule as $k => $v) {
+//   if (!$schedule[$k]['b_approval']) {
+//     $schedule[$k]['e_day'] = '';
+//     $schedule[$k]['i_time'] = '';
+//     $schedule[$k]['endtime'] = '';
+//   }
+// }
 
-usort($schedule, 'sortByTime');
+// usort($schedule, 'sortByTime');
 usort($orders, 'sortByTimestamp');
-usort($events, 'sortByTime');
+// usort($events, 'sortByTime');
 
 // Calculate the balance due
 $balance = 0;
@@ -372,27 +372,6 @@ EOD;
 
 
 
-//if the attendee is a GM
-if (count($events)>0) {
-
-  // List GM events
-  // $events = formatEventTitles($events, 'title');
-  // $events = formatEventTimes($events, 'time');
-  // $events = formatEventPlayers($events, 'players');
-  // $smarty->assign('additional', array('prereg'=>'Prereg'));
-  // $smarty->assign('events', $events);
-  // $smarty->assign('columns', array(
-  //   'id_event'=>'#',
-  //   'title'=>'System/Title',
-  //   'gamemaster'=>'Gamemaster',
-  //   'players'=>'Players',
-  //   'time'=>'Day/Time',
-  //   'prereg'=>'Prereg',
-  // ));
-  // $smarty->assign('columnsAlign', array());
-  // $content .= '<h3>GM Events</h3>';
-  // $content .= $smarty->fetch('gcs/common/general-table.tpl');
-
 $content .= <<< EOD
 
     <!-- demo root element -->
@@ -413,40 +392,7 @@ $content .= <<< EOD
       >
       </schedule-list>
     </div>
-EOD;
 
-}
-
-
-
-// List combined schedule
-foreach ($schedule as $k=>$v) {
-
-  if (isset($v['s_type']) && $v['s_type'] == "Ticket") {
-    $schedule[$k]['quant_type'] = $v['i_quantity'].' Ticket';
-  } else {
-    $schedule[$k]['quant_type'] = 'GM';
-  }
-}
-//echo "<pre style=\"text-align:left\">Schedule\n".print_r($schedule,1).'</pre>';
-$schedule = formatEventTimes($schedule, 'time');
-$schedule = formatEventTitles($schedule, 'title');
-$columns = array(
-  'time'=>'Time',
-  'quant_type'=>'Type',
-  'title'=>'System/Title',
-  'gamemaster'=>'Gamemaster',
-);
-if ($config['allow']['see_location']) {
-  $schedule = formatEventLocations($schedule, 'location');
-  $columns['location'] = 'Location';
-}
-$smarty->assign('columns', $columns);
-$smarty->assign('events', $schedule);
-$content .= '<h3>Combined Schedule</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
-
-
-$content .= <<< EOD
 
 <script type="text/x-template" id="gamemaster-events-template">
 <div>
@@ -558,7 +504,7 @@ $content .= <<< EOD
 <tbody>
   <tr v-for="entry in formatSchedule">
     <td>{{entry.event.formatTime}}</td>
-    <td><span v-if="entry.ticket">{{entry.ticket.quantity}} Ticket</span><span v-else>GM</span></td>
+    <td><span v-if="entry.ticket">{{entry.ticket.quantity}}&nbsp;Ticket</span><span v-else>GM</span></td>
     <td>{{entry.event.formatTitle}}</td>
     <td>{{entry.event.formatGM}}</td>
     <td>
