@@ -69,7 +69,7 @@ class SlimRouter
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Envelope"
+        "$ref" : "#/components/schemas/MemberPrivate"
       }
     }
   }
@@ -122,7 +122,7 @@ class SlimRouter
       "schema" : {
         "type" : "array",
         "items" : {
-          "$ref" : "#/components/schemas/Envelope"
+          "$ref" : "#/components/schemas/MemberPrivate"
         }
       }
     }
@@ -241,12 +241,12 @@ class SlimRouter
   "content" : {
     "application/xml" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Envelope"
+        "$ref" : "#/components/schemas/MemberPrivate"
       }
     },
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Envelope"
+        "$ref" : "#/components/schemas/MemberPrivate"
       }
     }
   }
@@ -394,12 +394,12 @@ class SlimRouter
   "content" : {
     "application/xml" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Envelope"
+        "$ref" : "#/components/schemas/MemberPrivate"
       }
     },
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/Envelope"
+        "$ref" : "#/components/schemas/MemberPrivate"
       }
     }
   }

@@ -41,7 +41,7 @@ class ScheduleItem implements ModelInterface
 }
 SCHEMA;
 
-    /** @var object $ticket */
+    /** @var \OpenAPIServer\Model\CartItem $ticket */
     private $ticket;
 
     /** @var \OpenAPIServer\Model\EventPrivate $event */
