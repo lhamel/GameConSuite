@@ -401,6 +401,7 @@ $content .= <<< EOD
       <gamemaster-events
         :gmevents="gridData"
         :event-formatter="eventFormatter"
+        :base-url="baseUrl"
       >
       </gamemaster-events>
 
@@ -408,6 +409,7 @@ $content .= <<< EOD
       <schedule-list
         :schedule="scheduleData"
         :event-formatter="eventFormatter"
+        :base-url="baseUrl"
       >
       </schedule-list>
     </div>
@@ -672,7 +674,8 @@ $content .= <<< EOD
         template: "#gamemaster-events-template",
         props: {
           gmevents: Array,
-          eventFormatter: eventFormatter
+          eventFormatter: Object,
+          baseUrl: String
         },
         data: function() {
         //   var sortOrders = {};
@@ -731,7 +734,7 @@ $content .= <<< EOD
             // TODO save values back to event with call to API
             $.ajax({
                type: 'PATCH',
-               url: "/GameConSuite/api/user/envelope/{$id_member}/event/" + this.currEvent.id,
+               url: this.baseUrl+"api/user/envelope/{$id_member}/event/" + this.currEvent.id,
                data: JSON.stringify(patch),
                processData: false,
                contentType: 'application/json',
@@ -775,13 +778,14 @@ $content .= <<< EOD
           gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
           gridData: [],
           scheduleData: [],
-          eventFormatter: eventFormatter
+          eventFormatter: eventFormatter,
+          baseUrl: '{$config['page']['depth']}',
         },
         created: function() {
-
+          var self = this;
 
           // Request the token from previous login
-          var jqxhr = $.get( "/GameConSuite/api/user/token")
+          var jqxhr = $.get( self.baseUrl+"api/user/token")
             .done(function(data) {
               console.log(data);
               let t = (data);
@@ -796,7 +800,7 @@ $content .= <<< EOD
               });
 
               // retrieve the GM events list
-              var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/event")
+              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/event")
                 .done(function(data) {
                   console.log( "success" );
                   console.log( data );
@@ -815,7 +819,7 @@ $content .= <<< EOD
                 });
 
               // retrieve the GM events list
-              var jqxhr = $.get( "/GameConSuite/api/user/envelope/{$id_member}/schedule")
+              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/schedule")
                 .done(function(data) {
                   console.log( "success" );
                   console.log( data );
