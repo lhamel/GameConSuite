@@ -197,12 +197,10 @@ paths:
         '401':
           description: Not logged in
           content: {}
-      security:
-        - GCS_Auth:
-          - 'attendee'
-          - 'admin'
-      #       - 'write:events'
-      #       - 'read:events'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+      #     - 'admin'
 
   /user/envelope:
     get:
@@ -223,9 +221,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MemberPrivate'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     post:
       tags:
         - attendee
@@ -242,9 +240,9 @@ paths:
         '401':
           description: Not logged in
           content: {}
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}':
     get:
       tags:
@@ -272,9 +270,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MemberPrivate'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     put:
       tags:
         - attendee
@@ -317,9 +315,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MemberPrivate'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     delete:
       tags:
         - attendee
@@ -342,9 +340,9 @@ paths:
           content: {}
         '200':
           description: Deleted successfully
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}/authorization':
     get:
       tags:
@@ -374,9 +372,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Authorization'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
 
 # TODO remove authorizations on each envelope
 # TODO add authorizations on each envelope
@@ -412,9 +410,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/gmSubmission/{memberId}/finalize':
     post:
       tags:
@@ -453,9 +451,9 @@ paths:
         '405':
           description: Validation exception
           content: {}
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}/event/{eventId}':
     get:
       tags:
@@ -494,9 +492,9 @@ paths:
         '404':
           description: Event not found
           content: {}
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     patch:
       tags:
         - gamemaster
@@ -541,9 +539,9 @@ paths:
         '405':
           description: Validation exception
           content: {}
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}/schedule':
     get:
       tags:
@@ -573,9 +571,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ScheduleItem'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}/cart':
     get:
       tags:
@@ -603,9 +601,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     put:
       tags:
         - attendee
@@ -645,9 +643,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CartItem'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
   '/user/envelope/{memberId}/cart/{itemId}':
     patch:
       tags:
@@ -685,9 +683,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CartItem'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
     delete:
       tags:
         - attendee
@@ -724,9 +722,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
-      security:
-        - GCS_Auth:
-          - 'attendee'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
 
 
 

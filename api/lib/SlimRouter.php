@@ -85,14 +85,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -131,14 +123,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -190,14 +174,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -254,14 +230,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -308,14 +276,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -359,14 +319,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -407,14 +359,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -461,14 +405,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -520,14 +456,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -579,14 +507,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -623,14 +543,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -709,14 +621,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -921,14 +825,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -975,14 +871,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -1028,14 +916,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
@@ -1081,14 +961,6 @@ class SlimRouter
                 ],
             ],
             'authMethods' => [
-                // http security schema named 'GCS_Auth'
-                [
-                    'type' => 'http',
-                    'isBasic' => true,
-                    'isBearer' => true,
-                    'isApiKey' => false,
-                    'isOAuth' => false,
-                ],
             ],
         ],
         [
