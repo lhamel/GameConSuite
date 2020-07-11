@@ -1,0 +1,1466 @@
+openapi: 3.0.1
+info:
+  title: GameConSuite Admin API
+  description: >-
+    This is the administrative API for GameConSuite.  You can find out more
+    about Game Con Suite at  [https://gameconsuite.com](https://gameconsuite.com)
+  # termsOfService: 'http://swagger.io/terms/'
+#   contact:
+#     email: lhamel@gmail.com
+  license:
+    name: GPLv3
+#     url: 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+  version: 1.0.0
+# externalDocs:
+#   description: Find out more about GameConSuite
+#   url: 'https://gameconsuite.com'
+tags:
+  - name: GameConSuite
+    description: Event and attendee management software
+    externalDocs:
+      description: Find out more
+      url: 'https://gameconsuite.com'
+  - name: public
+    description: Publically available event search and browse
+  - name: authentication
+    description: Login and operations for managing authentication
+  - name: attendee
+    description: Operations available to logged in users
+  - name: gamemaster
+    description: Event submission and edit capabilities for logged in users
+  - name: event
+    description: Operations about events
+  - name: member
+    description: Operations about GMs and attendees of the convention
+  - name: user
+    description: Operations about login accounts and access permissions
+  - name: order
+    description: Operations about tickets
+paths:
+  '/public/event':
+    get:
+      tags:
+        - public
+      summary: Filter the events list
+      description: Returns a list of events filtered by the query strings
+      operationId: getFilteredEvents
+      parameters:
+        - name: search
+          in: query
+          description: keystring search for finding events
+          schema:
+            type: string
+        - name: day
+          in: query
+          description: filter events for the given day
+          schema:
+            type: string
+            enum:
+              - MON
+              - TUE
+              - WED
+              - THU
+              - FRI
+              - SAT
+              - SUN
+          allowEmptyValue: true
+        - name: category
+          in: query
+          description: filter events for the given category
+          schema:
+            type: integer
+            format: int32
+        - name: ages
+          in: query
+          description: filter events for the given age restrictions
+          schema:
+            type: integer
+            format: int32
+        - name: tags
+          in: query
+          description: filter events for the given tag identifier (one at a time)
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+  '/public/event/{eventId}':
+    get:
+      tags:
+        - public
+      summary: Find event by ID
+      description: Returns a single event
+      operationId: getPublicEventById
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+  /user/login:
+    put:
+      tags:
+        - authentication
+      summary: Login with username and password
+      description: Begin authentication session
+      operationId: login
+      requestBody:
+        description: login credentials
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginBody'
+      responses:
+        '401':
+          description: Invalid credentials
+          content: {}
+  /user/token:
+    get:
+      tags:
+        - authentication
+      summary: if logged in, get the auth token
+      operationId: getToken
+      responses:
+        '200':
+          description: token
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "123456789abcdef"
+        '401':
+          description: Invalid credentials
+          content: {}
+
+  # /user/credentials/create:
+  #   post:
+  #     tags:
+  #       - authentication
+  #     summary: Create a login with the given username and password
+  #     description: Create authentication credentials
+  #     operationId: createCredentials
+  #     requestBody:
+  #       description: create login credentials
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/LoginBody'
+  #     responses:
+  #       '401':
+  #         description: Invalid credentials
+  #         content: {}
+
+# TODO create account
+# TODO reset password
+# TODO activate account
+# TODO change password
+# TODO resend authentication
+  /user/logout:
+    put:
+      tags:
+        - authentication
+      summary: Log out
+      description: End authentication session
+      operationId: logout
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+      #     - 'admin'
+
+  /user/envelope:
+    get:
+      tags:
+        - attendee
+      summary: Get list of attendee envelopes
+      description: List the attendees envelopes for the logged in user
+      operationId: getUserEnvelopes
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '200':
+          description: A list of envelopes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MemberPrivate'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    post:
+      tags:
+        - attendee
+      summary: Create envelope
+      description: create an envelope for current user
+      operationId: createUserEnvelope
+      responses:
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberPrivate'
+        '401':
+          description: Not logged in
+          content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}':
+    get:
+      tags:
+        - attendee
+      summary: Get the envelop details for the logged in user
+      operationId: getEnvelopeByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MemberPrivate'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberPrivate'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    put:
+      tags:
+        - attendee
+      summary: Modify envelop details authorized for the current logged in user
+      operationId: editEnvelopeByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Event object that needs to be added to the convention
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberPrivate'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/MemberPrivate'
+        required: true
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '400':
+          description: Malformed body
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MemberPrivate'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberPrivate'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    delete:
+      tags:
+        - attendee
+      summary: Remove the envelope for the logged in user
+      description: Remove or archive the envelope for the current user under certain conditions
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Deleted successfully
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}/authorization':
+    get:
+      tags:
+        - attendee
+      summary: Get the authorization list for the specified member
+      operationId: getAuthorizationByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Authorization'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+
+# TODO remove authorizations on each envelope
+# TODO add authorizations on each envelope
+
+# TODO submit event
+# TODO get events
+  '/user/envelope/{memberId}/event':
+    get:
+      tags:
+        - gamemaster
+      summary: Get the list of GM events for the specified member
+      operationId: getGMEventsByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/gmSubmission/{memberId}/finalize':
+    post:
+      tags:
+        - gamemaster
+      summary: Finalize and submit the current session event
+      description: Submit the current event and send an email to the submitter and to registration
+      operationId: submitGMEventsByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the gamemaster (member/envelope)
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Event object that needs to be added to the convention
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitEvent'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SubmitEvent'
+        required: true
+      responses:
+        '200':
+          description: Operation succeeded
+          content: {}
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+        '405':
+          description: Validation exception
+          content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}/event/{eventId}':
+    get:
+      tags:
+        - gamemaster
+      summary: Find event by ID
+      description: Returns a single event
+      operationId: getGMEvent
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of gamemaster
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Event'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    patch:
+      tags:
+        - gamemaster
+      summary: Send allowed modifications for the specified event
+      description: Gamemasters of the event may modify VTT information after submission
+      operationId: updateGMEvent
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the gamemaster (member envelope)
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: eventId
+          in: path
+          description: ID of the gamemaster (member envelope)
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: subset of event fields allowed to be modified
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventVTT'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EventVTT'
+        required: true
+      responses:
+        '200':
+          description: Operation succeeded
+          content: {}
+        '400':
+          description: Invalid request
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+        '405':
+          description: Validation exception
+          content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}/schedule':
+    get:
+      tags:
+        - attendee
+      summary: Get the complete schedule for the specified member
+      operationId: getScheduleByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleItem'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}/cart':
+    get:
+      tags:
+        - attendee
+      summary: Get the cart for the specified member
+      operationId: getCartByMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    put:
+      tags:
+        - attendee
+      summary: Add an item to the cart
+      operationId: addItemToCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Item to be added to the cart
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CartItem'
+                - $ref: '#/components/schemas/Badge'
+                - $ref: '#/components/schemas/Ticket'
+        required: true
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '400':
+          description: Invalid Cart Item
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  '/user/envelope/{memberId}/cart/{itemId}':
+    patch:
+      tags:
+        - attendee
+      summary: Change the quantity of an item in the cart
+      operationId: updateItemFromCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: itemId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '404':
+          description: Item not found
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+    delete:
+      tags:
+        - attendee
+      summary: Remove item from cart
+      operationId: removeItemFromCart
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: itemId
+          in: path
+          description: ID of the member/envelope
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '403':
+          description: Unauthorized to access the specified envelope
+          content: {}
+        '404':
+          description: Item not found
+          content: {}
+        '200':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+
+
+
+# TODO get cart of items
+# TODO add item
+# TODO add ticket
+# TODO add badge
+# TODO change item quantity
+# TODO remove item or ticket
+
+  /event:
+    put:
+      tags:
+        - event
+      summary: Update an existing event
+      operationId: updateEvent
+      requestBody:
+        description: Event object that needs to be added to the convention
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventAdmin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EventAdmin'
+        required: true
+      responses:
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+        '405':
+          description: Validation exception
+          content: {}
+      # security:
+        # - gameconsuite_auth:
+        #     - 'write:events'
+        #     - 'read:events'
+      # x-codegen-request-body-name: body
+    post:
+      tags:
+        - event
+      summary: Add a new event to the convention
+      operationId: addEvent
+      requestBody:
+        description: Event object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventAdmin'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EventAdmin'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      # security:
+      #   - gameconsuite_auth:
+      #       - 'write:events'
+      #       - 'read:events'
+      # x-codegen-request-body-name: body
+  '/event/{eventId}':
+    get:
+      tags:
+        - event
+      summary: Find event by ID
+      description: Returns a single event
+      operationId: getEventById
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EventAdmin'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventAdmin'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+      # security:
+      #   - api_key: []
+    post:
+      tags:
+        - event
+      summary: Updates an event in the convention with form data
+      operationId: updateEventWithForm
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                name:
+                  type: string
+                  description: Updated name of the event
+                status:
+                  type: string
+                  description: Updated status of the pet
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      # security:
+      #   - gameconsuite_auth:
+      #       - 'write:events'
+      #       - 'read:events'
+    delete:
+      tags:
+        - event
+      summary: Deletes an event
+      operationId: deleteEvent
+      parameters:
+        - name: api_key
+          in: header
+          schema:
+            type: string
+        - name: eventId
+          in: path
+          description: Event id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Event not found
+          content: {}
+      # security:
+      #   - gameconsuite_auth:
+      #       - 'write:events'
+      #       - 'read:events'
+  /member:
+    post:
+      tags:
+        - member
+      summary: Create a new member
+      description: This can only be done by an admin
+      operationId: createMember
+      requestBody:
+        description: Created member object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/MemberAdmin'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+  '/member/{memberId}':
+    put:
+      tags:
+        - member
+      summary: Update an existing member
+      description: This can only be done by an admin or member with permissions
+      operationId: updateMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of member that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Revised member object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/MemberAdmin'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+    post:
+      tags:
+        - member
+      summary: Updates a member with form data
+      operationId: updateMemberWithForm
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of member that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                fName:
+                  type: string
+                  description: Updated first name
+                lname:
+                  type: string
+                  description: Updated last name
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      # security:
+      #   - gameconsuite_auth:
+      #       - 'write:members'
+      #       - 'read:members'
+    delete:
+      tags:
+        - member
+      summary: Removes a member
+      operationId: deleteMember
+      parameters:
+        - name: memberId
+          in: path
+          description: ID of member that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      # security:
+      #   - gameconsuite_auth:
+      #       - 'write:members'
+      #       - 'read:members'
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+          content: {}
+        '404':
+          description: User not found
+          content: {}
+    put:
+      tags:
+        - user
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '400':
+          description: Invalid user supplied
+          content: {}
+        '404':
+          description: User not found
+          content: {}
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+          content: {}
+        '404':
+          description: User not found
+          content: {}
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        groupName:
+          type: string
+    MemberPrivate:
+      allOf:     # inherit from Member
+        - $ref: '#/components/schemas/Member'
+        - type: object
+          properties:
+            addr1:
+              type: string
+            addr2:
+              type: string
+            addr3:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            zip:
+              type: string
+            international:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+    MemberAdmin:
+      allOf:     # inherit from MemberPrivate
+        - $ref: '#/components/schemas/MemberPrivate'
+        - type: object
+          properties:
+            notes:
+              type: string
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        abbr:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+      xml:
+        name: Category
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        label:
+          type: string
+      xml:
+        name: Tag
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        label:
+          type: string
+      xml:
+        name: Room
+    Event:
+      required:
+        - id
+        - conventionId
+        - category
+        - gm
+        - game
+        - maxplayers
+        - duration
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        conventionId:
+          type: integer
+          format: int32
+        category:
+          $ref: '#/components/schemas/Category'
+        gm:
+          $ref: '#/components/schemas/Member'
+        game:
+          type: string
+          example: 7 Wonders
+        title:
+          type: string
+          example: Leaders
+        tags:
+          type: array
+          xml:
+            name: tag
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+        day:
+          type: string
+          description: day of the event
+          enum:
+            - Mon
+            - Tue
+            - Wed
+            - Thu
+            - Fri
+            - Sat
+            - Sun
+        time:
+          type: number
+          format: float
+          description: Start time of event, as first 2 digits of event time in 24 hour clock
+        endtime:
+          type: number
+          format: float
+          description: End time of event, as first 2 digits of event time in 24 hour clock
+        duration:
+          type: number
+          format: float
+        maxplayers:
+          type: integer
+          format: int32
+          description: the number of seats available in the game, must be larger than minplayers
+        minplayers:
+          type: integer
+          format: int32
+          description: the minimum number of player required to play the game
+        desclong:
+          type: string
+        descshort:
+          type: string
+        exper:
+          type: string
+          description: experience rating (1, 3, 5), where 1 is the least experience
+          enum:
+            - '1'
+            - '3'
+            - '5'
+        complex:
+          type: string
+          description: complexity rating (A, C, E), where A is the least complex
+          enum:
+            - A
+            - C
+            - E
+        room:
+          $ref: '#/components/schemas/Room'
+        table:
+          type: string
+        cost:
+          description: Price of event ticket
+          type: number
+          format: float
+      xml:
+        name: Event
+    EventPrivate:
+      allOf:     # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          properties:
+            vttLink:
+              type: string
+              description: A link to VTT information, available only to GMs and ticketed players
+            vttInfo:
+              type: string
+              description: Additional VTT information, available only to GMs and ticketed players
+    EventAdmin:
+      allOf:     # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/EventPrivate'
+        - type: object
+          properties:
+            s_comments:
+              type: string
+              description: Comments from GM to scheduler about event
+            s_setup:
+              description: Request from GM about space setup
+            s_table_type:
+              type: string
+              description: Request from GM about type of table
+            s_eventcom:
+              type: string
+              description: Comments from GM to scheduler about scheduling
+            b_approval:
+              type: boolean
+              description: true if event is approved for public release
+            b_edited:
+              type: boolean
+              description: true if copy editing is complete
+            i_c1:
+              type: integer
+              format: int32
+              description: 1st choice for time slot
+            i_c2:
+              type: integer
+              format: int32
+              description: 2nd choice for time slot
+            i_c3:
+              type: integer
+              format: int32
+              description: 3rd choice for time slot
+            i_profit:
+              type: number
+              format: float
+            i_actual:
+              type: integer
+              format: int32
+              description: Event attendance entered by event runner
+            b_showed_up:
+              type: boolean
+              description: Entered by event runner, true if GM showed up
+            b_prize:
+              type: integer
+              format: int32
+              description: Entered by event runner, number of prize tokens awarded
+            s_note:
+              type: string
+            d_updated:
+              type: string
+              format: date-time
+              description: Date the event was last updated
+            d_created:
+              type: string
+              format: date-time
+              description: Date the event was submitted
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "me@me.com"
+        password:
+          type: string
+          example: "p@ssw0rd"
+    Cart:
+      type: object
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        conventionId:
+          type: integer
+          format: int32
+        memberId:
+          type: integer
+          format: int64
+        type:
+          type: string
+        subtype:
+          type: string
+          description: for tickets, this is the id of the event
+        quantity:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: float
+    Badge:
+      type: object
+    Ticket:
+      type: object
+    Authorization:
+      type: object
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+    EventVTT:
+      type: object
+      required:
+        - vttLink
+        - vttInfo
+      properties:
+        vttLink:
+          type: string
+        vttInfo:
+          type: string
+    SubmitEvent:
+      required:
+        - category
+        - game
+        - descshort
+        - maxplayers
+        - minplayers
+        - duration
+        - agerec
+
+        - eventcomment
+        - schedulecomment
+        - title
+        - desclong
+        - exper
+        - complex
+        - pref1
+        - pref2
+        - pref3
+        - numtables
+        - tabletype
+      type: object
+      properties:
+        category:
+          type: integer
+          format: int32
+        game:
+          type: string
+          example: 7 Wonders
+        title:
+          type: string
+          example: Leaders
+        duration:
+          type: integer
+          format: int32
+          description: intended duration of the game in hours
+        maxplayers:
+          type: integer
+          format: int32
+          description: the number of seats available in the game, must be larger than minplayers
+        minplayers:
+          type: integer
+          format: int32
+          description: the minimum number of player required to play the game
+        agerec:
+          type: integer
+          format: int32
+          description: the recommended age for play as 7, 13, 18, 19 - where 19 is mature content
+        desclong:
+          type: string
+        descshort:
+          type: string
+      xml:
+        name: SubmitEvent
+    ScheduleItem:
+      type: object
+      properties:
+        ticket:
+          $ref: '#/components/schemas/CartItem'
+        event:
+          $ref: '#/components/schemas/EventPrivate'
+  securitySchemes:
+    GCS_Auth:
+      type: http
+      scheme: bearer
+      
+  #   gameconsuite_auth:
+  #     type: oauth2
+  #     flows:
+  #       implicit:
+  #         authorizationUrl: 'http://gameconsuite.swagger.io/oauth/dialog'
+  #         scopes:
+  #           'write:pets': modify pets in your account
+  #           'read:pets': read your pets
+  #   api_key:
+  #     type: apiKey
+  #     name: api_key
+  #     in: header

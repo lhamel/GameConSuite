@@ -175,24 +175,24 @@ function formatRemoveBtn($orders, $fieldname) {
 
 
 // remove time information from unapproved events
-foreach ($events as $k => $v) {
-  if (!$events[$k]['b_approval']) {
-    $events[$k]['e_day'] = '';
-    $events[$k]['i_time'] = '';
-    $events[$k]['endtime'] = '';
-  }
-}
-foreach ($schedule as $k => $v) {
-  if (!$schedule[$k]['b_approval']) {
-    $schedule[$k]['e_day'] = '';
-    $schedule[$k]['i_time'] = '';
-    $schedule[$k]['endtime'] = '';
-  }
-}
+// foreach ($events as $k => $v) {
+//   if (!$events[$k]['b_approval']) {
+//     $events[$k]['e_day'] = '';
+//     $events[$k]['i_time'] = '';
+//     $events[$k]['endtime'] = '';
+//   }
+// }
+// foreach ($schedule as $k => $v) {
+//   if (!$schedule[$k]['b_approval']) {
+//     $schedule[$k]['e_day'] = '';
+//     $schedule[$k]['i_time'] = '';
+//     $schedule[$k]['endtime'] = '';
+//   }
+// }
 
-usort($schedule, 'sortByTime');
+// usort($schedule, 'sortByTime');
 usort($orders, 'sortByTimestamp');
-usort($events, 'sortByTime');
+// usort($events, 'sortByTime');
 
 // Calculate the balance due
 $balance = 0;
@@ -372,55 +372,421 @@ EOD;
 
 
 
-//if the attendee is a GM
-if (count($events)>0) {
+$content .= <<< EOD
 
-  // List GM events
-  $events = formatEventTitles($events, 'title');
-  $events = formatEventTimes($events, 'time');
-  $events = formatEventPlayers($events, 'players');
-  $smarty->assign('additional', array('prereg'=>'Prereg'));
-  $smarty->assign('events', $events);
-  $smarty->assign('columns', array(
-    'id_event'=>'#',
-    'title'=>'System/Title',
-    'gamemaster'=>'Gamemaster',
-    'players'=>'Players',
-    'time'=>'Day/Time',
-    'prereg'=>'Prereg',
-  ));
-  $smarty->assign('columnsAlign', array());
-  $content .= '<h3>GM Events</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
-}
+    <!-- demo root element -->
+    <div id="demo">
+      <h3>GM Events</h3>
+      <gamemaster-events
+        :gmevents="gridData"
+        :event-formatter="eventFormatter"
+        :base-url="baseUrl"
+      >
+      </gamemaster-events>
+
+      <h3>Combined Schedule</h3>
+      <schedule-list
+        :schedule="scheduleData"
+        :event-formatter="eventFormatter"
+        :base-url="baseUrl"
+      >
+      </schedule-list>
+    </div>
 
 
+<script type="text/x-template" id="gamemaster-events-template">
+<div>
 
-// List combined schedule
-foreach ($schedule as $k=>$v) {
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>System/Title</th>
+    <th>Gamemaster</th>
+    <th>Players</th>
+    <th>Day/Time</th>
+    <th>Prereg</th>
+    <th></th>
+  </tr>
+</thead>
+<tbody>
 
-  if (isset($v['s_type']) && $v['s_type'] == "Ticket") {
-    $schedule[$k]['quant_type'] = $v['i_quantity'].' Ticket';
-  } else {
-    $schedule[$k]['quant_type'] = 'GM';
-  }
-}
-//echo "<pre style=\"text-align:left\">Schedule\n".print_r($schedule,1).'</pre>';
-$schedule = formatEventTimes($schedule, 'time');
-$schedule = formatEventTitles($schedule, 'title');
-$columns = array(
-  'time'=>'Time',
-  'quant_type'=>'Type',
-  'title'=>'System/Title',
-  'gamemaster'=>'Gamemaster',
-);
-if ($config['allow']['see_location']) {
-  $schedule = formatEventLocations($schedule, 'location');
-  $columns['location'] = 'Location';
-}
-$smarty->assign('columns', $columns);
-$smarty->assign('events', $schedule);
-$content .= '<h3>Combined Schedule</h3>'.$smarty->fetch('gcs/common/general-table.tpl');
+  <tr v-for="entry in formattedGmEvents">
 
+<td>{{ entry.id }}</td>
+<td>{{ entry.formatTitle }}</td>
+<td>{{ entry.formatGM }}</td>
+<td>{{ entry.formatPlayers }}</td>
+<td>{{ entry.formatTime }}</td>
+<td>{{ entry.prereg }}</td>
+<td><button @click="currEvent = entry; showVTTDialog = true">Provide VTT</button></td>
+
+  </tr>
+</tbody>
+</table>
+
+<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" v-bind:edit="true" @close="showVTTDialog = false" @saveAndClose="saveEvent"></vtt-dialog>
+
+</div>
+</script>
+
+    <script type="text/x-template" id="vtt-dialog-template">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+
+              <div class="modal-header">
+                <h3>Title: {{eventData.formatTitle}}</h3>
+              </div>
+
+              <div class="modal-body">
+
+                <!-- event details -->
+                <ul>
+                <li>Event #{{eventData.id}}</li>
+                <li>Price: \${{eventData.cost}}</li>
+                <li>Seats: {{eventData.formatPlayers}}</li>
+                <li>Time: {{eventData.formatTime}}</span></li>
+                </ul>
+                <hr>
+
+                <div v-if="edit">
+                <p>Provide <em>Virtual Table Top (VTT)</em> link (e.g. Roll20 or Zoom link)</p>
+                <input id="vttlink" type="text" v-model="vttLink">
+                <p>Provide additional instructions or information for players, including platforms as well as required accounts and software.</p>
+                <textarea id="vttinfo" v-model="vttInfo"></textarea>
+                </div>
+                <div v-else>
+                <p>This is the information which your GM provided for connecting.  Note: not reviewed by staff; please report any abuse to staff.</p>
+                <hr>
+                <a :href="vttLink">{{vttLink}}</a>
+                <p>{{vttInfo}}</p>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <slot name="footer">
+                  &nbsp;
+                  <span v-if="edit">
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Cancel
+                  </button>
+                  <button class="modal-default-button" @click="\$emit('saveAndClose', vttLink, vttInfo)">
+                    OK
+                  </button>
+                  </span>
+                  <span v-else>
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Close
+                  </button>
+                  </span>
+                </slot>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </script>
+
+    <script type="text/x-template" id="schedule-list-template">
+<div>
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th>Time</th>
+    <th>Type</th>
+    <th>System/Title</th>
+    <th>Gamemaster</th>
+    <th>Location</th>
+  </tr>
+</thead>
+<tbody>
+  <tr v-for="entry in formatSchedule">
+    <td>{{entry.event.formatTime}}</td>
+    <td><span v-if="entry.ticket">{{entry.ticket.quantity}}&nbsp;Ticket</span><span v-else>GM</span></td>
+    <td>{{entry.event.formatTitle}}</td>
+    <td>{{entry.event.formatGM}}</td>
+    <td>
+      <span v-if="entry.event.room">{{entry.event.room}} {{entry.event.table}}</span>
+      <span v-if="entry.event.vttLink"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
+      <span v-else-if="entry.event.vttInfo"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+<vtt-dialog v-if="showVTTDialog" :eventData="currEvent" v-bind:edit="false" @close="showVTTDialog = false"></vtt-dialog>
+
+</div>
+    </script>
+
+
+    <script>
+      var eventFormatter = {
+        capitalize: function(str) {
+          if (!str) { return str; }
+          return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        },
+        formatTitle: function(eventObj) {
+          if (!eventObj) {
+            console.error("Missing eventObj");
+          }
+          let name = eventObj.game;
+          if (eventObj.title) {
+            name += (name ? ': ' : '') + eventObj.title
+          }
+          return name;
+        },
+        formatGmObj: function(obj) {
+          if (!obj) { return '' };
+          let name = obj.lastName;
+          if (obj.firstName) {
+            name = obj.firstName + ' ' + name;
+          }
+          if (obj.groupName) {
+            name += ' (' + obj.groupName + ')';
+          }
+          return name;
+        },
+        formatPlayers: function(obj) {
+          if (!obj) { return '' };
+          let players = obj['maxplayers'];
+          let minplayers = obj['minplayers'];
+          if (minplayers && minplayers>0 && minplayers != players) {
+            players = minplayers + " - " + players;
+          }
+          return players;
+        },
+        formatSingleTime: function (time) {
+          if (!time) return "";
+          if (time < 12) return time+"a";
+          else if (time == 12) return "12p";
+          else if (time < 24) return (time-12)+"p";
+          else if (time == 24) return "12a";
+          else return (time-24)+"a";
+        },
+        formatTime: function(eventObj) {
+          let day = eventObj.day ? this.capitalize(eventObj.day) : '';
+          let time = eventObj.time ? eventObj.time : '';
+          let endtime = eventObj.endtime ? eventObj.endtime : '';
+          return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' ET':'');
+        }
+      }
+
+
+      Vue.component("schedule-list", {
+        template: "#schedule-list-template",
+        props: {
+          schedule: Array,
+          eventFormatter: Object,
+        },
+        data : function () {
+          return {
+            showVTTDialog: false,
+            currEvent : null,
+          };
+        },
+        computed: {
+          formatSchedule :function() {
+            let s = this.schedule;
+            s.forEach(e => {
+              e.event.formatTitle = this.eventFormatter.formatTitle(e.event);
+              e.event.formatPlayers = this.eventFormatter.formatPlayers(e.event);
+              e.event.formatGM = this.eventFormatter.formatGmObj(e.event.gm);
+              e.event.formatTime = this.eventFormatter.formatTime(e.event);
+            });
+            console.log(s);
+            return s;
+          }
+        }
+      });
+
+      Vue.component("vtt-dialog", {
+        template: "#vtt-dialog-template",
+        props: {
+          eventData : Object,
+          edit: Boolean,
+        },
+        data: function () {
+          return {
+            vttLink: this.eventData.vttLink,
+            vttInfo: this.eventData.vttInfo,
+          }
+        },
+      });
+
+      Vue.component("gamemaster-events", {
+        template: "#gamemaster-events-template",
+        props: {
+          gmevents: Array,
+          eventFormatter: Object,
+          baseUrl: String
+        },
+        data: function() {
+        //   var sortOrders = {};
+        //   this.columns.forEach(function(key) {
+        //     sortOrders[key] = 1;
+        //   });
+          return {
+            showVTTDialog: false,
+            currEvent: Object,
+            // sortKey: "",
+            // sortOrders: sortOrders
+          };
+        },
+        computed: {
+          formattedGmEvents: function() {
+            var events = this.gmevents;
+
+            events.forEach(e => {
+              e.formatTitle = this.eventFormatter.formatTitle(e);
+              e.formatPlayers = this.eventFormatter.formatPlayers(e);
+              e.formatGM = this.eventFormatter.formatGmObj(e.gm);
+              e.formatTime = this.eventFormatter.formatTime(e);
+            });
+            return events;
+          },
+          filteredGmEvents: function() {
+            var sortKey = this.sortKey;
+            var order = this.sortOrders[sortKey] || 1;
+            var events = this.gmevents;
+            if (sortKey) {
+              events = events.slice().sort(function(a, b) {
+                a = a[sortKey];
+                b = b[sortKey];
+                return (a === b ? 0 : a > b ? 1 : -1) * order;
+              });
+            }
+            return events;
+          }
+        },
+        methods: {
+          saveEvent: function(vttLinkValue, vttInfoValue) {
+            console.log("save click");
+            console.log(this.currEvent.id);
+            console.log(vttLinkValue);
+            console.log(vttInfoValue);
+
+            this.currEvent.vttLink = vttLinkValue;
+            this.currEvent.vttInfo = vttInfoValue;
+            var self = this;
+
+            let patch = {
+              'vttLink' : vttLinkValue,
+              'vttInfo' : vttInfoValue
+            }
+
+            // TODO save values back to event with call to API
+            $.ajax({
+               type: 'PATCH',
+               url: this.baseUrl+"api/user/envelope/{$id_member}/event/" + this.currEvent.id,
+               data: JSON.stringify(patch),
+               processData: false,
+               contentType: 'application/json',
+
+               done: function(data) {
+                console.log( "success" );
+                console.log( data );
+                this.showVTTDialog = false;
+               },
+               fail: function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: values can not be saved");
+                },
+            })
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                self.showVTTDialog = false;
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: values can not be saved");
+              });
+
+          },
+          sortBy: function(key) {
+            this.sortKey = key;
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+          }
+        }
+      });
+
+      // bootstrap the demo
+      var demo = new Vue({
+        el: "#demo",
+        data: {
+          //searchQuery: "",
+          gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
+          gridData: [],
+          scheduleData: [],
+          eventFormatter: eventFormatter,
+          baseUrl: '{$config['page']['depth']}',
+        },
+        created: function() {
+          var self = this;
+
+          // Request the token from previous login
+          var jqxhr = $.get( self.baseUrl+"api/user/token")
+            .done(function(data) {
+              console.log(data);
+              let t = (data);
+              console.log( "retrieved token " + t );
+              localStorage.setItem('token', t);
+
+              // set up the bearer-token for all calls
+              $.ajaxSetup({
+                  beforeSend: function(xhr) {
+                      xhr.setRequestHeader('Authorization', 'Bearer '+t);
+                  }
+              });
+
+              // retrieve the GM events list
+              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/event")
+                .done(function(data) {
+                  console.log( "success" );
+                  console.log( data );
+
+                  data = data.slice().sort(function(a, b) {
+                    a = a.day + a.time + a.id;
+                    b = b.day + b.time + b.id;
+                    return (a === b ? 0 : a > b ? 1 : -1);
+                  });
+                  demo.gridData = data;
+
+                })
+                .fail(function(data) {
+                  console.log( "error" );
+                  console.log( data );
+                });
+
+              // retrieve the GM events list
+              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/schedule")
+                .done(function(data) {
+                  console.log( "success" );
+                  console.log( data );
+                  demo.scheduleData = data;
+                })
+                .fail(function(data) {
+                  console.log( "error" );
+                  console.log( data );
+                });
+
+            })
+            .fail(function(data) {
+              console.log( "not logged in" );
+            });
+
+        }
+      });
+</script>
+
+
+EOD;
 
 $smarty->assign('content', $content);
 $smarty->display('base.tpl');

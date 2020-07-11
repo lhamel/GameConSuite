@@ -46,18 +46,29 @@ include INC_PATH.'layout/adminmenu.php';
 
 include '_tabs.php';
 
+// get unique convention identifiers
+$conIdsSql = <<< EOD
+select id_convention as k, id_convention from ucon_event group by id_convention
+UNION
+select id_convention as k, id_convention from ucon_convention;
+EOD;
+$conIds = $db->getAssoc($conIdsSql);
+if ($conIds === false) { echo "SQL Error (browse.php::".__LINE__.")".$db->ErrorMsg(); exit; }
+$year = $config['gcs']['year'];
+$conIds[$year] = $year;
+arsort($conIds);
 
 $filters = array(
   'year' => array(
     'label'=>'Year',
-    'options'=>array_reverse(array_combine(range(2002,$config['gcs']['year']),range(2002,$config['gcs']['year'])), true),
+    'options'=>$conIds,
     'noall'=>true
   ),
 );
 $smarty->assign('filters', $filters);
 $smarty->assign('REQUEST', $_REQUEST);
 
-$additionalFields = array('badgecount'=>'Badge Count', 'badgetypes'=>'Badge Types', 'gmhrs'=>'GM Hours');
+$additionalFields = array('badgecount'=>'Badge Count', 'badgetypes'=>'Badge Types', 's_email'=>'Email', 'gmhrs'=>'GM Hours');
 $smarty->assign('additional', $additionalFields);
 
 $smarty->assign('actions', $actions);

@@ -3,6 +3,7 @@
 @import "style-cart.css"; /* deprecated */
 @import "style-admin.css";
 @import "style-wp.css";
+@import "style-modal.css";
 @import "forms.css";
 @import "event.css";
 @import "cart.css";

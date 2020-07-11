@@ -1,0 +1,1 @@
+java -jar .\openapi-generator-cli-4.3.1.jar generate -g php-slim4 -i .\api.yaml -o ..\api

@@ -43,7 +43,19 @@ select * from ucon_tag where (not tag="") and id_tag in
     (select id_event from ucon_event where id_convention={$config['gcs']['year']}))
 EOD;
 $tags = $db->getAssoc($tagSql);
-if ($tags === false) { echo "SQL Error (browse.php)".$db->ErrorMsg(); exit; }
+if ($tags === false) { echo "SQL Error (browse.php::".__LINE__.")".$db->ErrorMsg(); exit; }
+
+// get unique convention identifiers
+$conIdsSql = <<< EOD
+select id_convention as k, id_convention from ucon_event group by id_convention
+UNION
+select id_convention as k, id_convention from ucon_convention;
+EOD;
+$conIds = $db->getAssoc($conIdsSql);
+if ($conIds === false) { echo "SQL Error (browse.php::".__LINE__.")".$db->ErrorMsg(); exit; }
+$year = $config['gcs']['year'];
+$conIds[$year] = $year;
+arsort($conIds);
 
 $filters = array(
   'day' => array(
@@ -64,7 +76,7 @@ $filters = array(
   ),
   'year' => array(
     'label'=>'Year',
-    'options'=>array_reverse(array_combine(range(2002,$config['gcs']['year']),range(2002,$config['gcs']['year'])), true),
+    'options'=>$conIds,
     'noall'=>true,
     'default'=>$year,
   ),

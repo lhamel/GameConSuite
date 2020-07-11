@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="{$config.page.depth}js/tag-editor/jquery.tag-editor.css"/>
 
     <link rel="SHORTCUT ICON" href="{$config.page.depth}favicon.ico" />
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vuex"></script>
+
     <script src="{$config.page.depth}js/jquery-1.10.2.min.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/jquery.jeditable.checkbox.js" type="text/javascript" ></script>
