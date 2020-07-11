@@ -570,7 +570,7 @@ $content .= <<< EOD
           let day = eventObj.day ? this.capitalize(eventObj.day) : '';
           let time = eventObj.time ? eventObj.time : '';
           let endtime = eventObj.endtime ? eventObj.endtime : '';
-          return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' EDT':'');
+          return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' ET':'');
         }
       }
 
