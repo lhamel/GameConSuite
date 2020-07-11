@@ -220,7 +220,7 @@ EOD;
         $sql = 'select '.join(',', $fields).' from ucon_event where id_gm=? and id_convention=?';
         $result = $this->db->getAll($sql, [$idGm, $idConvention]);
         if (!is_array($result)) {
-            throw new \Exception("SQL Error: ".$db->ErrMsg());
+            throw new \Exception("SQL Error: ".$db->ErrorMsg());
         }
 
 // echo "<pre>\n".print_r($result,true)."\n";
