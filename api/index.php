@@ -124,6 +124,21 @@ $router = new SlimRouter($container);
 $app = $router->getSlimApp();
 $app->setBasePath('/GameConSuite/api');
 
+
+/**
+ * Ensure that the API is not cached by attaching headers to all responses
+ */
+$app->add(function ($request, $handler) {
+    $response = $handler->handle($request);
+    return $response
+            ->withHeader("Cache-Control", "no-cache, no-store, must-revalidate") // HTTP 1.1.
+            ->withHeader("Pragma", "no-cache") // HTTP 1.0.
+            ->withHeader("Expires", "0"); // Proxies.
+            //->withHeader('Access-Control-Allow-Origin', 'http://mysite')
+            //->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            //->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 /**
  * The routing middleware should be added before the ErrorMiddleware
  * Otherwise exceptions thrown from it will not be handled

@@ -10,7 +10,7 @@ include INC_PATH.'resources/event/constants.php';
 $minimumTicketsSold = 1;
 $trackId = isset($_GET['category']) ? $_GET['category'] : '';
 
-
+// get unique convention identifiers
 $conIdsSql = <<< EOD
 select id_convention as k, id_convention from ucon_event group by id_convention
 UNION
