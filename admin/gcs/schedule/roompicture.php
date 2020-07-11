@@ -91,15 +91,23 @@ $actions = array('list'=>basename(__FILE__),
                  'showExpanded'=>(isset($_GET['expanded']) ? true : false),
                 );
 
-
-
-
+// get unique convention identifiers
+$conIdsSql = <<< EOD
+select id_convention as k, id_convention from ucon_event group by id_convention
+UNION
+select id_convention as k, id_convention from ucon_convention;
+EOD;
+$conIds = $db->getAssoc($conIdsSql);
+if ($conIds === false) { echo "SQL Error (browse.php::".__LINE__.")".$db->ErrorMsg(); exit; }
+$year = $config['gcs']['year'];
+$conIds[$year] = $year;
+arsort($conIds);
 
 
 $filters = array(
   'year' => array(
     'label'=>'Year',
-    'options'=>array_reverse(array_combine(range(2002,$config['gcs']['year']),range(2002,$config['gcs']['year'])), true),
+    'options'=>$conIds,
     'noall'=>true,
     'default'=>$year,
   ),
