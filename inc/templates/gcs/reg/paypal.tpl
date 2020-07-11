@@ -7,7 +7,7 @@
 <input type="hidden" name="no_note" value="1" />
 <input type="hidden" name="currency_code" value="USD" />
 <input type="hidden" name="lc" value="US" />
-<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" />
+<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but01.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!" />
 <input type="hidden" name="add" value="1" />
 </form>
 
