@@ -97,7 +97,7 @@ class MemberRepository
         // map the data into the API model object
         foreach ($result as $m) {
             $mId = (int)$m['id_member'];
-            $member = new PublicMember($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
+            $member = new Member($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
             $this->cachePublicMembers[$mId] = $member;
         }
     }

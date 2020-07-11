@@ -44,15 +44,6 @@ class EventRepository
     // ];
 
 
-    private $findEventsQuery = <<< EOD
-        select *
-        from ucon_event as E, ucon_member as M
-        where id_convention=?
-          and E.id_gm = M.id_member
-          and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?)
-          and b_approval=1
-EOD;
-
     public function __construct(\ADOConnection $db, CategoryRepository $categoryRepository, MemberRepository $memberRepository, RoomRepository $roomRepository)
     {
         $this->db = $db;
@@ -68,26 +59,69 @@ EOD;
      */
     public function findPublicEvents($idConvention, $search, $day, $categoryId, $ages, $tags /*, string $sort */) : array
     {
-        $wildcard = '%'.$search.'%';
+        //validate input
+        if (!is_numeric($idConvention)) {
+            throw new \Exception("convention ID must be a number");
+        }
+        if (isset($categoryId) && !is_numeric($categoryId)) {
+            throw new \Exception("category ID must be a number");
+        }
+        if (isset($ages) && !is_numeric($ages)) {
+            throw new \Exception("ages must be a number");
+        }
+        if (isset($tags) && !is_numeric($tags)) {
+            throw new \Exception("tag must be a number");
+        }
 
-        // search for matching GMs and gather a list
+        // search for events that match the search and filter parameters
 
-        // $result = $this->db->getAll($this->findGMsQuery, [$wildcard, $wildcard, $wildcard]);
-        // if (!is_array($result)) {
-        //     throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
-        // }
+        $findEventsQuery = <<< EOD
+            select E.*
+            from ucon_event as E, ucon_member as M
+            where id_convention=?
+              and E.id_gm = M.id_member
+              and (not (e_day='' OR i_time=0 OR isNull(e_day) OR isNull(i_time)))
+              and b_approval=1
+EOD;
+        $params = [$idConvention];
 
-        // search for matching events, including those with GMs listed above
-        // filter for all filter parameters
+        if (isset($search)) {
+            $wildcard = '%'.$search.'%';
+            $findEventsQuery .= " and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?) ";
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+        }
 
-        // TODO need to retrieve all the GM information can cache it for retrieval!!
+        if (isset($categoryId)) {
+            $findEventsQuery .= " and E.id_event_type=? ";
+            $params[] = $categoryId;
+        }
+        if (isset($day)) {
+            $findEventsQuery .= " and E.e_day=?";
+            $params[] = $day;
+        }
+        if (isset($ages)) {
+            $findEventsQuery .= " and E.i_agerestriction=?";
+            $params[] = $ages;
+        }
+        if (isset($tags)) {
+            // TODO fixme this is inefficient
+            $findEventsQuery .= " and E.id_event in (select id_event from ucon_event_tag where id_tag=".$_GET['tags'].")";
+            $params[] = $ages;
+        }
 
+        $findEventsQuery .= " order by E.id_event_type, e_day, i_time, E.s_number";
 
-        $result = $this->db->getAll($this->findEventsQuery, [$idConvention, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard]);
+        $result = $this->db->getAll($findEventsQuery, $params);
         if (!is_array($result)) {
             throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
         }
 
+        // TODO fixme slightly inefficient because GM names are already included above
         // cache GMs in the MemberRepository
         $gmIds = [];
         foreach ($result as $row) {
