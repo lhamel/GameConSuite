@@ -110,8 +110,8 @@ EOD;
         }
         if (isset($tags)) {
             // TODO fixme this is inefficient
-            $findEventsQuery .= " and E.id_event in (select id_event from ucon_event_tag where id_tag=".$_GET['tags'].")";
-            $params[] = $ages;
+            $findEventsQuery .= " and E.id_event in (select id_event from ucon_event_tag where id_tag=?)";
+            $params[] = $tags;
         }
 
         $findEventsQuery .= " order by E.id_event_type, e_day, i_time, E.s_number";
