@@ -63,13 +63,13 @@ class EventRepository
         if (!is_numeric($idConvention)) {
             throw new \Exception("convention ID must be a number");
         }
-        if (isset($categoryId) && !is_numeric($categoryId)) {
+        if ($categoryId!=null && !is_numeric($categoryId)) {
             throw new \Exception("category ID must be a number");
         }
-        if (isset($ages) && !is_numeric($ages)) {
+        if ($ages!=null && !is_numeric($ages)) {
             throw new \Exception("ages must be a number");
         }
-        if (isset($tags) && !is_numeric($tags)) {
+        if ($tags!=null && !is_numeric($tags)) {
             throw new \Exception("tag must be a number");
         }
 
@@ -85,7 +85,7 @@ class EventRepository
 EOD;
         $params = [$idConvention];
 
-        if (isset($search)) {
+        if ($search!=null) {
             $wildcard = '%'.$search.'%';
             $findEventsQuery .= " and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?) ";
             $params[] = $wildcard;
@@ -96,19 +96,19 @@ EOD;
             $params[] = $wildcard;
         }
 
-        if (isset($categoryId)) {
+        if (isset($categoryId) && $categoryId!=null) {
             $findEventsQuery .= " and E.id_event_type=? ";
             $params[] = $categoryId;
         }
-        if (isset($day)) {
+        if (isset($day) && $day!=null) {
             $findEventsQuery .= " and E.e_day=?";
             $params[] = $day;
         }
-        if (isset($ages)) {
+        if (isset($ages) && $ages!=null) {
             $findEventsQuery .= " and E.i_agerestriction=?";
             $params[] = $ages;
         }
-        if (isset($tags)) {
+        if (isset($tags) && $tags !=null) {
             // TODO fixme this is inefficient
             $findEventsQuery .= " and E.id_event in (select id_event from ucon_event_tag where id_tag=?)";
             $params[] = $tags;
@@ -118,7 +118,11 @@ EOD;
 
         $result = $this->db->getAll($findEventsQuery, $params);
         if (!is_array($result)) {
-            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+            throw new \Exception("SQL Error (".__LINE__."): ".$this->db->ErrorMsg()."\n".$findEventsQuery);
+        }
+
+        if (count($result) == 0) {
+            return [];
         }
 
         // TODO fixme slightly inefficient because GM names are already included above
