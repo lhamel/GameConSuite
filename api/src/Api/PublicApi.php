@@ -93,8 +93,8 @@ class PublicApi extends AbstractPublicApi
         $events = $this->eventRepo->findPublicEvents($idConvention, $search, $day, $category, $ages, $tags);
 
         if ($events == null || count($events)==0) {
-            $response->getBody()->write('No matching events found');
-            return $response->withStatus(401);
+            $response->getBody()->write('[]');
+            return $response->withStatus(200)->withHeader('Content-type', 'application/json');
         }
 
         // add ticket information to each event
