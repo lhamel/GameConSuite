@@ -1255,6 +1255,13 @@ components:
           description: Price of event ticket
           type: number
           format: float
+        fill:
+          type: number
+          format: int(32)
+          description: the number of seats filled, when enabled
+        soldout:
+          type: boolean
+          description: true if event has no seats available
       xml:
         name: Event
     EventPrivate:

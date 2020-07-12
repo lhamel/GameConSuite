@@ -26,6 +26,7 @@
 namespace OpenAPIServer\Api;
 
 use OpenAPIServer\Repository\EventRepository;
+use OpenAPIServer\Repository\TicketRepository;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -54,9 +55,10 @@ class PublicApi extends AbstractPublicApi
      *
      * @param EventRepository $container Slim app container instance
      */
-    public function __construct(EventRepository $eventRepo)
+    public function __construct(EventRepository $eventRepo, TicketRepository $ticketRepo)
     {
         $this->eventRepo = $eventRepo;
+        $this->ticketRepo = $ticketRepo;
         $this->siteConfig = $GLOBALS['config'];
 
         if ($this->eventRepo == null) {
@@ -95,6 +97,18 @@ class PublicApi extends AbstractPublicApi
             return $response->withStatus(401);
         }
 
+        // add ticket information to each event
+        $eventIds = array_column($events, 'id');
+        $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        foreach ($events as $k => $event) {
+            $id = $event->id;
+            $fill = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
+            $event->soldout = ($fill >= $event->maxplayers);
+            if ($this->siteConfig['allow']['see_fill']) {
+                $event->fill = $fill;
+            }
+        }
+
         $response->getBody()->write( json_encode($events) );
         return $response->withStatus(200)->withHeader('Content-type', 'application/json');
     }
@@ -125,6 +139,15 @@ class PublicApi extends AbstractPublicApi
         } catch (\OutOfBoundsException $e) {
             $response->getBody()->write( "Not found" );
             return $response->withStatus(404);
+        }
+
+        // add ticket information to each event
+        $eventIds = [$eventId];
+        $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        $fill = isset($ticketCounts[$eventId]) ? $ticketCounts[$eventId] : 0;
+        $event->soldout = ($fill >= $event->maxplayers);
+        if ($this->siteConfig['allow']['see_fill']) {
+            $event->fill = $fill;
         }
 
         $response->getBody()->write( json_encode($event) );

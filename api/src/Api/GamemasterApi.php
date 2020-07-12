@@ -205,7 +205,7 @@ class GamemasterApi extends AbstractGamemasterApi
         $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
         foreach ($events as $k => $event) {
             $id = $event->id;
-            $event->prereg = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
+            $event->fill = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
         }
 
         $response->getBody()->write( json_encode($events) );

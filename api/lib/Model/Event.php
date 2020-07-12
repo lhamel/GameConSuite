@@ -119,6 +119,15 @@ class Event implements ModelInterface
       "type" : "number",
       "description" : "Price of event ticket",
       "format" : "float"
+    },
+    "fill" : {
+      "type" : "number",
+      "description" : "the number of seats filled, when enabled",
+      "format" : "int(32)"
+    },
+    "soldout" : {
+      "type" : "boolean",
+      "description" : "true if event has no seats available"
     }
   },
   "xml" : {
@@ -186,6 +195,12 @@ SCHEMA;
 
     /** @var float $cost Price of event ticket*/
     public $cost;
+
+    /** @var float $fill the number of seats filled, when enabled*/
+    //public $fill;
+
+    /** @var bool $soldout true if event has no seats available*/
+    //public $soldout;
 
     /**
      * Returns model schema.

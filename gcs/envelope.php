@@ -418,7 +418,7 @@ $content .= <<< EOD
 <td>{{ entry.formatGM }}</td>
 <td>{{ entry.formatPlayers }}</td>
 <td>{{ entry.formatTime }}</td>
-<td>{{ entry.prereg }}</td>
+<td>{{ entry.fill }}</td>
 <td><button @click="currEvent = entry; showVTTDialog = true">Provide VTT</button></td>
 
   </tr>

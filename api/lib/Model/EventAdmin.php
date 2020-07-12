@@ -25,7 +25,7 @@ use OpenAPIServer\Interfaces\ModelInterface;
  * @author  OpenAPI Generator team
  * @link    https://github.com/openapitools/openapi-generator
  */
-class EventAdmin implements ModelInterface
+class EventAdmin extends EventPrivate implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
@@ -36,72 +36,6 @@ class EventAdmin implements ModelInterface
   } ]
 }
 SCHEMA;
-
-    /** @var int $id */
-    private $id;
-
-    /** @var int $conventionId */
-    private $conventionId;
-
-    /** @var \OpenAPIServer\Model\Category $category */
-    private $category;
-
-    /** @var \OpenAPIServer\Model\Member $gm */
-    private $gm;
-
-    /** @var string $game */
-    private $game;
-
-    /** @var string $title */
-    private $title;
-
-    /** @var \OpenAPIServer\Model\Tag[] $tags */
-    private $tags;
-
-    /** @var string $day day of the event*/
-    private $day;
-
-    /** @var float $time Start time of event, as first 2 digits of event time in 24 hour clock*/
-    private $time;
-
-    /** @var float $endtime End time of event, as first 2 digits of event time in 24 hour clock*/
-    private $endtime;
-
-    /** @var float $duration */
-    private $duration;
-
-    /** @var int $maxplayers the number of seats available in the game, must be larger than minplayers*/
-    private $maxplayers;
-
-    /** @var int $minplayers the minimum number of player required to play the game*/
-    private $minplayers;
-
-    /** @var string $desclong */
-    private $desclong;
-
-    /** @var string $descshort */
-    private $descshort;
-
-    /** @var string $exper experience rating (1, 3, 5), where 1 is the least experience*/
-    private $exper;
-
-    /** @var string $complex complexity rating (A, C, E), where A is the least complex*/
-    private $complex;
-
-    /** @var \OpenAPIServer\Model\Room $room */
-    private $room;
-
-    /** @var string $table */
-    private $table;
-
-    /** @var float $cost Price of event ticket*/
-    private $cost;
-
-    /** @var string $vttLink A link to VTT information, available only to GMs and ticketed players*/
-    private $vttLink;
-
-    /** @var string $vttInfo Additional VTT information, available only to GMs and ticketed players*/
-    private $vttInfo;
 
     /** @var string $sComments Comments from GM to scheduler about event*/
     private $sComments;
