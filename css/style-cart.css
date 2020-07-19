@@ -31,3 +31,26 @@
 	background-color: #FFFFE0;
 }
 
+
+.fa-button, a.fa-button, button.fa-button {
+	padding: 6px 4px;
+  	border-radius: 10px;
+  	margin-right: 4px;
+	/*border: 2px #c30000; */
+  	/*background: #007BA7;*/
+  	/*background: #e0e0e0;*/
+
+  	/*background-image: linear-gradient(to right top, #fdbe25, #fec928, #ffd42b, #ffdf31, #ffea37); */ /* yellow */
+  	background-image: linear-gradient(to top, #880000, #c30000);
+
+	font-size: 14px;
+	color: #fff0a0;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+
+  	text-align: center;
+  	text-decoration: none;
+}
+/*.fa-button i {
+	color: #007BA7;
+}
+*/

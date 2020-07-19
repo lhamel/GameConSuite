@@ -21,6 +21,9 @@
     <script src="{$config.page.depth}js/jquery-ui-1.10.3.custom.min.js" type="text/javascript" ></script>
     <script src="{$config.page.depth}js/tag-editor/jquery.tag-editor.min.js" type="text/javascript" ></script>
 
+    <!-- load font awesome -->
+    <link href="{$config.page.depth}js/fontawesome-free-5.14.0-web/css/all.css" rel="stylesheet"> <!--load all styles -->
+
     {*
     <script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />
     <script type="text/javascript">

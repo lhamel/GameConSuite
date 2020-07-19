@@ -508,7 +508,7 @@ $content .= <<< EOD
     <td>{{entry.event.formatTitle}}</td>
     <td>{{entry.event.formatGM}}</td>
     <td>
-      <span v-if="entry.event.room">{{entry.event.room}} {{entry.event.table}}</span>
+      <span v-if="entry.event.room">{{entry.event.room.label}} {{entry.event.table}}</span>
       <span v-if="entry.event.vttLink"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
       <span v-else-if="entry.event.vttInfo"><button @click="currEvent = entry.event; showVTTDialog = true">See VTT</button></span>
     </td>
