@@ -231,6 +231,7 @@ $content .= <<< EOD
       <h3>Results</h3>
       <filter-event
         :filter-events="filteredEvents"
+        :members="members"
       >
       </filter-event>
 
@@ -240,11 +241,11 @@ $content .= <<< EOD
 <div>
 
   <tr v-for="entry in filterEvents">
-    <filter-event-entry :event="entry" @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
+    <filter-event-entry :event="entry" :members='members' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
   </tr>
 
   <exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
-  <view-event-dialog :event="currEvent" v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
+  <view-event-dialog :event="currEvent" :members='members' v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
 
 </div>
 </script>
@@ -364,69 +365,42 @@ $content .= <<< EOD
 <strong>{{event.formatTitle}}</strong>
 </p>
 
-<p style="float:right; width:60%;">
-  GM: {{event.formatGM}}<br>
-  <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span><br>
-</p>
-
-
-  <p>
+  <table><tr>
+  <td style="width:45%;">
     {{event.formatTime}}<br>
-    <span v-if="event.fill">{{event.fill}} of </span>{{event.formatPlayers}} seats
-  </p>
+    <span v-if="event.fill">{{event.fill}} of </span>{{event.formatPlayers}} seats<br>
+    <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span>
+  </td>
+  <td>
+    GM: {{event.formatGM}}<br>
+    <span v-if="event.formatAges">{{event.formatAges}}<br></span>
+    <span v-if="event.room">{{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
+    <span v-if="event.formatTags">{{event.formatTags}}</span>
+  </td>
+  </tr></table>
 
   <!--<p>{{event.desclong}}</p>-->
 
-  <div v-if="event.soldout" class="fa-button" style="margin-top:8px">
+  <div v-if="event.soldout" class="eventStatusMarker" style="margin-top:8px">
     <i class="fas fa-star"></i>
     <span style="font-size:smaller">SOLD OUT</span>
   </div>
+  <div v-else="event.soldout" class="eventStatusMarker" style="margin-top:8px">
+    <i class="fas fa-calendar"></i>
+    <span style="font-size:smaller">AVAILABLE</span>
+  </div>
 
   <p>
-    <span v-if="event.formatAges">{{event.formatAges}}<br></span>
-    <span v-if="event.formatTags">{{event.formatTags}}<br></span>
-    <span v-if="event.room">{{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span></span>
   </p>
 
 
 <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
 <!--<input type="hidden" name="action" value="selectMember">-->
 
-<table border="0" cellspacing="0" cellpadding="1" width="100%">
-<tbody><tr>
-<th style="white-space: nowrap; "></th>
-<th style="white-space: nowrap; "></th>
 
-</tr>
-
-      
-  <tr valign="top">
-    <td class="altcolor2" style="text-align:left;"><span id="mem_2"><img src="../../images/ticket_icon_star.png"></span></td>
-    <td class="altcolor2" style="text-align:left;">Laura Hamel</td>
-  </tr>
-
-  <tr valign="top">
-    <td class="altcolor1" style="text-align:left;"><span id="mem_151"><img src="../../images/ticket_icon_star.png"></span></td>
-    <td class="altcolor1" style="text-align:left;">Drew Hamel</td>
-  </tr>
-
-  <tr valign="top">
-<td class="altcolor2" style="text-align:left;"><span id="mem_7030"><img src="../../images/ticket_icon_star.png"></span></td>
-<td class="altcolor2" style="text-align:left;">Brandon Hamel</td>
-</tr>
-
-  <tr valign="top">
-<td class="altcolor1" style="text-align:left;"><span id="mem_7031"><img src="../../images/ticket_icon_star.png"></span></td>
-<td class="altcolor1" style="text-align:left;">Ethan Hamel</td>
-</tr>
-
-   <tr valign="top">
-<td class="altcolor2" style="text-align:left;"><span id="mem_8289"><img src="../../images/ticket_icon_star.png"></span></td>
-<td class="altcolor2" style="text-align:left;">Third Child</td>
-</tr>
-
-
-</tbody></table>
+<div v-for="member in members">
+  <member-ticket-status :member='member' :event='event'></member-ticket-status>
+</div>
 <!--<input type="submit" value="Select Envelope">-->
 
 
@@ -450,13 +424,44 @@ $content .= <<< EOD
     </script>
 
 
+<script type="text/x-template" id="member-ticket-status-template">
+<div>
+      <span v-if="hasTicket">
+        <button class="fa-button" @click="confirmRemoveTicket">
+          <span v-if="event.soldout">
+              <i class="fas fa-star"></i>
+          </span>
+          <i class="fas fa-check"></i>
+          <span style="font-size:smaller">HAS</span>
+        </button>
+      </span>
+      <span v-if="event.soldout && !hasTicket">
+        <button class="fa-button" disabled>
+          <i class="fas fa-star"></i>
+          <span style="font-size:smaller">FULL</span>
+        </button>
+      </span>
+      <span v-if="canAdd">
+        <button class="fa-button" @click="addTicket">
+          <i class="fas fa-calendar-plus"></i>
+          <span style="font-size:smaller">ADD</span>
+        </button>
+      </span>
+
+      <a :href="'../envelope.php?envelope='+member.id">{{member.formatName}}</a>
+  </p>
+</div>
+</script>
+
+
     <script src="{$config['page']['depth']}js/gcs/events.js"></script>
     <script>
 
       Vue.component("filter-event", {
         template: "#filter-event-template",
         props: {
-          filterEvents: Array
+          filterEvents: Array,
+          members: Array
         },
         data: function() {
           return {
@@ -478,6 +483,7 @@ $content .= <<< EOD
         template: "#filter-event-entry-template",
         props: {
           event: Object,
+          members: Array,
         },
         data: function() {
           return {
@@ -487,6 +493,60 @@ $content .= <<< EOD
           };
         }
       });
+
+      Vue.component("member-ticket-status", {
+        template: '#member-ticket-status-template',
+        props: {
+          member: Object,
+          event: Object
+        },
+        computed: {
+          hasTicket: function() {
+            console.log(this.member.tickets);
+            let r = this.member.tickets.find(t => t.subtype==this.event.id);
+            console.log(this.event.id);
+            console.log(r);
+            return r;
+          },
+          canAdd: function() {
+            return !this.event.soldout && !this.hasTicket;
+          }
+        },
+        methods: {
+          addTicket: function() {
+
+            // allow the user to add a ticket for the person
+            // var jqxhr = $.get( self.baseUrl+"api/user/tickets")
+            //   .done(function(data) {
+            //     console.log( "retrieve members" );
+            //     console.log( data );
+
+            //     demo.members = data;
+                // on success, adjust the tickets value
+
+            //   })
+            //   .fail(function(data) {
+            //     // probably not logged in
+            //     console.log( "error" );
+            //     console.log( data );
+            //     demo.members = null;
+            //   });
+
+
+
+
+          },
+          confirmRemoveTicket: function() {
+
+          },
+          removeTicket: function() {
+
+          }
+        }
+
+      });
+
+
 
 
       Vue.component("exp-comp-dialog", {
@@ -499,6 +559,7 @@ $content .= <<< EOD
         template: "#view-event-dialog-template",
         props: {
           event : Object,
+          members: Array,
         },
       });
 
@@ -506,10 +567,13 @@ $content .= <<< EOD
       // bootstrap the demo
       var demo = new Vue({
         el: "#demo",
-        data: {
-          eventFormatter: eventFormatter,
-          baseUrl: '{$config['page']['depth']}',
-          filteredEvents: [],
+        data: function () {
+          return {
+            eventFormatter: eventFormatter,
+            baseUrl: '{$config['page']['depth']}',
+            filteredEvents: [],
+            members: null
+          };
         },
         created: function() {
           var self = this;
@@ -518,7 +582,7 @@ $content .= <<< EOD
           // retrieve the filtered events list
           var jqxhr = $.get( self.baseUrl+"api/public/event?day={$_GET['day']}&category={$_GET['category']}&ages={$_GET['ages']}&tags={$_GET['tags']}")
             .done(function(data) {
-              console.log( "success" );
+              console.log( "retrieved filtered events" );
               console.log( data );
 
               var events = data;
@@ -540,6 +604,26 @@ $content .= <<< EOD
             .fail(function(data) {
               console.log( "error" );
               console.log( data );
+            });
+
+          // if the user is logged in, retrieve information about tickets for all their members
+          var jqxhr = $.get( self.baseUrl+"api/user/tickets")
+            .done(function(data) {
+              console.log( "retrieve members" );
+              console.log( data );
+
+              data.forEach(m => {
+                m.formatName = eventFormatter.formatGmObj(m);
+              });
+
+              demo.members = data;
+
+            })
+            .fail(function(data) {
+              // probably not logged in
+              console.log( "error" );
+              console.log( data );
+              demo.members = null;
             });
 
         }

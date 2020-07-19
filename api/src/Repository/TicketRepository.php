@@ -95,7 +95,7 @@ where id_convention=?
   and s_type = 'Ticket'
   and id_member=?
 EOD;
-        $preregOrders = $this->db->getAssoc($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
+        $preregOrders = $this->db->getArray($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
         if (!is_array($preregOrders)) {
             throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
         }

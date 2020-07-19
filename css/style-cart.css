@@ -54,3 +54,19 @@
 	color: #007BA7;
 }
 */
+
+.eventStatusMarker {
+	padding: 2px 4px;
+  	/*border-radius: 3px;*/
+
+  	/*background-image: linear-gradient(to right top, #fdbe25, #fec928, #ffd42b, #ffdf31, #ffea37); */ /* yellow */
+  	background-image: linear-gradient(to top, #555555, #333333);
+
+	font-size: 14px;
+	color: #fff0a0;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+
+  	text-align: center;
+  	text-decoration: none;
+
+}
