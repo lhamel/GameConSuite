@@ -105,7 +105,7 @@ class PublicApi extends AbstractPublicApi
             $fill = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
             $event->soldout = ($fill >= $event->maxplayers);
             if ($this->siteConfig['allow']['see_fill']) {
-                $event->fill = $fill;
+                $event->fill = (int)$fill;
             }
         }
 

@@ -368,10 +368,14 @@ $content .= <<< EOD
   <table><tr>
   <td style="width:45%;">
     {{event.formatTime}}<br>
-    <span v-if="event.fill">{{event.fill}} of </span>{{event.formatPlayers}} seats<br>
-    <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span>
+    Players: {{event.formatPlayers}}<br>
+    <span v-if="event.fill>=0">
+      Sold: {{event.fill}}<br>
+      Available: {{event.maxplayers-event.fill}}
+    </span>
   </td>
   <td>
+    <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span><br>
     GM: {{event.formatGM}}<br>
     <span v-if="event.formatAges">{{event.formatAges}}<br></span>
     <span v-if="event.room">{{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
@@ -591,6 +595,7 @@ $content .= <<< EOD
                 e.formatPlayers = eventFormatter.formatPlayers(e);
                 e.formatGM = eventFormatter.formatGmObj(e.gm);
                 e.formatTime = eventFormatter.formatTime(e);
+                // e.formatAges = eventFormatter.formatAges(e);
               });
 
               // data = data.slice().sort(function(a, b) {
