@@ -370,8 +370,8 @@ $content .= <<< EOD
     {{event.formatTime}}<br>
     Players: {{event.formatPlayers}}<br>
     <span v-if="event.fill>=0">
-      Sold: {{event.fill}}<br>
-      Available: {{event.maxplayers-event.fill}}
+      &nbsp;&nbsp;Sold: {{event.fill}}<br>
+      &nbsp;&nbsp;Available: {{event.maxplayers-event.fill}}
     </span>
   </td>
   <td>
