@@ -243,8 +243,8 @@ $content .= <<< EOD
     <filter-event-entry :event="entry" @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
   </tr>
 
-<exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
-<view-event-dialog :event="currEvent" v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
+  <exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
+  <view-event-dialog :event="currEvent" v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
 
 </div>
 </script>
@@ -375,7 +375,7 @@ $content .= <<< EOD
     <span v-if="event.fill">{{event.fill}} of </span>{{event.formatPlayers}} seats
   </p>
 
-  <p>{{event.desclong}}</p>
+  <!--<p>{{event.desclong}}</p>-->
 
   <div v-if="event.soldout" class="fa-button" style="margin-top:8px">
     <i class="fas fa-star"></i>

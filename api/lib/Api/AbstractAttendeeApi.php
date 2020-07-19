@@ -235,6 +235,28 @@ abstract class AbstractAttendeeApi
     }
 
     /**
+     * GET getUserTickets
+     * Summary: Get envelopes with tickets
+     * Notes: Get list of attendee envelopes and all the tickets for each
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getUserTickets(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $message = "How about implementing getUserTickets as a GET method in OpenAPIServer\Api\AttendeeApi class?";
+        throw new Exception($message);
+
+        $response->getBody()->write($message);
+        return $response->withStatus(501);
+    }
+
+    /**
      * DELETE removeItemFromCart
      * Summary: Remove item from cart
      * Output-Formats: [application/json]

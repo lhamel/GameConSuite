@@ -44,7 +44,7 @@ SCHEMA;
     public $addr2;
 
     /** @var string $addr3 */
-    public $addr3;
+    private $addr3;
 
     /** @var string $city */
     public $city;

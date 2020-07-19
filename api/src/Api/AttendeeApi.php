@@ -228,6 +228,54 @@ class AttendeeApi extends AbstractAttendeeApi
     }
 
 
+    /**
+     * GET getUserTickets
+     * Summary: Get envelopes with tickets
+     * Notes: Get list of attendee envelopes and all the tickets for each
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getUserTickets(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+
+        // check that the user is logged in
+        if (!$this->auth->isLogged()) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
+
+        // get the listed associates for the logged in user
+        $userId = $this->auth->getCurrentUser()['uid'];
+        $associates = $this->associates->listAssociates();
+
+        if (count($associates)==0) {
+            $response->getBody()->write('[]');
+            return $response->withStatus(200);
+        }
+
+        // get all the member associated with this login account
+        $memberIds = array_keys($associates);
+        $members = $this->memberRepository->findPrivateMembersByIds($memberIds);
+
+        // Get the tickets for each member
+        // TODO improve performance by getting all tickets at once
+        foreach ($members as $k=>$m) {
+            $memberId = $m->id;
+            $ticketItems = $this->ticketRepo->findMemberTickets($memberId);
+            $members[$k]->tickets = $ticketItems;
+        }
+
+        $response->getBody()->write(json_encode($members));
+        return $response->withStatus(200)->withHeader('Content-type', 'application/json');
+    }
+
+
     private function sortScheduleByTime($a, $b) {
         $a1 = $a['event'];
         $b1 = $b['event'];

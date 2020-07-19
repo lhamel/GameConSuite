@@ -126,6 +126,56 @@ class SlimRouter
             ],
         ],
         [
+            'httpMethod' => 'GET',
+            'basePathWithoutHost' => '',
+            'path' => '/user/tickets',
+            'apiPackage' => 'OpenAPIServer\Api',
+            'classname' => 'AbstractAttendeeApi',
+            'userClassname' => 'AttendeeApi',
+            'operationId' => 'getUserTickets',
+            'responses' => [
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Not logged in',
+                    'jsonSchema' => '{
+  "description" : "Not logged in",
+  "content" : { }
+}',
+                ],
+                'default' => [
+                    'code' => 200,
+                    'message' => 'A list of envelopes with additional ticket information',
+                    'jsonSchema' => '{
+  "description" : "A list of envelopes with additional ticket information",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "type" : "array",
+        "items" : {
+          "allOf" : [ {
+            "$ref" : "#/components/schemas/MemberPrivate"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "tickets" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/CartItem"
+                }
+              }
+            }
+          } ]
+        }
+      }
+    }
+  }
+}',
+                ],
+            ],
+            'authMethods' => [
+            ],
+        ],
+        [
             'httpMethod' => 'PUT',
             'basePathWithoutHost' => '',
             'path' => '/user/envelope/{memberId}/cart',
@@ -1135,6 +1185,33 @@ class SlimRouter
                     'jsonSchema' => '{
   "description" : "Event not found",
   "content" : { }
+}',
+                ],
+            ],
+            'authMethods' => [
+            ],
+        ],
+        [
+            'httpMethod' => 'GET',
+            'basePathWithoutHost' => '',
+            'path' => '/system/constants/events',
+            'apiPackage' => 'OpenAPIServer\Api',
+            'classname' => 'AbstractSystemApi',
+            'userClassname' => 'SystemApi',
+            'operationId' => 'getEventsConstants',
+            'responses' => [
+                'default' => [
+                    'code' => 200,
+                    'message' => 'successful operation',
+                    'jsonSchema' => '{
+  "description" : "successful operation",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200"
+      }
+    }
+  }
 }',
                 ],
             ],
