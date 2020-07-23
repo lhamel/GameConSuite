@@ -383,7 +383,7 @@ $content .= <<< EOD
 </p>
 
   <table><tr>
-  <td style="width:45%;">
+  <td style="width:150px">
     {{event.formatTime}}<br>
     Players: {{event.formatPlayers}}<br>
     <span v-if="event.fill>=0">
@@ -414,7 +414,7 @@ $content .= <<< EOD
   <p>
   </p>
 
-
+<div v-if="!event.soldout">
   <div v-if="members">
     <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
     <div v-for="member in members">
@@ -424,11 +424,12 @@ $content .= <<< EOD
   </div>
 
   <div v-else>
-    <div v-if="!event.soldout" class="eventStatusMarker" style="margin-top:8px">
+    <div class="eventStatusMarker" style="margin-top:8px">
       <i class="fas fa-user"></i>
       <span style="font-size:smaller">Log in to add tickets</span>
     </div>
   </div>
+</div>
 
               </div>
 
@@ -471,6 +472,7 @@ $content .= <<< EOD
         </button>
       </span>
 
+      <!--<i class="fas fa-envelope-open-text"></i>-->
       <a :href="'../envelope.php?envelope='+member.id">{{member.formatName}}</a>
   </p>
 </div>
@@ -549,8 +551,8 @@ $content .= <<< EOD
           hasTicket: function() {
             console.log(this.member.tickets);
             let r = this.member.tickets.find(t => t.subtype==this.event.id);
-            console.log(this.event.id);
-            console.log(r);
+            // console.log(this.event.id);
+            // console.log(r);
             return r;
           },
           canAdd: function() {
@@ -623,29 +625,62 @@ $content .= <<< EOD
         created: function() {
           var self = this;
 
-
-          // retrieve the filtered events list
-          var jqxhr = $.get( self.baseUrl+"api/public/event?day={$_GET['day']}&category={$_GET['category']}&ages={$_GET['ages']}&tags={$_GET['tags']}")
+          // retrieve the event constants
+          var jqxhr = $.get( self.baseUrl+"api/system/constants/events")
             .done(function(data) {
-              console.log( "retrieved filtered events" );
+              console.log( "retrieved event constants" );
               console.log( data );
+              eventFormatter.constants = data;
 
-              var events = data;
-              events.forEach(e => {
-                e.formatTitle = eventFormatter.formatTitle(e);
-                e.formatPlayers = eventFormatter.formatPlayers(e);
-                e.formatGM = eventFormatter.formatGmObj(e.gm);
-                e.formatStartTime = eventFormatter.formatSingleTime(e.time);
-                e.formatTime = eventFormatter.formatTime(e);
-                // e.formatAges = eventFormatter.formatAges(e);
-              });
+              // retrieve the filtered events list
+                var jqxhr = $.get( self.baseUrl+"api/public/event?day={$_GET['day']}&category={$_GET['category']}&ages={$_GET['ages']}&tags={$_GET['tags']}")
+                  .done(function(data) {
+                    console.log( "retrieved filtered events" );
+                    console.log( data );
 
-              // data = data.slice().sort(function(a, b) {
-              //   a = a.day + a.time + a.id;
-              //   b = b.day + b.time + b.id;
-              //   return (a === b ? 0 : a > b ? 1 : -1);
-              // });
-              demo.filteredEvents = events;
+                    var events = data;
+                    events.forEach(e => {
+                      e.formatTitle = eventFormatter.formatTitle(e);
+                      e.formatPlayers = eventFormatter.formatPlayers(e);
+                      e.formatGM = eventFormatter.formatGmObj(e.gm);
+                      e.formatStartTime = eventFormatter.formatSingleTime(e.time);
+                      e.formatTime = eventFormatter.formatTime(e);
+                      e.formatAges = eventFormatter.formatAges(e);
+                    });
+
+                    // data = data.slice().sort(function(a, b) {
+                    //   a = a.day + a.time + a.id;
+                    //   b = b.day + b.time + b.id;
+                    //   return (a === b ? 0 : a > b ? 1 : -1);
+                    // });
+                    demo.filteredEvents = events;
+
+                  })
+                  .fail(function(data) {
+                    console.log( "error" );
+                    console.log( data );
+                  });
+
+                // if the user is logged in, retrieve information about tickets for all their members
+                var jqxhr = $.get( self.baseUrl+"api/user/tickets")
+                  .done(function(data) {
+                    console.log( "retrieve members" );
+                    console.log( data );
+
+                    data.forEach(m => {
+                      m.formatName = eventFormatter.formatGmObj(m);
+                    });
+
+                    demo.members = data;
+
+                  })
+                  .fail(function(data) {
+                    // probably not logged in
+                    console.log( "error" );
+                    console.log( data );
+                    demo.members = null;
+                  });
+
 
             })
             .fail(function(data) {
@@ -653,25 +688,7 @@ $content .= <<< EOD
               console.log( data );
             });
 
-          // if the user is logged in, retrieve information about tickets for all their members
-          var jqxhr = $.get( self.baseUrl+"api/user/tickets")
-            .done(function(data) {
-              console.log( "retrieve members" );
-              console.log( data );
-
-              data.forEach(m => {
-                m.formatName = eventFormatter.formatGmObj(m);
-              });
-
-              demo.members = data;
-
-            })
-            .fail(function(data) {
-              // probably not logged in
-              console.log( "error" );
-              console.log( data );
-              demo.members = null;
-            });
+  
 
         }
       });

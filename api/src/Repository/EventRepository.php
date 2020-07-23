@@ -30,7 +30,7 @@ class EventRepository
     const ROLE_PLAYER_OR_THE_GM = 2;
     const ROLE_ADMIN = 3;
 
-    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', ];
+    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', 'i_agerestriction' ];
     const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo', 'b_approval'];
 
     const COND_DB_FIELDS = ['id_room', 's_table'];
@@ -306,6 +306,7 @@ EOD;
         $e->day = ucfirst(strtolower(''.$state['e_day']));
         $e->time = (float) $state['i_time'];
         $e->duration = (float) $state['i_length'];
+        $e->ages = (float) $state['i_agerestriction'];
         if (is_numeric($e->time) && $e->time > 0) {
             $e->endtime = $e->time + $e->duration;
         }

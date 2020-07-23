@@ -1,4 +1,38 @@
 var eventFormatter = {
+  // these are expected to be filled in programmatically, or some of the formatting won't work
+  constants: {},
+// {
+//     "eventType": {
+//         "1": "Board and Card Games",
+//         "2": "Miniatures",
+//         "5": "Organized Play",
+//         "4": "Role Playing",
+//         "6": "Special Events"
+//     },
+//     "days": {
+//         "FRI": "Friday",
+//         "SAT": "Saturday",
+//         "SUN": "Sunday"
+//     },
+//     "ages": {
+//         "0": "",
+//         "7": "(Ages 7+)",
+//         "13": "(Ages 13+)",
+//         "18": "(Adults 18+)",
+//         "19": "(Mature 18+)"
+//     },
+//     "exper": {
+//         "1": "No XP",
+//         "3": "Some XP",
+//         "5": "Lots XP"
+//     },
+//     "complex": {
+//         "A": "Simple",
+//         "C": "Average",
+//         "E": "Complex"
+//     }
+// }
+
   capitalize: function(str) {
     if (!str) { return str; }
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -46,5 +80,13 @@ var eventFormatter = {
     let time = eventObj.time ? eventObj.time : '';
     let endtime = eventObj.endtime ? eventObj.endtime : '';
     return day + (time? ' ' + this.formatSingleTime(time) + '-'+this.formatSingleTime(endtime)+' ET':'');
-  }
+  },
+
+  formatAges: function(eventObj) {
+    if (!eventObj) { return eventObj; }
+    let a = eventObj.ages;
+    let b = this.constants.ages[a];
+    console.log(b);
+    return (b ? b : a);
+  },
 }

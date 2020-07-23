@@ -1246,6 +1246,7 @@ components:
         - game
         - maxplayers
         - duration
+        - ages
       type: object
       properties:
         id:
@@ -1323,6 +1324,10 @@ components:
           $ref: '#/components/schemas/Room'
         table:
           type: string
+        ages:
+          type: integer
+          format: int32
+          description: the minimum age recommended by the gamemaster (7,13,18,19/Mature)
         cost:
           description: Price of event ticket
           type: number
