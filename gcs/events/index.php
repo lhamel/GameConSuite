@@ -415,7 +415,7 @@ $content .= <<< EOD
   </p>
 
 
-  <div v-if="member">
+  <div v-if="members">
     <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
     <div v-for="member in members">
       <member-ticket-status :member='member' :event='event'></member-ticket-status>
