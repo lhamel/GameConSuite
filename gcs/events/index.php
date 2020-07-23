@@ -211,9 +211,10 @@ $smarty->assign('cart_avail', array(
 $smarty->assign('REQUEST', isset($_REQUEST) ? $_REQUEST : array());
 $smarty->assign('config', $config);
 $smarty->assign('constants', $constants);
-$smarty->assign('events', isset($events) ? $events : array());
+// $smarty->assign('events', isset($events) ? $events : array());
 $smarty->assign('actions', $actions);
-$smarty->assign('showResults', true);
+// $smarty->assign('showResults', true);
+$smarty->assign('showResults', false);
 $smarty->assign('loginInfo', $associates->getLoginInfo());
 
 $content = '';
@@ -223,7 +224,6 @@ $content .= $smarty->fetch('gcs/reg/browse.tpl');
 
 
 $content .= <<< EOD
-
 
     <!-- demo root element -->
     <div id="demo">
@@ -237,12 +237,29 @@ $content .= <<< EOD
 
     </div>
 
+
+
+
 <script type="text/x-template" id="filter-event-template">
 <div>
 
-  <tr v-for="entry in filterEvents">
-    <filter-event-entry :event="entry" :members='members' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
-  </tr>
+  <div v-for="(daygroup, day) in eventsByDayAndTime">
+
+    <h2 style="text-align:center;font-size:1.6em;border:solid gray 1px;background:navy;color:white">{{day}}</h2>
+
+    <div v-for="(timegroup, time) in daygroup">
+
+      <p style="font-weight:bold;font-size:larger;border-bottom:solid black 1px; background-color:#fff0a0">{{day}} {{timegroup[0].formatStartTime}} ET</p>
+
+      <div v-for="entry in timegroup">
+        <filter-event-entry :event="entry" :members='members' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
+      </div>
+    </div>
+
+
+  </div>
+
+
 
   <exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
   <view-event-dialog :event="currEvent" :members='members' v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
@@ -389,7 +406,7 @@ $content .= <<< EOD
     <i class="fas fa-star"></i>
     <span style="font-size:smaller">SOLD OUT</span>
   </div>
-  <div v-else="event.soldout" class="eventStatusMarker" style="margin-top:8px">
+  <div v-else class="eventStatusMarker" style="margin-top:8px">
     <i class="fas fa-calendar"></i>
     <span style="font-size:smaller">AVAILABLE</span>
   </div>
@@ -398,18 +415,20 @@ $content .= <<< EOD
   </p>
 
 
-<p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
-<!--<input type="hidden" name="action" value="selectMember">-->
+  <div v-if="member">
+    <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
+    <div v-for="member in members">
+      <member-ticket-status :member='member' :event='event'></member-ticket-status>
+    </div>
+  <p style="text-align:left;margin-bottom:2px;">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>
+  </div>
 
-
-<div v-for="member in members">
-  <member-ticket-status :member='member' :event='event'></member-ticket-status>
-</div>
-<!--<input type="submit" value="Select Envelope">-->
-
-
-<p style="text-align:left;margin-bottom:2px;">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>
-
+  <div v-else>
+    <div v-if="!event.soldout" class="eventStatusMarker" style="margin-top:8px">
+      <i class="fas fa-user"></i>
+      <span style="font-size:smaller">Log in to add tickets</span>
+    </div>
+  </div>
 
               </div>
 
@@ -474,10 +493,32 @@ $content .= <<< EOD
             currEvent: Object,
           };
         },
+        computed: {
+          eventsByDayAndTime: function() {
+
+            let result = {};
+
+            let byDay = this.groupBy(this.filterEvents, 'day');
+            for (const [day, dayList] of Object.entries(byDay)) {
+              result[day] = this.groupBy(dayList, 'time');
+            }
+
+            // let result = this.groupBy(this.filterEvents, 'time');
+            console.log(result);
+            return result;
+          }
+        },
         methods: {
           showEvent: function(event) {
             currEvent = event;
             showEventDialog = true;
+          },
+          groupBy: function (arr, property) {
+            return arr.reduce(function(memo, x) {
+              if (!memo[x[property]]) { memo[x[property]] = []; }
+              memo[x[property]].push(x);
+              return memo;
+            }, {});
           }
         }
       });
@@ -594,6 +635,7 @@ $content .= <<< EOD
                 e.formatTitle = eventFormatter.formatTitle(e);
                 e.formatPlayers = eventFormatter.formatPlayers(e);
                 e.formatGM = eventFormatter.formatGmObj(e.gm);
+                e.formatStartTime = eventFormatter.formatSingleTime(e.time);
                 e.formatTime = eventFormatter.formatTime(e);
                 // e.formatAges = eventFormatter.formatAges(e);
               });

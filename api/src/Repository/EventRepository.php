@@ -114,7 +114,7 @@ EOD;
             $params[] = $tags;
         }
 
-        $findEventsQuery .= " order by E.id_event_type, e_day, i_time, E.s_number";
+        $findEventsQuery .= " order by e_day, i_time, i_length, E.id_event_type, E.s_number";
 
         $result = $this->db->getAll($findEventsQuery, $params);
         if (!is_array($result)) {
