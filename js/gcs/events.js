@@ -86,7 +86,13 @@ var eventFormatter = {
     if (!eventObj) { return eventObj; }
     let a = eventObj.ages;
     let b = this.constants.ages[a];
-    console.log(b);
+    // console.log(b);
     return (b ? b : a);
   },
+  formatDay: function(dayStr) {
+    if (!dayStr) { return dayStr; }
+    let b = this.constants.days[dayStr.toUpperCase()];
+    // console.log(this.constants.days);
+    return (b ? b : dayStr);
+  }
 }

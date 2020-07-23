@@ -232,6 +232,7 @@ $content .= <<< EOD
       <filter-event
         :filter-events="filteredEvents"
         :members="members"
+        :event-formatter="eventFormatter"
       >
       </filter-event>
 
@@ -485,8 +486,9 @@ $content .= <<< EOD
       Vue.component("filter-event", {
         template: "#filter-event-template",
         props: {
+          eventFormatter: Object,
           filterEvents: Array,
-          members: Array
+          members: Array,
         },
         data: function() {
           return {
@@ -502,7 +504,9 @@ $content .= <<< EOD
 
             let byDay = this.groupBy(this.filterEvents, 'day');
             for (const [day, dayList] of Object.entries(byDay)) {
-              result[day] = this.groupBy(dayList, 'time');
+              console.log (this.eventFormatter);
+              let d = this.eventFormatter.formatDay(day);
+              result[d] = this.groupBy(dayList, 'time');
             }
 
             // let result = this.groupBy(this.filterEvents, 'time');
