@@ -2,6 +2,7 @@
 
 namespace OpenAPIServer\Repository;
 
+use OpenAPIServer\Model\CartItem;
 use OutOfBoundsException;
 
 
@@ -101,6 +102,148 @@ EOD;
         }
 
         return $preregOrders;
+    }
+
+    /**
+     *  Use this method to add a cart item to the database. The caller is responsible for validating the item, 
+     *  including checking for limited quantities and ensuring fields are filled in.  The year will be overwritten 
+     *  with the current year.
+     *  @return the cart item, including the newly inserted ID
+     */
+    public function addVerifiedCartItem(CartItem $cartItem)
+    {
+        // TODO convert input to cart object
+        $cartItem->conventionId = $this->siteConfiguration['gcs']['year'];
+        $params = [
+            $cartItem->conventionId,
+            $cartItem->memberId,
+            $cartItem->type, 
+            $cartItem->subtype,
+            $cartItem->quantity,
+            $cartItem->price,
+            isset($cartItem->special) ? $cartItem->special : ''
+        ];
+
+        $sql = "insert into ucon_order set id_convention=?, id_member=?, s_type=?, s_subtype=?, i_quantity=?, i_price=?, s_special=?";
+        $ok = $this->db->execute($sql, $params);
+        if (!$ok) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+
+        $cartItem->id = $this->db->GetOne('SELECT LAST_INSERT_ID()');
+        return $cartItem;
+    }
+
+
+    public function updateVerifiedCartItemQuantity($memberId, $orderId, $quantity)
+    {
+        if ( !is_numeric($memberId) || !is_numeric($orderId) || !is_numeric($quantity) || $quantity>0 ) {
+            throw new \Exception("Bad input to method");
+        }
+
+        $conventionId = $this->siteConfiguration['gcs']['year'];
+
+        $params = [ $orderId, $memberId, $conventionId ];
+        $sql = "select * from ucon_order where id_order=? and id_member=? and id_convention=?";
+        $matches = $this->db->getAssoc($sql, $params);
+        if (!is_array($matches)) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+        if (count($ok) == 0) {
+            return false; // nothing to update
+        }
+
+        $params = [ $quantity, $orderId, $memberId, $conventionId ];
+        $sql = "update ucon_order set i_quantity=? where id_order=? and id_member=? and id_convention=?";
+        $ok = $this->db->execute($sql, $params);
+        if (!$ok) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+
+        return $ok;
+    }
+
+
+    public function updateVerifiedCartItemCart($memberId, $orderId, $price)
+    {
+        if ( !is_numeric($memberId) || !is_numeric($orderId) || !is_numeric($quantity) || $quantity>0 ) {
+            throw new \Exception("Bad input to method");
+        }
+
+        $conventionId = $this->siteConfiguration['gcs']['year'];
+
+        $params = [ $orderId, $memberId, $conventionId ];
+        $sql = "select * from ucon_order where id_order=? and id_member=? and id_convention=?";
+        $matches = $this->db->getAssoc($sql, $params);
+        if (!is_array($matches)) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+        if (count($ok) == 0) {
+            return false; // nothing to update
+        }
+
+        $params = [ $price, $orderId, $memberId, $conventionId ];
+        $sql = "update ucon_order set i_price=? where id_order=? and id_member=? and id_convention=?";
+        $ok = $this->db->execute($sql, $params);
+        if (!$ok) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+
+        return $ok;
+    }
+
+
+    /**
+     *  Use this method to remove a cart item to the database. The caller is responsible for validating the item, 
+     *  including checking for limited quantities and ensuring fields are filled in.  The year will be overwritten 
+     *  with the current year.
+     */
+    public function removeVerifiedCartItem($memberId, $orderId)
+    {
+
+        $conventionId = $this->siteConfiguration['gcs']['year'];
+        $params = [ $orderId, $memberId, $conventionId ];
+
+        $sql = "select * from ucon_order where id_order=? and id_member=? and id_convention=?";
+        $matches = $this->db->getAssoc($sql, $params);
+        if (!is_array($matches)) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+        if (count($matches) == 0) {
+            return false; // nothing to delete
+        }
+
+        $sql = "delete from ucon_order where id_order=? and id_member=? and id_convention=?";
+        $ok = $this->db->execute($sql, $params);
+        if (!$ok) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+
+        return $ok;
+    }
+
+    public function lookupCartItemUnitPrice(CartItem $cartItem)
+    {
+        if( 'Ticket' == $cartItem->type) {
+            // check that ticket is available
+            $event = $this->eventRepo->findById((int)$cartItem->subtype);
+            return $event->cost;
+        }
+
+        $params = [ $cartItem->type, $cartItem->subtype ];
+        $sql = "select * from ucon_prereg_items where itemtype=? and subtype=?";
+        $matches = $this->db->getAll($sql, $params);
+        if (!is_array($matches)) {
+            throw new \Exception($this->db->ErrorMsg()."\n$sql");
+        }
+        if (count($matches) == 0) {
+            throw new \Exception("Unknown item ".$cartItem->type);
+        }
+        if (count($matches) > 1) {
+            throw new \Exception("Database integrety error: Multiple matches to item unexpected ($cartItem->type, $cartItem->subtype)");
+        }
+        $item = $matches[0];
+        return $item['unit_price'];
     }
 
 }

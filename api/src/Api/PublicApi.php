@@ -48,6 +48,11 @@ class PublicApi extends AbstractPublicApi
      */
     protected $eventRepo;
 
+    /**
+     * @var TicketRepository DB access layer for tickets
+     */
+    protected $ticketRepo;
+
     protected $siteConfig;
 
     /**

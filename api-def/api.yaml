@@ -663,10 +663,13 @@ paths:
           description: Not logged in
           content: {}
         '403':
-          description: Unauthorized to access the specified envelope
+          description: Unauthorized to access the specified envelope or prereg currently closed
           content: {}
         '400':
           description: Invalid Cart Item
+          content: {}
+        '409':
+          description: Request cannot be fulfilled, e.g. ticket quantity not available
           content: {}
         '200':
           description: Created successfully
