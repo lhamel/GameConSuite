@@ -223,6 +223,8 @@ if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background
 $content .= $smarty->fetch('gcs/reg/browse.tpl');
 
 
+$buyEventsEnabled = $config['allow']['buy_events'] ? 'true':'false';
+
 $content .= <<< EOD
 
     <!-- demo root element -->
@@ -234,6 +236,7 @@ $content .= <<< EOD
         :members="members"
         :event-formatter="eventFormatter"
         :api-url="baseUrl"
+        :preregOpen="preregOpen"
         @ticket-add="updateTicketInfo"
       >
       </filter-event>
@@ -245,25 +248,17 @@ $content .= <<< EOD
 <div>
 
   <div v-for="(daygroup, day) in eventsByDayAndTime">
-
     <h2 style="text-align:center;font-size:1.6em;border:solid gray 1px;background:navy;color:white">{{day}}</h2>
-
     <div v-for="(timegroup, time) in daygroup">
-
       <p style="font-weight:bold;font-size:larger;border-bottom:solid black 1px; background-color:#fff0a0">{{day}} {{timegroup[0].formatStartTime}} ET</p>
-
       <div v-for="entry in timegroup">
         <filter-event-entry :event="entry" :members='members' :api-url='apiUrl' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
       </div>
     </div>
-
-
   </div>
 
-
-
   <exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
-  <view-event-dialog :event="currEvent" :members='members' :api-url='apiUrl' v-if="showEventDialog" @close="showEventDialog=false" @ticketAdd="ticketAdd"></view-event-dialog>
+  <view-event-dialog :preregOpen="preregOpen" :event="currEvent" :members='members' :api-url='apiUrl' v-if="showEventDialog" @close="showEventDialog=false" @ticketAdd="ticketAdd"></view-event-dialog>
 
 </div>
 </script>
@@ -415,7 +410,7 @@ $content .= <<< EOD
   <p>
   </p>
 
-<div>
+<div v-if="preregOpen">
   <div v-if="members">
     <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
     <div v-for="member in members">
@@ -430,6 +425,10 @@ $content .= <<< EOD
       <span style="font-size:smaller">Log in to add tickets</span>
     </div>
   </div>
+</div>
+
+<div v-else>
+<p>Registration is currently closed</p>
 </div>
 
               </div>
@@ -489,7 +488,8 @@ $content .= <<< EOD
           eventFormatter: Object,
           filterEvents: Array,
           members: Array,
-          apiUrl: String
+          apiUrl: String,
+          preregOpen: Boolean
         },
         data: function() {
           return {
@@ -640,7 +640,8 @@ $content .= <<< EOD
         props: {
           event : Object,
           members: Array,
-          apiUrl: String
+          apiUrl: String,
+          preregOpen: Boolean
         },
         methods: {
           ticketAdd: function(member, ticket) {
@@ -662,7 +663,8 @@ $content .= <<< EOD
             eventFormatter: eventFormatter,
             baseUrl: '{$config['page']['depth']}',
             filteredEvents: [],
-            members: []
+            members: [],
+            preregOpen: {$buyEventsEnabled},
           };
         },
         methods: {
