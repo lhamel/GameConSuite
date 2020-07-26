@@ -94,5 +94,17 @@ var eventFormatter = {
     let b = this.constants.days[dayStr.toUpperCase()];
     // console.log(this.constants.days);
     return (b ? b : dayStr);
+  },
+  formatExper: function(experStr) {
+    if (!experStr) { return experStr; }
+    let b = this.constants.exper[experStr.toUpperCase()];
+    // console.log(this.constants.days);
+    return (b ? b : experStr);
+  },
+  formatComplex: function(complexStr) {
+    if (!complexStr) { return complexStr; }
+    let b = this.constants.complex[complexStr.toUpperCase()];
+    // console.log(this.constants.days);
+    return (b ? b : complexStr);
   }
 }

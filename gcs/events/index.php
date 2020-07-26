@@ -236,7 +236,7 @@ $content .= <<< EOD
         :members="members"
         :event-formatter="eventFormatter"
         :api-url="baseUrl"
-        :preregOpen="preregOpen"
+        :prereg-open="preregOpen"
         @ticket-add="updateTicketInfo"
       >
       </filter-event>
@@ -280,7 +280,7 @@ $content .= <<< EOD
     <strong>{{event.formatTitle}}</strong>,
     GM: <a :href="'{$config['page']['depth']}gcs/events/search.php?search='+event.gm.lastName">{{event.formatGM}}</a>,
     {{event.maxplayers}} seats, 
-    <a href="#" @click.prevent="\$emit('showExpCompDialog')">{{event.exper}}/{{event.complex}}</a>,
+    <a href="#" @click.prevent="\$emit('showExpCompDialog')">{{event.formatExper}}/{{event.formatComplex}}</a>,
 
     {{event.formatTime}}.
     {{event.desclong}}
@@ -712,6 +712,8 @@ $content .= <<< EOD
                       e.formatStartTime = eventFormatter.formatSingleTime(e.time);
                       e.formatTime = eventFormatter.formatTime(e);
                       e.formatAges = eventFormatter.formatAges(e);
+                      e.formatExper = eventFormatter.formatExper(e.exper);
+                      e.formatComplex = eventFormatter.formatComplex(e.complex);
                     });
 
                     // data = data.slice().sort(function(a, b) {
