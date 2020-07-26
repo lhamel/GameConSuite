@@ -87,6 +87,12 @@ class PublicApi extends AbstractPublicApi
      */
     public function getFilteredEvents(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
+        // check that registration view and buy are enabled
+        if(!$this->siteConfig['allow']['view_events']) {
+            $response->getBody()->write('Viewing events is currently disabled');
+            return $response->withStatus(401);
+        }
+
         $queryParams = $request->getQueryParams();
         $search = (key_exists('search', $queryParams)) ? $queryParams['search'] : null;
         $day = (key_exists('day', $queryParams)) ? $queryParams['day'] : null;
@@ -133,6 +139,12 @@ class PublicApi extends AbstractPublicApi
      */
     public function getPublicEventById(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
+        // check that registration view and buy are enabled
+        if(!$this->siteConfig['allow']['view_events']) {
+            $response->getBody()->write('Viewing events is currently disabled');
+            return $response->withStatus(401);
+        }
+
         $eventId = $args['eventId'];
 
         if ($this->eventRepo == null) {

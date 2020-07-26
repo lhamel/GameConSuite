@@ -96,6 +96,9 @@ paths:
         '400':
           description: Invalid ID supplied
           content: {}
+        '401':
+          description: Registration is currently disabled
+          content: {}
         '404':
           description: Event not found
           content: {}
@@ -126,6 +129,9 @@ paths:
                 $ref: '#/components/schemas/Event'
         '400':
           description: Invalid ID supplied
+          content: {}
+        '401':
+          description: Registration is currently disabled
           content: {}
         '404':
           description: Event not found
@@ -660,10 +666,10 @@ paths:
         required: true
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is currently disabled
           content: {}
         '403':
-          description: Unauthorized to access the specified envelope or prereg currently closed
+          description: Unauthorized to access the specified envelope
           content: {}
         '400':
           description: Invalid Cart Item
@@ -703,7 +709,7 @@ paths:
             format: int64
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is current disabled
           content: {}
         '403':
           description: Unauthorized to access the specified envelope
@@ -742,7 +748,7 @@ paths:
             format: int64
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is current disabled
           content: {}
         '403':
           description: Unauthorized to access the specified envelope

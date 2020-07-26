@@ -297,8 +297,8 @@ class AttendeeApi extends AbstractAttendeeApi
 
         // check that registration view and buy are enabled
         if(!$this->siteConfig['allow']['view_events'] || !$this->siteConfig['allow']['buy_events']) {
-            $response->getBody()->write('Buying events is disabled');
-            return $response->withStatus(403);
+            $response->getBody()->write('Modifying registration is currently disabled');
+            return $response->withStatus(401);
         }
 
         // check that the user is logged in
@@ -428,6 +428,12 @@ class AttendeeApi extends AbstractAttendeeApi
      */
     public function removeItemFromCart(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
+        // check that registration view and buy are enabled
+        if(!$this->siteConfig['allow']['view_events'] || !$this->siteConfig['allow']['buy_events']) {
+            $response->getBody()->write('Modifying registration is currently disabled');
+            return $response->withStatus(401);
+        }
+
         $memberId = $args['memberId'];
         $itemId = $args['itemId'];
 

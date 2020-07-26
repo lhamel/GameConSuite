@@ -186,17 +186,17 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is currently disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is currently disabled",
   "content" : { }
 }',
                 ],
                 '403' => [
                     'code' => 403,
-                    'message' => 'Unauthorized to access the specified envelope or prereg currently closed',
+                    'message' => 'Unauthorized to access the specified envelope',
                     'jsonSchema' => '{
-  "description" : "Unauthorized to access the specified envelope or prereg currently closed",
+  "description" : "Unauthorized to access the specified envelope",
   "content" : { }
 }',
                 ],
@@ -476,9 +476,9 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is current disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is current disabled",
   "content" : { }
 }',
                 ],
@@ -527,9 +527,9 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is current disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is current disabled",
   "content" : { }
 }',
                 ],
@@ -1139,6 +1139,14 @@ class SlimRouter
   "content" : { }
 }',
                 ],
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Registration is currently disabled',
+                    'jsonSchema' => '{
+  "description" : "Registration is currently disabled",
+  "content" : { }
+}',
+                ],
                 '404' => [
                     'code' => 404,
                     'message' => 'Event not found',
@@ -1184,6 +1192,14 @@ class SlimRouter
                     'message' => 'Invalid ID supplied',
                     'jsonSchema' => '{
   "description" : "Invalid ID supplied",
+  "content" : { }
+}',
+                ],
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Registration is currently disabled',
+                    'jsonSchema' => '{
+  "description" : "Registration is currently disabled",
   "content" : { }
 }',
                 ],
