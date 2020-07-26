@@ -233,12 +233,12 @@ $content .= <<< EOD
         :filter-events="filteredEvents"
         :members="members"
         :event-formatter="eventFormatter"
+        :api-url="baseUrl"
+        @ticket-add="updateTicketInfo"
       >
       </filter-event>
 
     </div>
-
-
 
 
 <script type="text/x-template" id="filter-event-template">
@@ -253,7 +253,7 @@ $content .= <<< EOD
       <p style="font-weight:bold;font-size:larger;border-bottom:solid black 1px; background-color:#fff0a0">{{day}} {{timegroup[0].formatStartTime}} ET</p>
 
       <div v-for="entry in timegroup">
-        <filter-event-entry :event="entry" :members='members' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
+        <filter-event-entry :event="entry" :members='members' :api-url='apiUrl' @showExpCompDialog="showExpCompDialog=true" @showEventDialog="currEvent=entry; showEventDialog=true"></filter-event-entry>
       </div>
     </div>
 
@@ -263,7 +263,7 @@ $content .= <<< EOD
 
 
   <exp-comp-dialog v-if="showExpCompDialog" @close="showExpCompDialog=false"></exp-comp-dialog>
-  <view-event-dialog :event="currEvent" :members='members' v-if="showEventDialog" @close="showEventDialog=false"></view-event-dialog>
+  <view-event-dialog :event="currEvent" :members='members' :api-url='apiUrl' v-if="showEventDialog" @close="showEventDialog=false" @ticketAdd="ticketAdd"></view-event-dialog>
 
 </div>
 </script>
@@ -415,11 +415,11 @@ $content .= <<< EOD
   <p>
   </p>
 
-<div v-if="!event.soldout">
+<div>
   <div v-if="members">
     <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
     <div v-for="member in members">
-      <member-ticket-status :member='member' :event='event'></member-ticket-status>
+      <member-ticket-status :member='member' :event='event' :api-url='apiUrl' @ticketAdd="ticketAdd"></member-ticket-status>
     </div>
   <p style="text-align:left;margin-bottom:2px;">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>
   </div>
@@ -489,6 +489,7 @@ $content .= <<< EOD
           eventFormatter: Object,
           filterEvents: Array,
           members: Array,
+          apiUrl: String
         },
         data: function() {
           return {
@@ -499,7 +500,6 @@ $content .= <<< EOD
         },
         computed: {
           eventsByDayAndTime: function() {
-
             let result = {};
 
             let byDay = this.groupBy(this.filterEvents, 'day');
@@ -520,11 +520,16 @@ $content .= <<< EOD
             showEventDialog = true;
           },
           groupBy: function (arr, property) {
+            if (!arr) { return arr; }
             return arr.reduce(function(memo, x) {
               if (!memo[x[property]]) { memo[x[property]] = []; }
               memo[x[property]].push(x);
               return memo;
             }, {});
+          },
+          ticketAdd: function(member, ticket){
+            console.log('filter-event');
+            this.\$emit('ticket-add', member, ticket);
           }
         }
       });
@@ -549,7 +554,8 @@ $content .= <<< EOD
         template: '#member-ticket-status-template',
         props: {
           member: Object,
-          event: Object
+          event: Object,
+          apiUrl: String
         },
         computed: {
           hasTicket: function() {
@@ -565,26 +571,49 @@ $content .= <<< EOD
         },
         methods: {
           addTicket: function() {
+            var self = this;
 
-            // allow the user to add a ticket for the person
-            // var jqxhr = $.get( self.baseUrl+"api/user/tickets")
-            //   .done(function(data) {
-            //     console.log( "retrieve members" );
-            //     console.log( data );
+            console.log ("add tickets");
+            console.log(this.member);
 
-            //     demo.members = data;
-                // on success, adjust the tickets value
+            let url = this.apiUrl+"api/user/envelope/"+this.member.id+"/cart";
+            console.log(url);
 
-            //   })
-            //   .fail(function(data) {
-            //     // probably not logged in
-            //     console.log( "error" );
-            //     console.log( data );
-            //     demo.members = null;
-            //   });
+            let body = {
+              "type": "Ticket",
+              "subtype": this.event.id,
+              "quantity": 1
+            };
 
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: JSON.stringify(body),
+              contentType: 'application/json',
+              dataType: 'json'
+            })
+              .done(function(data) {
+                console.log( "member-ticket-status - succeeded adding ticket" );
+                console.log( self.member );
+                console.log( data );
 
+                // TODO convert alert to dialog
+                //alert("Added ticket #"+data.subtype);
 
+                // TODO on success, adjust the tickets value
+                self.\$emit('ticketAdd', self.member, data);
+
+              })
+              .fail(function(data) {
+
+                // TODO display the error message
+                //alert(data);
+
+                // probably not logged in
+                console.log( "error" );
+                console.log( data.responseText );
+                alert(data.responseText);
+              });
 
           },
           confirmRemoveTicket: function() {
@@ -611,7 +640,17 @@ $content .= <<< EOD
         props: {
           event : Object,
           members: Array,
+          apiUrl: String
         },
+        methods: {
+          ticketAdd: function(member, ticket) {
+            console.log("view-event-dialog - ticket add, passing upward")
+            console.log(member);
+            console.log(ticket);
+
+            this.\$emit('ticketAdd', member, ticket);
+          }
+        }
       });
 
 
@@ -623,8 +662,29 @@ $content .= <<< EOD
             eventFormatter: eventFormatter,
             baseUrl: '{$config['page']['depth']}',
             filteredEvents: [],
-            members: null
+            members: []
           };
+        },
+        methods: {
+          updateTicketInfo: function(member, ticket) {
+            console.log("ticket added");
+
+            // TODO add the ticket to the member's ticket list
+            let m = this.members.find(t => t.id==member.id);
+            m.tickets.push(ticket);
+
+            // TODO add the ticket quanitity to the event prereg count, or reload to check for sold-out status
+            let e = this.filteredEvents.find(t => t.id==ticket.subtype);
+            console.log (e);
+            // TODO manipulate the prereg count or refresh for sold-out status
+            if (e.fill >= 0) {
+              e.fill += ticket.quantity;
+              if (e.fill >= e.maxplayers) { e.soldout=true; }
+            } else {
+              // TODO fetch info
+            }
+
+          }
         },
         created: function() {
           var self = this;
