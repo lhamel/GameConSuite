@@ -176,7 +176,7 @@ class SlimRouter
             ],
         ],
         [
-            'httpMethod' => 'PUT',
+            'httpMethod' => 'POST',
             'basePathWithoutHost' => '',
             'path' => '/user/envelope/{memberId}/cart',
             'apiPackage' => 'OpenAPIServer\Api',
@@ -194,9 +194,9 @@ class SlimRouter
                 ],
                 '403' => [
                     'code' => 403,
-                    'message' => 'Unauthorized to access the specified envelope',
+                    'message' => 'Unauthorized to access the specified envelope or prereg currently closed',
                     'jsonSchema' => '{
-  "description" : "Unauthorized to access the specified envelope",
+  "description" : "Unauthorized to access the specified envelope or prereg currently closed",
   "content" : { }
 }',
                 ],
@@ -205,6 +205,14 @@ class SlimRouter
                     'message' => 'Invalid Cart Item',
                     'jsonSchema' => '{
   "description" : "Invalid Cart Item",
+  "content" : { }
+}',
+                ],
+                '409' => [
+                    'code' => 409,
+                    'message' => 'Request cannot be fulfilled, e.g. ticket quantity not available',
+                    'jsonSchema' => '{
+  "description" : "Request cannot be fulfilled, e.g. ticket quantity not available",
   "content" : { }
 }',
                 ],

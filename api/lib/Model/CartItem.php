@@ -57,6 +57,10 @@ class CartItem implements ModelInterface
     "price" : {
       "type" : "number",
       "format" : "float"
+    },
+    "special" : {
+      "type" : "string",
+      "description" : "for badges, the name on the badge"
     }
   }
 }
@@ -83,8 +87,8 @@ SCHEMA;
     /** @var float $price */
     public $price;
 
-    /** @var string $special */
     public $special;
+    /** @var string $special for badges, the name on the badge*/
 
     /**
      * Returns model schema.

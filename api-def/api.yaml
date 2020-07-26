@@ -635,7 +635,7 @@ paths:
       # security:
       #   - GCS_Auth:
       #     - 'attendee'
-    put:
+    post:
       tags:
         - attendee
       summary: Add an item to the cart
@@ -1447,6 +1447,9 @@ components:
         price:
           type: number
           format: float
+        special:
+          type: string
+          description: for badges, the name on the badge
     Badge:
       type: object
     Ticket:

@@ -57,7 +57,7 @@ abstract class AbstractAttendeeApi
 
 
     /**
-     * PUT addItemToCart
+     * POST addItemToCart
      * Summary: Add an item to the cart
      * Output-Formats: [application/json]
      *
@@ -72,7 +72,7 @@ abstract class AbstractAttendeeApi
     {
         $memberId = $args['memberId'];
         $body = $request->getParsedBody();
-        $message = "How about implementing addItemToCart as a PUT method in OpenAPIServer\Api\AttendeeApi class?";
+        $message = "How about implementing addItemToCart as a POST method in OpenAPIServer\Api\AttendeeApi class?";
         throw new Exception($message);
 
         $response->getBody()->write($message);

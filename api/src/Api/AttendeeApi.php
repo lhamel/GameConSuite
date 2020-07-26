@@ -375,14 +375,14 @@ class AttendeeApi extends AbstractAttendeeApi
                 // check that ticket is available
                 $event = $this->eventRepo->findById((int)$subtype);
                 $counts = $this->ticketRepo->findCurrentTicketCountByEvents([(int)$subtype]);
-                $count = $counts[(int)$subtype];
+                $count = isset($counts[(int)$subtype]) ? $counts[(int)$subtype] : 0;
 
                 $ticketsLeft = $event->maxplayers - $count;
                 if ($ticketsLeft <= 0) {
                     $response->getBody()->write('Event sold out');
                     return $response->withStatus(409);
                 }
-                if ($ticketsLeft <= $quantity) {
+                if ($ticketsLeft < $quantity) {
                     $response->getBody()->write("Not enough tickets: $quantity wanted, $ticketsLeft left");
                     return $response->withStatus(409);
                 }
