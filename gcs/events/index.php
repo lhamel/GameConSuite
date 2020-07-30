@@ -67,9 +67,7 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 
 <hr>
 
-
-      <h3>Results</h3>
-      <filter-event
+      <filter-event v-if="filteredEvents.length"
         :filter-events="filteredEvents"
         :members="members"
         :event-formatter="eventFormatter"
@@ -111,6 +109,8 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 
 <script type="text/x-template" id="filter-event-template">
 <div>
+
+  <h3>Results</h3>
 
   <div v-for="(daygroup, day) in eventsByDayAndTime">
     <h2 style="text-align:center;font-size:1.6em;border:solid gray 1px;background:navy;color:white">{{day}}</h2>
