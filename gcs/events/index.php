@@ -3,7 +3,7 @@ require_once '../../inc/inc.php';
 
 $year = $config['gcs']['year'];
 require_once INC_PATH.'smarty.php';
-$location = 'gcs/events/browse.php';
+$location = 'gcs/events/index.php';
 require_once INC_PATH.'layout/menu.php';
 include_once INC_PATH.'auth.php';
 
@@ -105,8 +105,8 @@ $content .= <<< EOD
     <div id="demo">
 
 <h1>Browse Events</h1>
-<form>
-Keyword: <input v-model="filterSearch" @change="updateSearch" name="search" value="">
+<form @submit.prevent>
+Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 </form>
 
 <filter-selection label="Day" :options="filterOptions.day" :selected="filterSelections.day" @update="updateDay"></filter-selection>
@@ -192,7 +192,7 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search" valu
 
     {{event.id}}
     <strong>{{event.formatTitle}}</strong>,
-    GM: <a :href="'{$config['page']['depth']}gcs/events/search.php?search='+event.gm.lastName">{{event.formatGM}}</a>,
+    GM: <a :href="'{$config['page']['depth']}gcs/events/index.php?search='+event.gm.lastName">{{event.formatGM}}</a>,
     {{event.maxplayers}} seats, 
     <a href="#" @click.prevent="\$emit('showExpCompDialog')">{{event.formatExper}}/{{event.formatComplex}}</a>,
 
