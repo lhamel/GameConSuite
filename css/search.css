@@ -21,6 +21,12 @@
 
 .content a.selected {
   font-weight: bold;
-  color: darkred;
+  color: #880000;
+
+  padding-left: 3px;
+  padding-right: 3px;
+  border: solid 1px #880000;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
 }
 

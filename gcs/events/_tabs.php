@@ -8,8 +8,7 @@ if (!$config['allow']['view_events']) {
 }
 
 $tabs = array(
-  array('link'=>'gcs/events/browse.php', 'label'=>'Browse Tickets'),
-  array('link'=>'gcs/events/search.php', 'label'=>'Search Tickets'),
+  array('link'=>'gcs/events/index.php', 'label'=>'Find Tickets'),
   array('link'=>'gcs/reg/additional.php', 'label'=>'Generics, Shirts, &amp; Misc'),
   array('link'=>'gcs/reg/register.php', 'label'=>'Badges'),
 //  array('link'=>'gcs/reg/cart.php', 'label'=>'<img src="'.BASE_PATH.'images/gcs/reg/cart-16.png" style="vertical-align:text-bottom;"/> Cart'),

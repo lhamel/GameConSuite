@@ -30,7 +30,7 @@ class EventRepository
     const ROLE_PLAYER_OR_THE_GM = 2;
     const ROLE_ADMIN = 3;
 
-    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', ];
+    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', 'i_agerestriction' ];
     const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo', 'b_approval'];
 
     const COND_DB_FIELDS = ['id_room', 's_table'];
@@ -43,15 +43,6 @@ class EventRepository
     //     self::ROLE_ADMIN => self::PUBLIC_DB_FIELDS + self::LIMITED_DB_FIELDS + self::ADMIN_DB_FIELDS,
     // ];
 
-
-    private $findEventsQuery = <<< EOD
-        select *
-        from ucon_event as E, ucon_member as M
-        where id_convention=?
-          and E.id_gm = M.id_member
-          and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?)
-          and b_approval=1
-EOD;
 
     public function __construct(\ADOConnection $db, CategoryRepository $categoryRepository, MemberRepository $memberRepository, RoomRepository $roomRepository)
     {
@@ -68,26 +59,73 @@ EOD;
      */
     public function findPublicEvents($idConvention, $search, $day, $categoryId, $ages, $tags /*, string $sort */) : array
     {
-        $wildcard = '%'.$search.'%';
-
-        // search for matching GMs and gather a list
-
-        // $result = $this->db->getAll($this->findGMsQuery, [$wildcard, $wildcard, $wildcard]);
-        // if (!is_array($result)) {
-        //     throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
-        // }
-
-        // search for matching events, including those with GMs listed above
-        // filter for all filter parameters
-
-        // TODO need to retrieve all the GM information can cache it for retrieval!!
-
-
-        $result = $this->db->getAll($this->findEventsQuery, [$idConvention, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard, $wildcard]);
-        if (!is_array($result)) {
-            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        //validate input
+        if (!is_numeric($idConvention)) {
+            throw new \Exception("convention ID must be a number");
+        }
+        if ($categoryId!=null && !is_numeric($categoryId)) {
+            throw new \Exception("category ID must be a number");
+        }
+        if ($ages!=null && !is_numeric($ages)) {
+            throw new \Exception("ages must be a number");
+        }
+        if ($tags!=null && !is_numeric($tags)) {
+            throw new \Exception("tag must be a number");
         }
 
+        // search for events that match the search and filter parameters
+
+        $findEventsQuery = <<< EOD
+            select E.*
+            from ucon_event as E, ucon_member as M
+            where id_convention=?
+              and E.id_gm = M.id_member
+              and (not (e_day='' OR i_time=0 OR isNull(e_day) OR isNull(i_time)))
+              and b_approval=1
+EOD;
+        $params = [$idConvention];
+
+        if ($search!=null) {
+            $wildcard = '%'.$search.'%';
+            $findEventsQuery .= " and (s_game LIKE ? or s_desc LIKE ? or s_number LIKE ? or s_lname LIKE ? or s_fname LIKE ? or s_group LIKE ?) ";
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+            $params[] = $wildcard;
+        }
+
+        if (isset($categoryId) && $categoryId!=null) {
+            $findEventsQuery .= " and E.id_event_type=? ";
+            $params[] = $categoryId;
+        }
+        if (isset($day) && $day!=null) {
+            $findEventsQuery .= " and E.e_day=?";
+            $params[] = $day;
+        }
+        if (isset($ages) && $ages!=null) {
+            $findEventsQuery .= " and E.i_agerestriction=?";
+            $params[] = $ages;
+        }
+        if (isset($tags) && $tags !=null) {
+            // TODO fixme this is inefficient
+            $findEventsQuery .= " and E.id_event in (select id_event from ucon_event_tag where id_tag=?)";
+            $params[] = $tags;
+        }
+
+        $findEventsQuery .= " order by e_day, i_time, i_length, E.id_event_type, E.s_number";
+
+        $result = $this->db->getAll($findEventsQuery, $params);
+        if (!is_array($result)) {
+            throw new \Exception("SQL Error (".__LINE__."): ".$this->db->ErrorMsg()."\n".$findEventsQuery);
+        }
+
+        if (count($result) == 0) {
+            return [];
+        }
+
+        // TODO fixme slightly inefficient because GM names are already included above
         // cache GMs in the MemberRepository
         $gmIds = [];
         foreach ($result as $row) {
@@ -268,6 +306,7 @@ EOD;
         $e->day = ucfirst(strtolower(''.$state['e_day']));
         $e->time = (float) $state['i_time'];
         $e->duration = (float) $state['i_length'];
+        $e->ages = (float) $state['i_agerestriction'];
         if (is_numeric($e->time) && $e->time > 0) {
             $e->endtime = $e->time + $e->duration;
         }

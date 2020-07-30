@@ -69,7 +69,7 @@ $menu['items'] = array(
     array('label'=>'Submit Events', 'link'=>'gcs/gm/submit.php'),
   )),
   array('label'=>'Registration', 'children'=>array(
-    array('label'=>'Find Events', 'link'=>'gcs/events/browse.php'),
+    array('label'=>'Find Events', 'link'=>'gcs/events/index.php'),
     array('label'=>'Register Now', 'link'=>'gcs/reg/register.php'),
     array('label'=>'Additional Options', 'link'=>'gcs/reg/additional.php'),
 )),

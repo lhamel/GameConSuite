@@ -126,7 +126,57 @@ class SlimRouter
             ],
         ],
         [
-            'httpMethod' => 'PUT',
+            'httpMethod' => 'GET',
+            'basePathWithoutHost' => '',
+            'path' => '/user/tickets',
+            'apiPackage' => 'OpenAPIServer\Api',
+            'classname' => 'AbstractAttendeeApi',
+            'userClassname' => 'AttendeeApi',
+            'operationId' => 'getUserTickets',
+            'responses' => [
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Not logged in',
+                    'jsonSchema' => '{
+  "description" : "Not logged in",
+  "content" : { }
+}',
+                ],
+                'default' => [
+                    'code' => 200,
+                    'message' => 'A list of envelopes with additional ticket information',
+                    'jsonSchema' => '{
+  "description" : "A list of envelopes with additional ticket information",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "type" : "array",
+        "items" : {
+          "allOf" : [ {
+            "$ref" : "#/components/schemas/MemberPrivate"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "tickets" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/CartItem"
+                }
+              }
+            }
+          } ]
+        }
+      }
+    }
+  }
+}',
+                ],
+            ],
+            'authMethods' => [
+            ],
+        ],
+        [
+            'httpMethod' => 'POST',
             'basePathWithoutHost' => '',
             'path' => '/user/envelope/{memberId}/cart',
             'apiPackage' => 'OpenAPIServer\Api',
@@ -136,9 +186,9 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is currently disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is currently disabled",
   "content" : { }
 }',
                 ],
@@ -155,6 +205,14 @@ class SlimRouter
                     'message' => 'Invalid Cart Item',
                     'jsonSchema' => '{
   "description" : "Invalid Cart Item",
+  "content" : { }
+}',
+                ],
+                '409' => [
+                    'code' => 409,
+                    'message' => 'Request cannot be fulfilled, e.g. ticket quantity not available',
+                    'jsonSchema' => '{
+  "description" : "Request cannot be fulfilled, e.g. ticket quantity not available",
   "content" : { }
 }',
                 ],
@@ -418,9 +476,9 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is current disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is current disabled",
   "content" : { }
 }',
                 ],
@@ -469,9 +527,9 @@ class SlimRouter
             'responses' => [
                 '401' => [
                     'code' => 401,
-                    'message' => 'Not logged in',
+                    'message' => 'Not logged in, or registration is current disabled',
                     'jsonSchema' => '{
-  "description" : "Not logged in",
+  "description" : "Not logged in, or registration is current disabled",
   "content" : { }
 }',
                 ],
@@ -1081,6 +1139,14 @@ class SlimRouter
   "content" : { }
 }',
                 ],
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Registration is currently disabled',
+                    'jsonSchema' => '{
+  "description" : "Registration is currently disabled",
+  "content" : { }
+}',
+                ],
                 '404' => [
                     'code' => 404,
                     'message' => 'Event not found',
@@ -1129,12 +1195,47 @@ class SlimRouter
   "content" : { }
 }',
                 ],
+                '401' => [
+                    'code' => 401,
+                    'message' => 'Registration is currently disabled',
+                    'jsonSchema' => '{
+  "description" : "Registration is currently disabled",
+  "content" : { }
+}',
+                ],
                 '404' => [
                     'code' => 404,
                     'message' => 'Event not found',
                     'jsonSchema' => '{
   "description" : "Event not found",
   "content" : { }
+}',
+                ],
+            ],
+            'authMethods' => [
+            ],
+        ],
+        [
+            'httpMethod' => 'GET',
+            'basePathWithoutHost' => '',
+            'path' => '/system/constants/events',
+            'apiPackage' => 'OpenAPIServer\Api',
+            'classname' => 'AbstractSystemApi',
+            'userClassname' => 'SystemApi',
+            'operationId' => 'getEventsConstants',
+            'responses' => [
+                'default' => [
+                    'code' => 200,
+                    'message' => 'successful operation',
+                    'jsonSchema' => '{
+  "description" : "successful operation",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200"
+      }
+    }
+  }
 }',
                 ],
             ],

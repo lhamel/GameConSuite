@@ -57,31 +57,38 @@ class CartItem implements ModelInterface
     "price" : {
       "type" : "number",
       "format" : "float"
+    },
+    "special" : {
+      "type" : "string",
+      "description" : "for badges, the name on the badge"
     }
   }
 }
 SCHEMA;
 
     /** @var int $id */
-    private $id;
+    public $id;
 
     /** @var int $conventionId */
-    private $conventionId;
+    public $conventionId;
 
     /** @var int $memberId */
-    private $memberId;
+    public $memberId;
 
     /** @var string $type */
-    private $type;
+    public $type;
 
     /** @var string $subtype for tickets, this is the id of the event*/
-    private $subtype;
+    public $subtype;
 
     /** @var int $quantity */
-    private $quantity;
+    public $quantity;
 
     /** @var float $price */
-    private $price;
+    public $price;
+
+    public $special;
+    /** @var string $special for badges, the name on the badge*/
 
     /**
      * Returns model schema.

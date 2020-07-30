@@ -57,7 +57,7 @@ abstract class AbstractAttendeeApi
 
 
     /**
-     * PUT addItemToCart
+     * POST addItemToCart
      * Summary: Add an item to the cart
      * Output-Formats: [application/json]
      *
@@ -72,7 +72,7 @@ abstract class AbstractAttendeeApi
     {
         $memberId = $args['memberId'];
         $body = $request->getParsedBody();
-        $message = "How about implementing addItemToCart as a PUT method in OpenAPIServer\Api\AttendeeApi class?";
+        $message = "How about implementing addItemToCart as a POST method in OpenAPIServer\Api\AttendeeApi class?";
         throw new Exception($message);
 
         $response->getBody()->write($message);
@@ -228,6 +228,28 @@ abstract class AbstractAttendeeApi
     public function getUserEnvelopes(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
         $message = "How about implementing getUserEnvelopes as a GET method in OpenAPIServer\Api\AttendeeApi class?";
+        throw new Exception($message);
+
+        $response->getBody()->write($message);
+        return $response->withStatus(501);
+    }
+
+    /**
+     * GET getUserTickets
+     * Summary: Get envelopes with tickets
+     * Notes: Get list of attendee envelopes and all the tickets for each
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getUserTickets(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $message = "How about implementing getUserTickets as a GET method in OpenAPIServer\Api\AttendeeApi class?";
         throw new Exception($message);
 
         $response->getBody()->write($message);

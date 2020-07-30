@@ -28,6 +28,8 @@ tags:
     description: Operations available to logged in users
   - name: gamemaster
     description: Event submission and edit capabilities for logged in users
+  - name: system
+    description: System lists and configuration
   - name: event
     description: Operations about events
   - name: member
@@ -94,6 +96,9 @@ paths:
         '400':
           description: Invalid ID supplied
           content: {}
+        '401':
+          description: Registration is currently disabled
+          content: {}
         '404':
           description: Event not found
           content: {}
@@ -124,6 +129,9 @@ paths:
                 $ref: '#/components/schemas/Event'
         '400':
           description: Invalid ID supplied
+          content: {}
+        '401':
+          description: Registration is currently disabled
           content: {}
         '404':
           description: Event not found
@@ -240,6 +248,35 @@ paths:
         '401':
           description: Not logged in
           content: {}
+      # security:
+      #   - GCS_Auth:
+      #     - 'attendee'
+  /user/tickets:
+    get:
+      tags:
+        - attendee
+      summary: Get envelopes with tickets
+      description: Get list of attendee envelopes and all the tickets for each
+      operationId: getUserTickets
+      responses:
+        '401':
+          description: Not logged in
+          content: {}
+        '200':
+          description: A list of envelopes with additional ticket information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:     # Combines the BasicErrorModel and the inline model
+                    - $ref: '#/components/schemas/MemberPrivate'
+                    - type: object
+                      properties:
+                        tickets:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/CartItem'
       # security:
       #   - GCS_Auth:
       #     - 'attendee'
@@ -604,7 +641,7 @@ paths:
       # security:
       #   - GCS_Auth:
       #     - 'attendee'
-    put:
+    post:
       tags:
         - attendee
       summary: Add an item to the cart
@@ -629,13 +666,16 @@ paths:
         required: true
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is currently disabled
           content: {}
         '403':
           description: Unauthorized to access the specified envelope
           content: {}
         '400':
           description: Invalid Cart Item
+          content: {}
+        '409':
+          description: Request cannot be fulfilled, e.g. ticket quantity not available
           content: {}
         '200':
           description: Created successfully
@@ -669,7 +709,7 @@ paths:
             format: int64
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is current disabled
           content: {}
         '403':
           description: Unauthorized to access the specified envelope
@@ -708,7 +748,7 @@ paths:
             format: int64
       responses:
         '401':
-          description: Not logged in
+          description: Not logged in, or registration is current disabled
           content: {}
         '403':
           description: Unauthorized to access the specified envelope
@@ -734,6 +774,47 @@ paths:
 # TODO add badge
 # TODO change item quantity
 # TODO remove item or ticket
+
+
+  '/system/constants/events':
+    get:
+      tags:
+        - system
+      summary: Provide keys/value pairs for event-related configuration options
+      description: Returns an object containing key/value lookup for various event-related options
+      operationId: getEventsConstants
+      parameters:
+        - name: abbrDays
+          in: query
+          description: 1 if using 3-letter abbreviations, 0 if full name
+          schema:
+            type: integer
+            format: int32
+        - name: fullExpComp
+          in: query
+          description: 1 if the backwards compatible long list, omitted or 0 if the default list for experience and complexity
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventType:
+                    type: object
+                  days:
+                    type: object
+                  ages:
+                    type: object
+                  exper:
+                    type: object
+                  complex:
+                    type: object
+
 
   /event:
     put:
@@ -1174,6 +1255,7 @@ components:
         - game
         - maxplayers
         - duration
+        - ages
       type: object
       properties:
         id:
@@ -1251,10 +1333,21 @@ components:
           $ref: '#/components/schemas/Room'
         table:
           type: string
+        ages:
+          type: integer
+          format: int32
+          description: the minimum age recommended by the gamemaster (7,13,18,19/Mature)
         cost:
           description: Price of event ticket
           type: number
           format: float
+        fill:
+          type: number
+          format: int(32)
+          description: the number of seats filled, when enabled
+        soldout:
+          type: boolean
+          description: true if event has no seats available
       xml:
         name: Event
     EventPrivate:
@@ -1360,6 +1453,9 @@ components:
         price:
           type: number
           format: float
+        special:
+          type: string
+          description: for badges, the name on the badge
     Badge:
       type: object
     Ticket:

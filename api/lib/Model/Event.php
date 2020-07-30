@@ -29,7 +29,7 @@ class Event implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "category", "conventionId", "duration", "game", "gm", "id", "maxplayers" ],
+  "required" : [ "ages", "category", "conventionId", "duration", "game", "gm", "id", "maxplayers" ],
   "type" : "object",
   "properties" : {
     "id" : {
@@ -115,10 +115,24 @@ class Event implements ModelInterface
     "table" : {
       "type" : "string"
     },
+    "ages" : {
+      "type" : "integer",
+      "description" : "the minimum age recommended by the gamemaster (7,13,18,19/Mature)",
+      "format" : "int32"
+    },
     "cost" : {
       "type" : "number",
       "description" : "Price of event ticket",
       "format" : "float"
+    },
+    "fill" : {
+      "type" : "number",
+      "description" : "the number of seats filled, when enabled",
+      "format" : "int(32)"
+    },
+    "soldout" : {
+      "type" : "boolean",
+      "description" : "true if event has no seats available"
     }
   },
   "xml" : {
@@ -184,8 +198,17 @@ SCHEMA;
     /** @var string $table */
     public $table;
 
+    /** @var int $ages the minimum age recommended by the gamemaster (7,13,18,19/Mature)*/
+    public $ages;
+
     /** @var float $cost Price of event ticket*/
     public $cost;
+
+    /** @var float $fill the number of seats filled, when enabled*/
+    //public $fill;
+
+    /** @var bool $soldout true if event has no seats available*/
+    //public $soldout;
 
     /**
      * Returns model schema.

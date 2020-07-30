@@ -26,6 +26,7 @@
 namespace OpenAPIServer\Api;
 
 use OpenAPIServer\Repository\EventRepository;
+use OpenAPIServer\Repository\TicketRepository;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -47,6 +48,11 @@ class PublicApi extends AbstractPublicApi
      */
     protected $eventRepo;
 
+    /**
+     * @var TicketRepository DB access layer for tickets
+     */
+    protected $ticketRepo;
+
     protected $siteConfig;
 
     /**
@@ -54,9 +60,10 @@ class PublicApi extends AbstractPublicApi
      *
      * @param EventRepository $container Slim app container instance
      */
-    public function __construct(EventRepository $eventRepo)
+    public function __construct(EventRepository $eventRepo, TicketRepository $ticketRepo)
     {
         $this->eventRepo = $eventRepo;
+        $this->ticketRepo = $ticketRepo;
         $this->siteConfig = $GLOBALS['config'];
 
         if ($this->eventRepo == null) {
@@ -80,6 +87,12 @@ class PublicApi extends AbstractPublicApi
      */
     public function getFilteredEvents(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
+        // check that registration view and buy are enabled
+        if(!$this->siteConfig['allow']['view_events']) {
+            $response->getBody()->write('Viewing events is currently disabled');
+            return $response->withStatus(401);
+        }
+
         $queryParams = $request->getQueryParams();
         $search = (key_exists('search', $queryParams)) ? $queryParams['search'] : null;
         $day = (key_exists('day', $queryParams)) ? $queryParams['day'] : null;
@@ -91,8 +104,20 @@ class PublicApi extends AbstractPublicApi
         $events = $this->eventRepo->findPublicEvents($idConvention, $search, $day, $category, $ages, $tags);
 
         if ($events == null || count($events)==0) {
-            $response->getBody()->write('No matching events found');
-            return $response->withStatus(401);
+            $response->getBody()->write('[]');
+            return $response->withStatus(200)->withHeader('Content-type', 'application/json');
+        }
+
+        // add ticket information to each event
+        $eventIds = array_column($events, 'id');
+        $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        foreach ($events as $k => $event) {
+            $id = $event->id;
+            $fill = isset($ticketCounts[$id]) ? $ticketCounts[$id] : 0;
+            $event->soldout = ($fill >= $event->maxplayers);
+            if ($this->siteConfig['allow']['see_fill']) {
+                $event->fill = (int)$fill;
+            }
         }
 
         $response->getBody()->write( json_encode($events) );
@@ -114,6 +139,12 @@ class PublicApi extends AbstractPublicApi
      */
     public function getPublicEventById(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
+        // check that registration view and buy are enabled
+        if(!$this->siteConfig['allow']['view_events']) {
+            $response->getBody()->write('Viewing events is currently disabled');
+            return $response->withStatus(401);
+        }
+
         $eventId = $args['eventId'];
 
         if ($this->eventRepo == null) {
@@ -125,6 +156,15 @@ class PublicApi extends AbstractPublicApi
         } catch (\OutOfBoundsException $e) {
             $response->getBody()->write( "Not found" );
             return $response->withStatus(404);
+        }
+
+        // add ticket information to each event
+        $eventIds = [$eventId];
+        $ticketCounts = $this->ticketRepo->findCurrentTicketCountByEvents($eventIds);
+        $fill = isset($ticketCounts[$eventId]) ? $ticketCounts[$eventId] : 0;
+        $event->soldout = ($fill >= $event->maxplayers);
+        if ($this->siteConfig['allow']['see_fill']) {
+            $event->fill = $fill;
         }
 
         $response->getBody()->write( json_encode($event) );
