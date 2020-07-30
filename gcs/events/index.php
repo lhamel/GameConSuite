@@ -19,20 +19,7 @@ if (!$config['allow']['view_events']) {
 require_once INC_PATH.'resources/event/constants.php';
 require_once INC_PATH.'resources/cart/constants.php';
 
-/*
-    Browse Events
-    
-    This file allows events to be browsed as they would 
-    in the convention book.
-    
-        <root>/events/db/browse.php?category=BG
 
-    From here the member may navigate to:
-    
-        search.php      ->  search for events
-        cart.php        ->  currently selected items
-
-*/
 $location = 'events/browse.php';
 $title = $config['gcs']['sitetitle'] . ' - Browse Events';
 
@@ -44,41 +31,8 @@ $actions = array('list'=>basename(__FILE__),
                  'navigateMember'=>'search.php?search=',
                 );
 
-
-
-
-// $tagSql = <<< EOD
-// select * from ucon_tag where (not tag="") and id_tag in 
-//   (select id_tag from ucon_event_tag where id_event in 
-//     (select id_event from ucon_event where id_convention={$config['gcs']['year']}))
-// EOD;
-// $tags = $db->getAssoc($tagSql);
-// if ($tags === false) { echo "SQL Error (browse.php)".$db->ErrorMsg(); exit; }
-// $smarty->assign('tags', $tags);
-
 // $year = $config['gcs']['year'];
 // require_once INC_PATH.'resources/event/constants.php';
-// require_once INC_PATH.'db/db.php';
-
-// if (count($_GET)==0) {
-//   // render the event results
-//   $smarty->assign('config', $config);
-//   $smarty->assign('constants', $constants);
-//   $smarty->assign('showResults', false);
-//   $smarty->assign('actions', $actions);
-//   $smarty->assign('loginInfo', $associates->getLoginInfo());
-
-//   $content = '';
-//   $message = $config['allow']['message'];
-//   if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-//   $content .= $smarty->fetch('gcs/reg/browse.tpl');
-
-//   // render the page
-//   $smarty->assign('content', $content);
-//   $smarty->display('base.tpl');
-//   exit;
-// }
-
 
 
 // // render the event results
@@ -86,14 +40,11 @@ $actions = array('list'=>basename(__FILE__),
 $smarty->assign('config', $config);
 // $smarty->assign('constants', $constants);
 // $smarty->assign('actions', $actions);
-// // $smarty->assign('showResults', true);
-// $smarty->assign('showResults', false);
 // $smarty->assign('loginInfo', $associates->getLoginInfo());
 
 $content = '';
 $message = $config['allow']['message'];
 if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background:navy;color:#fff;font-weight:bold;font-size:14pt;\">$message</p>";
-// $content .= $smarty->fetch('gcs/reg/browse.tpl');
 
 
 $buyEventsEnabled = $config['allow']['buy_events'] ? 'true':'false';
