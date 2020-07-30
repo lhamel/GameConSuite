@@ -97,6 +97,7 @@ if ($message) $content .= "<p style=\"margin-top:6px;padding-left:2px;background
 
 
 $buyEventsEnabled = $config['allow']['buy_events'] ? 'true':'false';
+$searchParam = isset($_GET['search']) ? $_GET['search'] : '';
 
 $content .= <<< EOD
 
@@ -105,7 +106,7 @@ $content .= <<< EOD
 
 <h1>Browse Events</h1>
 <form>
-<input v-bind="filterSearch" name="search" value="">
+Keyword: <input v-model="filterSearch" @change="updateSearch" name="search" value="">
 </form>
 
 <filter-selection label="Day" :options="filterOptions.day" :selected="filterSelections.day" @update="updateDay"></filter-selection>
@@ -618,6 +619,10 @@ $content .= <<< EOD
           updateTag: function(selectedIndex) {
             this.updateFilter('tag', selectedIndex);
           },
+          updateSearch: function() {
+            // Note: the field doesn't matter, we're trying to trigger the re-query
+            this.updateFilter('search', this.filterSearch);
+          },
           updateFilter: function(field, selectedIndex) {
             Vue.set(this.filterSelections, field, selectedIndex);
 
@@ -700,6 +705,12 @@ $content .= <<< EOD
                   self.members = null;
                 });
 
+                // manually trigger a search if one was provided by URL
+                let searchInput = '{$searchParam}';
+                if (searchInput) {
+                  self.filterSearch = searchInput;
+                  self.updateSearch();
+                }
 
             })
             .fail(function(data) {
