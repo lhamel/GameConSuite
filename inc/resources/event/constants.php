@@ -63,7 +63,7 @@ if (isset($_SESSION['cache']['constants']['events'])) {
             19 => 'Mature Content (18+)',
         );
   $constants['events']['agesNoBlank'] = $constants['events']['ages'];
-  unset($constants['events']['agesNoBlank']['']);
+  unset($constants['events']['agesNoBlank'][0]);
         $constants['events']['agesInBook'] = array(
             0 => '',
             7 => '(Ages 7+)',

@@ -1,9 +1,15 @@
+
+
 {if !isset($REQUEST)}{assign var="REQUEST" value=array('tags'=>'', 'day'=>'', 'ages'=>'', 'category'=>'')}{/if}
 {if !$loginInfo.loggedin && $config.allow.buy_events}
 <p style="padding: 2px; margin-top: 6px; background: #880000; color: #FFFFFF; font-weight: bolder; font-size: larger;">User not logged in.  Log in to be able to add tickets.</p>
 {/if}
-{include file="gcs/reg/eventDetailTicketDlg.tpl"}
 <h1>Browse Events</h1>
+
+<form>
+<input name="search" value="{$config.page.request.search|default:''|urlencode}" />
+<input value="search" type="submit" />
+</form>
 
 {strip}
 <p>Day: <a href="{$actions.list}?day=&amp;ages={$REQUEST.ages}&amp;tags={$REQUEST.tags}&amp;category={$REQUEST.category}"{if ''==$REQUEST.day} class="selected"{/if}>All</a>
@@ -19,7 +25,7 @@
 
 {strip}
 <p>Ages: <a href="{$actions.list}?day={$REQUEST.day}&amp;category={$REQUEST.category}&amp;tags={$REQUEST.tags}&amp;ages="{if ''==$REQUEST.ages} class="selected"{/if}>All</a>
-{foreach key=key item=item from=$constants.events.ages} | <a href="{$actions.list}?day={$REQUEST.day}&amp;category={$REQUEST.category}&amp;tags={$REQUEST.tags}&amp;ages={$key}"{if $key==$REQUEST.ages} class="selected"{/if}>{$item}</a>{/foreach}
+{foreach key=key item=item from=$constants.events.agesNoBlank} | <a href="{$actions.list}?day={$REQUEST.day}&amp;category={$REQUEST.category}&amp;tags={$REQUEST.tags}&amp;ages={$key}"{if $key==$REQUEST.ages} class="selected"{/if}>{$item}</a>{/foreach}
 </p>
 {/strip}
 
@@ -29,7 +35,6 @@
 </p>
 {/strip}
 
-<p>Browse Events by Category and Day.  Click the symbol <img src="{$constants.cart.buy.0.0}"> to select a ticket for the event.  The symbol <img src="{$constants.cart.buy.1.0}"> indicates a sold out event.</p>
 <hr/>
 
 {if isset($events)}

@@ -25,6 +25,8 @@
  */
 namespace OpenAPIServer\Api;
 
+use OpenAPIServer\Repository\TagRepository;
+
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -55,19 +57,19 @@ class SystemApi extends AbstractSystemApi
 
     protected $siteConfiguration;
     protected $eventConstants;
+    protected $tagRepository;
 
     /**
      * Route Controller constructor receives container
      *
      * @param ContainerInterface|null $container Slim app container instance
      */
-    public function __construct(ContainerInterface $container = null)
+    public function __construct(ContainerInterface $container = null, TagRepository $tagRepository)
     {
         $this->container = $container;
-
         $this->siteConfiguration = $GLOBALS['config']; // TODO pass through dependency injection
-
         $this->eventConstants = array_merge($GLOBALS['constants']['events']);
+        $this->tagRepository = $tagRepository;
     }
 
 
@@ -99,7 +101,9 @@ class SystemApi extends AbstractSystemApi
             $answer['days'] = $this->eventConstants['days'];
         }
 
-        $answer['ages'] = $this->eventConstants['agesInBook'];
+        $answer['ages'] = $this->eventConstants['agesNoBlank'];
+        $answer['agesInDesc'] = $this->eventConstants['agesInBook'];
+        unset($answer['agesInDesc'][0]); // unset the blank
 
         if($fullExpComp) {
             $answer['exper'] = $this->eventConstants['experience']['display'];
@@ -108,6 +112,9 @@ class SystemApi extends AbstractSystemApi
             $answer['exper'] = $this->eventConstants['experience']['select'];
             $answer['complex'] = $this->eventConstants['complexity']['select'];
         }
+
+        // TODO add tag information
+        $answer['tagsInUse'] = $this->tagRepository->getCurrentTagsInUse();
 
         // TODO add slot options, with selection for the duration
 
