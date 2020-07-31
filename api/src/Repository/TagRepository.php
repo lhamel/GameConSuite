@@ -68,6 +68,7 @@ class TagRepository
             throw new \Exception("SQL Error: ".$db->ErrMsg());
         }
 
+        $this->cache = [];
         foreach($result as $arr)
         {
             $id = (int)$arr['id_tag'];
