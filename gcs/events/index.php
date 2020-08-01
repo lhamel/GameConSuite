@@ -277,11 +277,14 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 
 <div v-if="preregOpen">
   <div v-if="members">
-    <p style="text-align:left;margin-bottom:0px;margin-top:6px;">Select envelopes to receive tickets:</p>
+    <p v-if="members.length>0">Select envelopes to receive tickets:</p>
+    <p v-if="members.length==0">
+      <a href="../envelope_edit.php">Create an envelope in order to add tickets!</a>
+    </p>
     <div v-for="member in members">
       <member-ticket-status :member='member' :event='event' :api-url='apiUrl' @ticketAdd="ticketAdd"></member-ticket-status>
     </div>
-  <p style="text-align:left;margin-bottom:2px;">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>
+    <p v-if="members.length>0">Items will be added to specified envelopes.  See "My Registration" to view each envelope.</p>
   </div>
 
   <div v-else>
