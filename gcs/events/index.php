@@ -82,29 +82,16 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 
 <script type="text/x-template" id="filter-selection-template">
 <p>
-<!-- <filter-selection label="Day" :options="optionsDay" :selected="selectDay" @update="selectDay"></filter=selection> -->
   {{label}}:
-
   <a v-if="selected==null" href="#" @click.prevent="\$emit('update', null)" class="selected">All</a>
   <a v-else                 href="#" @click.prevent="\$emit('update', null)"                 >All</a>
-
-
-<!-- TODO check if selected -->
-  
-  <span v-for="(label, index) in options">
-    |
-    <a v-if="selected==index" href="#" @click.prevent="\$emit('update', index)" class="selected">{{label}}</a>
-    <a v-else                 href="#" @click.prevent="\$emit('update', index)"                 >{{label}}</a>
-  </span>
-
-<!--
-    <span>Day: <a href="index.php?day=&amp;ages=&amp;tags=&amp;category=4" class="selected">All</a> | <a href="index.php?day=FRI&amp;category=4&amp;tags=&amp;ages=">Friday</a> | <a href="index.php?day=SAT&amp;category=4&amp;tags=&amp;ages=">Saturday</a> | <a href="index.php?day=SUN&amp;category=4&amp;tags=&amp;ages=">Sunday</a></span>
--->
-
+    <span v-for="(label, index) in options">
+      |
+      <a v-if="selected==index" href="#" @click.prevent="\$emit('update', index)" class="selected">{{label}}</a>
+      <a v-else                 href="#" @click.prevent="\$emit('update', index)"                 >{{label}}</a>
+    </span>
 </p>
 </script>
-
-
 
 
 <script type="text/x-template" id="filter-event-template">
