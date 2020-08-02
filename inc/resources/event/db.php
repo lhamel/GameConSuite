@@ -16,6 +16,10 @@ function validateEvent($event) {
     $errors['i_minplayers'] = 'The number of players must be a number';
   }
 
+  if (!isset($event['i_agerestriction']) || !$event['i_agerestriction']) {
+    $errors['i_agerestriction'] = 'Please indicate the recommended minimum age';
+  }
+
   // TODO validate this another way  
   if(isset($event['i_maxplayers']) && isset($event['i_minplayers']) && is_numeric($event['i_maxplayers']) && is_numeric($event['i_minplayers'])
      && $event['i_minplayers']>$event['i_maxplayers']) $errors['i_minplayers'] = 'The minimum number of players should be equal to or lower than the maximum.'; 
@@ -25,9 +29,10 @@ function validateEvent($event) {
   }
 
   if (isset($event['s_desc']) && $event['s_desc']) {
+    $charLimit = 200;
     $length = strlen($event['s_desc']);
-    if ($length > 200) {
-      $errors['s_desc'] = 'Please reduce your description to 350 characters (currently ' . $length . ')';
+    if ($length > $charLimit) {
+      $errors['s_desc'] = "Please reduce your description to $charLimit characters (currently $length)";
     }
   }
 
