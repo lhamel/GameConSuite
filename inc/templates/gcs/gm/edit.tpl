@@ -80,6 +80,7 @@ $(document).ready(function() {
         {if isset($errors.s_desc)} class="validation" {/if}>{$event.s_desc|default:''|stripslashes}</textarea>
         <span id="charNum"></span>
         {if isset($errors.s_desc)}<span class="validation"><br>*{$errors.s_desc}</span>{/if}
+        </td>
     </tr>
 
     <tr>
@@ -88,6 +89,7 @@ $(document).ready(function() {
         <textarea style="width:100%;" name="s_desc_web" rows="3" cols="40"
         {if isset($errors.s_desc_web)} class="validation" {/if}>{$event.s_desc_web|default:''|stripslashes}</textarea>
         {if isset($errors.s_desc_web)}<span class="validation">*{$errors.s_desc_web}</span>{/if}
+        </td>
     </tr>
 
     <tr>
@@ -98,8 +100,19 @@ $(document).ready(function() {
         tournament, explain here.</span><br />
         <textarea style="width:100%;" name="s_comments" rows="3" cols="40">{$event.s_comments|default:''|stripslashes}</textarea>
         {if isset($errors.s_comments)}<span class="validation"><br/>*{$errors.s_comments}</span>{/if}
+        </td>
     </tr>
 
+    {if isset($config.gcs.virtual_venue) && $config.gcs.virtual_venue}
+    <tr>
+        <td colspan="2"><span class="field_name">Virtual Table Top Platform.</span>
+        <span class="description">Please explain what software and meeting platforms will be used for this game, 
+        for example Zoom and Tabletopia.  Be sure to mention any purchases required to play.</span><br />
+        <textarea style="width:100%;" name="s_platform" rows="3" cols="40">{$event.s_platform|default:''|stripslashes}</textarea>
+        {if isset($errors.s_platform)}<span class="validation"><br/>*{$errors.s_platform}</span>{/if}
+        </td>
+    </tr>
+    {/if}
 
     <tr>
         <th colspan="2">Players</th>
