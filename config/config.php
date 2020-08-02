@@ -25,6 +25,7 @@ $config['allow']['live_data'] = false; // enables the use of cash register data 
 $config['allow']['see_fill'] = false; // enables the public to see the fill rates for events, a values of false means the information is hidden
 $config['allow']['message'] = ''; //<span style="font-size:18pt">Pregistration Open!  More events to be added later.</span> ';
 
+$config['gcs']['virtual_venue'] = true;
 
 
 // $config['ucon']['baseUrl'] = "https://www.ucon-gaming.org/reg";
