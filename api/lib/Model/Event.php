@@ -125,6 +125,9 @@ class Event implements ModelInterface
       "description" : "Price of event ticket",
       "format" : "float"
     },
+    "platform" : {
+      "type" : "string"
+    },
     "fill" : {
       "type" : "number",
       "description" : "the number of seats filled, when enabled",
@@ -203,6 +206,9 @@ SCHEMA;
 
     /** @var float $cost Price of event ticket*/
     public $cost;
+
+    /** @var string $platform */
+    //public $platform;
 
     /** @var float $fill the number of seats filled, when enabled*/
     //public $fill;

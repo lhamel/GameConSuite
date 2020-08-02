@@ -231,7 +231,7 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 </p>
 
   <table><tr>
-  <td style="width:150px">
+  <td style="width:132px">
     {{event.formatTime}}<br>
     Players: {{event.formatPlayers}}<br>
     <span v-if="event.fill>=0">
@@ -242,9 +242,10 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
   <td>
     <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span><br>
     GM: {{event.formatGM}}<br>
-    <span v-if="event.formatAges">{{event.formatAges}}<br></span>
-    <span v-if="event.room">{{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
-    <span v-if="event.formatTags">{{event.formatTags}}</span>
+    <span v-if="event.formatAges">Recommended Age: {{event.formatAges}}<br></span>
+    <span v-if="event.room">Location: {{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
+    <span v-if="event.formatTags">Tags: {{event.formatTags}}</span>
+    <span v-if="event.platform">Platform: {{event.platform}}</span>
   </td>
   </tr></table>
 
