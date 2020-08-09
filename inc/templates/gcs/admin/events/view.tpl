@@ -400,6 +400,23 @@ $(document).ready(function() {
   </td>
 </tr>
 
+{if isset($config.gcs.virtual_venue) && $config.gcs.virtual_venue}
+<tr>
+  <td class="left">Platform</td>
+  <td class="right"><div class="editableArea" id="s_platform">{$event.s_platform|stripslashes}</div></td>
+</tr>
+
+<tr>
+  <td class="left">VTT Link</td>
+  <td class="right"><div id="s_vttlink" class="editable">{$event.s_vttlink}</div></td>
+</tr>
+
+<tr>
+  <td class="left">VTT Info</td>
+  <td class="right"><div class="editableArea" id="s_vttinfo">{$event.s_vttinfo|stripslashes}</div></td>
+</tr>
+{/if}
+
 </table>
 
 

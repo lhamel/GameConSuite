@@ -17,11 +17,11 @@ $sql = <<< EOD
     (d_created, id_convention, id_gm,
     id_event_type, s_game, s_title, s_desc,
     s_comments, i_maxplayers, i_minplayers, e_exper, e_complex, i_agerestriction,
-    i_length, i_c1, i_c2, i_c3, s_setup, s_table_type, s_eventcom, s_desc_web)
+    i_length, i_c1, i_c2, i_c3, s_setup, s_table_type, s_eventcom, s_desc_web, s_platform)
     values (?, ?, ?,
     ?, ?, ?, ?,
     ?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?, ?, ?, ?)
+    ?, ?, ?, ?, ?, ?, ?, ?, ?)
 EOD;
 
 
@@ -50,6 +50,7 @@ $prepareArgs = array(
   $event['s_table_type'],
   $event['s_eventcom'],
   $event['s_desc_web'],
+  $event['s_platform'],
 );
 $ok = $db->Execute($sql, $prepareArgs);
 if (!$ok) die('sql error: '.$db->ErrorMsg());

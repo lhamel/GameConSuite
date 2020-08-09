@@ -64,6 +64,18 @@ $sqlArray = array(
   's_eventcom'=>array(
     'update'=>'update ucon_event set s_eventcom=? where id_event=?',
   ),
+  's_platform'=>array(
+    'check' => 'select s_platform from ucon_event where s_platform=? and id_event=?',
+    'update'=> 'update ucon_event set s_platform=? where id_event=?',
+  ),
+  's_vttlink'=>array(
+    'check' => 'select s_vttlink from ucon_event where s_vttlink=? and id_event=?',
+    'update'=> 'update ucon_event set s_vttlink=? where id_event=?',
+  ),
+  's_vttinfo'=>array(
+    'check' => 'select s_vttinfo from ucon_event where s_vttinfo=? and id_event=?',
+    'update'=> 'update ucon_event set s_vttinfo=? where id_event=?',
+  ),
 );
 
 // special cases

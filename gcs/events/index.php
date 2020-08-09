@@ -82,29 +82,16 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 
 <script type="text/x-template" id="filter-selection-template">
 <p>
-<!-- <filter-selection label="Day" :options="optionsDay" :selected="selectDay" @update="selectDay"></filter=selection> -->
   {{label}}:
-
   <a v-if="selected==null" href="#" @click.prevent="\$emit('update', null)" class="selected">All</a>
   <a v-else                 href="#" @click.prevent="\$emit('update', null)"                 >All</a>
-
-
-<!-- TODO check if selected -->
-  
-  <span v-for="(label, index) in options">
-    |
-    <a v-if="selected==index" href="#" @click.prevent="\$emit('update', index)" class="selected">{{label}}</a>
-    <a v-else                 href="#" @click.prevent="\$emit('update', index)"                 >{{label}}</a>
-  </span>
-
-<!--
-    <span>Day: <a href="index.php?day=&amp;ages=&amp;tags=&amp;category=4" class="selected">All</a> | <a href="index.php?day=FRI&amp;category=4&amp;tags=&amp;ages=">Friday</a> | <a href="index.php?day=SAT&amp;category=4&amp;tags=&amp;ages=">Saturday</a> | <a href="index.php?day=SUN&amp;category=4&amp;tags=&amp;ages=">Sunday</a></span>
--->
-
+    <span v-for="(label, index) in options">
+      |
+      <a v-if="selected==index" href="#" @click.prevent="\$emit('update', index)" class="selected">{{label}}</a>
+      <a v-else                 href="#" @click.prevent="\$emit('update', index)"                 >{{label}}</a>
+    </span>
 </p>
 </script>
-
-
 
 
 <script type="text/x-template" id="filter-event-template">
@@ -244,7 +231,7 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
 </p>
 
   <table><tr>
-  <td style="width:150px">
+  <td style="width:132px">
     {{event.formatTime}}<br>
     Players: {{event.formatPlayers}}<br>
     <span v-if="event.fill>=0">
@@ -255,9 +242,10 @@ Keyword: <input v-model="filterSearch" @change="updateSearch" name="search">
   <td>
     <span v-if="event.cost">\${{event.cost}}</span><span v-else>Free!</span><br>
     GM: {{event.formatGM}}<br>
-    <span v-if="event.formatAges">{{event.formatAges}}<br></span>
-    <span v-if="event.room">{{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
-    <span v-if="event.formatTags">{{event.formatTags}}</span>
+    <span v-if="event.formatAges">Recommended Age: {{event.formatAges}}<br></span>
+    <span v-if="event.room">Location: {{event.room.label}}<span v-if="event.table"> Table {{event.table}}</span><br></span>
+    <span v-if="event.formatTags">Tags: {{event.formatTags}}</span>
+    <span v-if="event.platform">Platform: {{event.platform}}</span>
   </td>
   </tr></table>
 

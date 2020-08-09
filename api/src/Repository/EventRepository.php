@@ -30,7 +30,7 @@ class EventRepository
     const ROLE_PLAYER_OR_THE_GM = 2;
     const ROLE_ADMIN = 3;
 
-    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', 'i_agerestriction' ];
+    const PUBLIC_DB_FIELDS = ['id_event', 'id_convention', 'id_gm', 's_number', 's_title', 's_game', 's_desc', 's_desc_web', 'i_minplayers', 'i_maxplayers', 'i_agerestriction', 'e_exper', 'e_complex', 'i_length', 'e_day', 'i_time', 'i_cost', 'id_event_type', 'i_agerestriction', 's_platform' ];
     const LIMITED_DB_FIELDS = ['s_vttlink', 's_vttinfo', 'b_approval'];
 
     const COND_DB_FIELDS = ['id_room', 's_table'];
@@ -282,6 +282,11 @@ EOD;
             $required = array_merge($required, self::COND_DB_FIELDS);
         }
 
+        if (!isset($this->siteConfiguration['gcs']['virtual_venue']) || !$this->siteConfiguration['gcs']['virtual_venue']) {
+            unset($required[ array_search('s_platform', $required) ] ); // not required
+            unset($state['s_platform']); // hidden from return info
+        }
+
         foreach ($required as $k) {
           if (!array_key_exists($k, $state)) {
             throw new \Exception("Event data missing required field $k ".print_r($state, true));
@@ -321,6 +326,10 @@ EOD;
         } else {
             $e->desclong = $d2;
             $e->descshort = $d1;
+        }
+
+        if(isset($state['s_platform'])) {
+            $e->platform = $state['s_platform'];
         }
 
         // required fields

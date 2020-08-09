@@ -94,6 +94,8 @@ if ($_POST['action'] == 'selectMember') {
     $event['i_minplayers'] = $tmp;
   }
 
+  $event['s_platform'] = isset($_POST['s_platform']) ? $_POST['s_platform'] : '';
+
   // TODO swap short and long description if backwards
 
   // save values in the session
