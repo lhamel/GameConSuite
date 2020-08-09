@@ -1431,9 +1431,19 @@ components:
           type: string
           example: "p@ssw0rd"
     Cart:
-      type: object
+      type: array
+      items:
+        $ref: '#/components/schemas/CartItem'
     CartItem:
       type: object
+      required:
+        - id
+        - conventionId
+        - memberId
+        - type
+        - subtype
+        - quantity
+        - price
       properties:
         id:
           type: integer
@@ -1458,6 +1468,8 @@ components:
         special:
           type: string
           description: for badges, the name on the badge
+        event:
+          $ref: '#/components/schemas/Event'
     Badge:
       type: object
     Ticket:

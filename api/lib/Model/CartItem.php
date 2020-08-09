@@ -29,6 +29,7 @@ class CartItem implements ModelInterface
 {
     private const MODEL_SCHEMA = <<<'SCHEMA'
 {
+  "required" : [ "conventionId", "id", "memberId", "price", "quantity", "subtype", "type" ],
   "type" : "object",
   "properties" : {
     "id" : {
@@ -61,6 +62,9 @@ class CartItem implements ModelInterface
     "special" : {
       "type" : "string",
       "description" : "for badges, the name on the badge"
+    },
+    "event" : {
+      "$ref" : "#/components/schemas/Event"
     }
   }
 }

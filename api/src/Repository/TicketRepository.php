@@ -104,6 +104,24 @@ EOD;
         return $preregOrders;
     }
 
+
+    public function findCartItemsByMember(int $memberId)
+    {
+        // find sum of ticket quantities in prereg data
+        $sql = <<< EOD
+select id_order as id, id_convention as conventionId, id_member as memberId, s_type as type, s_subtype as subtype, i_quantity as quantity, i_price as price
+from ucon_order as O
+where id_convention=?
+  and id_member=?
+EOD;
+        $preregOrders = $this->db->getArray($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
+        if (!is_array($preregOrders)) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+        return $preregOrders;
+    }
+
+
     /**
      *  Use this method to add a cart item to the database. The caller is responsible for validating the item, 
      *  including checking for limited quantities and ensuring fields are filled in.  The year will be overwritten 
