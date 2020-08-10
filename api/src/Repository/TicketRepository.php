@@ -109,10 +109,11 @@ EOD;
     {
         // find sum of ticket quantities in prereg data
         $sql = <<< EOD
-select id_order as id, id_convention as conventionId, id_member as memberId, s_type as type, s_subtype as subtype, i_quantity as quantity, i_price as price
+select id_order as id, id_convention as conventionId, id_member as memberId, s_type as type, s_subtype as subtype, i_quantity as quantity, i_price as price, s_special as special
 from ucon_order as O
 where id_convention=?
   and id_member=?
+order by id_order
 EOD;
         $preregOrders = $this->db->getArray($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
         if (!is_array($preregOrders)) {
