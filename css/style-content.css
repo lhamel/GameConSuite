@@ -59,8 +59,16 @@
 	background-color: white;
 }
 
+.content .striped tr.cart-balance td{
+	background-color: #fff;
+	font-weight: bolder;
+	border-bottom: 0;
+	font-size: larger;
+}
+
 .content table tr td.numeric, .content table tr th.numeric {
 	text-align: right;
+	white-space: nowrap;
 }
 
 .content .altcolor1 {
