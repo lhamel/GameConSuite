@@ -293,7 +293,7 @@ class AttendeeApi extends AbstractAttendeeApi
      */
     public function getCartByMember(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $memberId = $args['memberId'];
+        $memberId = (int) $args['memberId'];
 
         // check that the user is logged in
         if (!$this->auth->isLogged()) {
@@ -318,6 +318,7 @@ class AttendeeApi extends AbstractAttendeeApi
         $indexedEvents = $this->eventRepo->findIndexedEvents($eventIds);
 
         // add event info to tickets in the cart
+        $balance = 0;
         foreach ($cartItems as $k => $v)
         {
             if ($v['type']=='Ticket')
@@ -326,11 +327,21 @@ class AttendeeApi extends AbstractAttendeeApi
                 $event = $indexedEvents[$eventId];
                 $cartItems[$k]['event'] = $event;
             }
+            $balance += $v['quantity']*$v['price'];
         }
+
+        $member = $this->memberRepository->findPublicMemberById($memberId);
+
+        $cart = [
+            'member'=>$member,
+            'pendingPaymentAmount'=>$this->ticketRepo->getPendingPaymentAmount($memberId),
+            'balance'=>$balance,
+            'items'=>$cartItems,
+        ];
 
         // TODO someday should we limit the event info to only what it needed?  this call currently returns extra fields
 
-        $response->getBody()->write(json_encode($cartItems));
+        $response->getBody()->write(json_encode($cart));
         return $response->withStatus(200)->withHeader('Content-type', 'application/json');
     }
 

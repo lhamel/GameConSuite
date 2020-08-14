@@ -1431,9 +1431,24 @@ components:
           type: string
           example: "p@ssw0rd"
     Cart:
-      type: array
-      items:
-        $ref: '#/components/schemas/CartItem'
+      type: object
+      required:
+        - member
+        - balance
+        - pendingPaymentAmount
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        balance:
+          type: number
+          format: float
+        pendingPaymentAmount:
+          type: number
+          format: float
+        member:
+          $ref: '#/components/schemas/Member'
     CartItem:
       type: object
       required:

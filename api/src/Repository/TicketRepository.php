@@ -31,6 +31,10 @@ class TicketRepository
      */
     public function findCurrentTicketCountByEvents($idEvents) : array
     {
+        if (count($idEvents) == 0) {
+            return [];
+        }
+
         // validate parameter
         foreach ($idEvents as $id) {
             if (!is_numeric($id)) {
@@ -265,6 +269,19 @@ EOD;
         return $item['unit_price'];
     }
 
+    public function getPendingPaymentAmount($memberId)
+    {
+        // search for any unresolved payments pertaining to this member
+        $sql = 'select sum(f_amount) from ucon_incoming_paypal where id_member=? && b_used=0';
+        $pending = $this->db->getOne($sql, [$memberId]);
+        if ($pending===false) {
+            throw new \Exception("SQL Error: " . $this->db->ErrorMsg());
+        }
+
+        if (!isset($pending)) {
+            $pending = 0;
+        }
+        return $pending;
+    }
+
 }
-
-
