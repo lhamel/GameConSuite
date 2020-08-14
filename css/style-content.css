@@ -59,6 +59,10 @@
 	background-color: white;
 }
 
+.content table tr td.numeric, .content table tr th.numeric {
+	text-align: right;
+}
+
 .content .altcolor1 {
 	background-color: white;
 	border-bottom: solid black 1px;

@@ -376,6 +376,21 @@ $content .= <<< EOD
 
     <!-- demo root element -->
     <div id="demo">
+      <h3>Preregistration Order</h3>
+      <prereg-order
+        :cart="cartData"
+        :event-formatter="eventFormatter"
+        :base-url="baseUrl"
+        @update-schedule="updateMemberSchedule"
+      >
+      </prereg-order>
+
+      <h3>Payments</h3>
+      <pay-balance
+        :cart="cartData"
+      >
+      </pay-balance>
+
       <h3>GM Events</h3>
       <gamemaster-events
         :gmevents="gridData"
@@ -393,6 +408,138 @@ $content .= <<< EOD
       </schedule-list>
     </div>
 
+
+<script type="text/x-template" id="prereg-order-template">
+<div>
+
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th style="white-space: nowrap;">Description</th>
+    <th class="numeric" style="white-space: nowrap;">Quantity</th>
+    <th class="numeric" style="white-space: nowrap;">Unit Price</th>
+    <th class="numeric" style="white-space: nowrap;">Total</th>
+    <!--<th style="white-space: nowrap;">Balance</th>-->
+    <th style="white-space: nowrap;">&nbsp;</th><!-- spacer -->
+    <th style="white-space: nowrap;"></th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr v-for="entry in formatCart">
+
+    <td>
+      <span v-if="entry.type == 'Badge'">
+        {{entry.type}}: {{entry.subtype}} - {{entry.special}}
+      </span>
+      <span v-if="entry.type == 'Ticket'">
+        {{entry.type}}: {{entry.event.formatTitle}} (#{{entry.event.id}}, {{entry.event.formatStartTime}})
+      </span>
+      <span v-if="entry.type == 'Payment'">
+        ***Payment Applied: {{entry.subtype}} {{entry.special}}
+      </span>
+      <span v-if="entry.type != 'Badge' && entry.type != 'Ticket' && entry.type != 'Payment'">
+        {{entry.type}}: {{entry.subtype}}
+      </span>
+    </td>
+
+    <td class="numeric">{{entry.quantity}}</td>
+    <td class="numeric">{{(entry.price*1.0).toFixed(2)}}</td>
+    <td class="numeric">\${{(entry.quantity * entry.price).toFixed(2)}}</td>
+
+    <!-- running balance
+    <td></td> -->
+
+    <!-- spacer -->
+    <td></td>
+
+    <td>
+      <button v-if="entry.type!='Payment'" class="fa-button" style="white-space: nowrap;" @click="currEntry=entry;showConfirmDialog=true">
+        <span v-if="entry.type=='Ticket'">
+          <i class="fas fa-calendar-times"></i> <span style="font-size:smaller">RELEASE</span>
+        </span>
+        <span v-else>
+          <i class="fas fa-trash"></i> <span style="font-size:smaller">REMOVE</span>
+        </span>
+      </button>
+    </td>
+  </tr>
+
+  <tr class="cart-balance">
+    <td></td>
+    <td></td>
+    <td class="numeric">Total</td>
+    <td class="numeric"><strong>\${{balance}}</strong></td>
+    <!--<td class="numeric">Balance</td>-->
+    <td></td>
+    <td></td>
+  </tr>
+
+</tbody>
+</table>
+
+<confirmation-dialog v-if="showConfirmDialog" title="Confirm item should be removed?" :description="currEntry.type+': '+(currEntry.type=='Ticket'? currEntry.event.formatTitle+' #'+currEntry.event.id : currEntry.subtype)" @close="showConfirmDialog=false" @confirm="showConfirmDialog=false;removeItem(currEntry)"></confirmation-dialog>
+
+</div>
+</script>
+
+<script type="text/x-template" id="pay-balance-template">
+<div>
+
+
+<p v-if="balance==0">No payment due.</p>
+
+
+<div v-if="balance<0">
+<p>Our records show that you have a refund due.  Feel free to add additional items into your account.  Please contact us to request an early refund.</p>
+
+<p>Refund owed: \${{balance*-1}}</p>
+
+</div>
+
+
+<div v-if="balance>0">
+
+<p>Our records show that you have a balance due.  <span style="font-weight:bolder">Please wait until you've got all your items in your cart before you check out!  Also wait for previous payments to be resolved before paying again.</span><!--'--></p>
+
+<p>Balance due: <b>\${{balance}}</b></p>
+
+<table><tbody><tr>
+  <th style="width:46%">Pay by credit card or PayPal</th>
+  <th>Pay by check</th>
+</tr><tr><td>
+
+  <p>Make a credit card or PayPal payment for <b>\${{balance}}</b>: </p><form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="{$config['email']['paypal']}">
+<input type="hidden" name="item_name" value="{$config['gcs']['name']} {$config['gcs']['year']} Registration #{$id_member}">
+<input type="hidden" name="item_number" value="Member #{$id_member}">
+<input type="hidden" name="amount" :value="balance">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="lc" value="US">
+<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but01.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+<input type="hidden" name="add" value="1">
+</form>
+
+<p></p>
+  <p><b>Payments will not appear immediately!</b><br>Please give us 3 business days to update our records, then notify us of any discrepencies.</p>
+
+</td><td>
+
+<p>Alternately, you may submit a check by postal mail to our P.O. Box, however it will
+  take longer for us to receive and process your payment.  Please make checks payable 
+  to <b>U-Con Gaming Club</b> and include the name on your 
+  registration with the check.  Never send cash through the mail!</p>
+
+  <p>Attn: Registration<br>
+  U-Con Gaming Convention<br>PO Box 130242<br>Ann Arbor, MI 48113-0242</p>
+</td></tr></tbody></table>
+
+</div>
+
+</div>
+</script>
 
 <script type="text/x-template" id="gamemaster-events-template">
 <div>
@@ -429,6 +576,40 @@ $content .= <<< EOD
 
 </div>
 </script>
+
+
+    <script type="text/x-template" id="confirmation-dialog-template">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+
+              <div class="modal-header">
+                <h3>{{title}}</h3>
+              </div>
+
+              <div class="modal-body">
+                <p>{{description}}</p>
+              </div>
+
+              <div class="modal-footer">
+                <slot name="footer">
+                  &nbsp;
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Cancel
+                  </button>
+                  <button class="modal-default-button" @click="\$emit('confirm', payload)">
+                    OK
+                  </button>
+                </slot>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </script>
+
+
 
     <script type="text/x-template" id="vtt-dialog-template">
       <transition name="modal">
@@ -525,6 +706,100 @@ $content .= <<< EOD
     <script src="{$config['page']['depth']}js/gcs/events.js"></script>
     <script>
 
+      Vue.component("prereg-order",{
+        template: "#prereg-order-template",
+        props: {
+          cart: Array,
+          eventFormatter: Object,
+          baseUrl: String,
+        },
+        data: function() {
+          return {
+            showConfirmDialog: false,
+            currEntry: null,
+          };
+        },
+        computed: {
+          balance : function() {
+            let s = this.cart;
+            let b = 0;
+            s.forEach(e => {
+              console.log(e);
+              b += e.quantity*e.price;
+            });
+            return b.toFixed(2);
+          },
+          formatCart : function() {
+            let ef = this.eventFormatter;
+            let s = this.cart;
+            console.log('formatCart');
+            console.log(s);
+            s.forEach(e => {
+              if (e.event) {
+                e.event.formatTitle = ef.formatTitle(e.event);
+                e.event.formatStartTime = ef.formatDay(e.event.day).substring(0,3) + ' ' + ef.formatSingleTime(e.event.time);
+              }
+            });
+            return s;
+          }
+        },
+        methods:
+        {
+          removeItem : function(entry)
+          {
+            console.log("remove item ")
+            console.log(entry);
+
+            if (entry.type=="Payment") {
+              alert("Error: payments cannot be remove by this method");
+            }
+
+
+            let self = this;
+
+            // remove entry with call to API
+            $.ajax({
+               type: 'DELETE',
+               url: this.baseUrl+"api/user/envelope/{$id_member}/cart/" + entry.id,
+               contentType: 'application/json',
+            })
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                // self.showConfirmDialog = false;
+
+                // update the cart and schedule
+                self.\$emit('update-schedule');
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: removal failed");
+              });
+
+          }
+        }
+      });
+
+      Vue.component("pay-balance",{
+        template: "#pay-balance-template",
+        props: {
+          cart: Array,
+        },
+        computed: {
+          balance : function() {
+            let s = this.cart;
+            let b = 0;
+            s.forEach(e => {
+              console.log(e);
+              b += e.quantity*e.price;
+            });
+            return b.toFixed(2);
+          },
+        }
+      });
+
       Vue.component("schedule-list", {
         template: "#schedule-list-template",
         props: {
@@ -551,6 +826,16 @@ $content .= <<< EOD
           }
         }
       });
+
+      Vue.component("confirmation-dialog", {
+        template: "#confirmation-dialog-template",
+        props: {
+          title : String,
+          description : String,
+          payload: Object,
+        },
+      });
+
 
       Vue.component("vtt-dialog", {
         template: "#vtt-dialog-template",
@@ -673,27 +958,51 @@ $content .= <<< EOD
           //searchQuery: "",
           gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
           gridData: [],
+          cartData: [],
           scheduleData: [],
           eventFormatter: eventFormatter,
           baseUrl: '{$config['page']['depth']}',
         },
+        methods:
+        {
+          updateMemberSchedule : function() {
+
+            // retrieve items int the cart
+            var jqxhr = $.get( this.baseUrl+"api/user/envelope/{$id_member}/cart")
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                demo.cartData = data;
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+              });
+
+            // retrieve the combined schedule
+            var jqxhr = $.get( this.baseUrl+"api/user/envelope/{$id_member}/schedule")
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+                demo.scheduleData = data;
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+              });
+
+          }
+        },
         created: function() {
           var self = this;
 
-          // Request the token from previous login
-          var jqxhr = $.get( self.baseUrl+"api/user/token")
+          // retrieve the event constants
+          var jqxhr = $.get( self.baseUrl+"api/system/constants/events")
             .done(function(data) {
-              console.log(data);
-              let t = (data);
-              console.log( "retrieved token " + t );
-              localStorage.setItem('token', t);
-
-              // set up the bearer-token for all calls
-              $.ajaxSetup({
-                  beforeSend: function(xhr) {
-                      xhr.setRequestHeader('Authorization', 'Bearer '+t);
-                  }
-              });
+              console.log( "retrieved event constants" );
+              console.log( data );
+              eventFormatter.constants = data;
 
               // retrieve the GM events list
               var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/event")
@@ -714,17 +1023,7 @@ $content .= <<< EOD
                   console.log( data );
                 });
 
-              // retrieve the GM events list
-              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/schedule")
-                .done(function(data) {
-                  console.log( "success" );
-                  console.log( data );
-                  demo.scheduleData = data;
-                })
-                .fail(function(data) {
-                  console.log( "error" );
-                  console.log( data );
-                });
+                self.updateMemberSchedule();
 
             })
             .fail(function(data) {
