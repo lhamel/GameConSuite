@@ -170,7 +170,7 @@ $content = <<< EOD
 <script type="text/x-template" id="pay-balance-template">
 <div>
 
-<p v-if="pendingPaymentAmount>0">A payment for \${{pendingPaymentAmount.toFixed(2)}} is pending.  It may take up to 3 business days for us to credit your account.  Meanwhile, the amount has already been deducted from your balance below.</p>
+<p v-if="pendingPaymentAmount>0">A payment for \${{pendingPaymentAmount.toFixed(2)}} is pending.  It may take up to 3 business days for us to credit your account.  Meanwhile, the amount has already been applied to your balance below.</p>
 
 
 <p v-if="balance==0">No payment due.</p>
@@ -188,7 +188,7 @@ $content = <<< EOD
 
 <p>Our records show that you have a balance due.  <span style="font-weight:bolder">Please wait until you've got all your items in your cart before you check out!</span><!--'--></p>
 
-<p>Balance due: <b>\${{balance}}</b></p>
+<p>Balance due: <b>\${{balance}}</b><span v-if="pendingPaymentAmount>0"> (after pending amount of \${{pendingPaymentAmount}} is applied)</span></p>
 
 <table><tbody><tr>
   <th style="width:46%">Pay by credit card or PayPal</th>
