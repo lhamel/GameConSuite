@@ -21,11 +21,10 @@ if (!$config['allow']['view_events'] || !$config['allow']['buy_events']) {
                  ."the email list when pre-registration is open!</p>\n";
     }
     $depth = $config['page']['depth'];
-    $content .= <<< EOD
-        <p style="text-align: center;">
-        <img src="{$depth}/images/pic2003/crazylarpers.jpg" style="border: solid 1px;" alt="" />
-        </p>
-EOD;
+
+    if ($config['allow']['submit_events']) {
+        $content .= '<p>Event Submission is open!  <a href="../gm/submit.php">Click here to submit your events (login required).</a></p>';
+    }
     // render the page
     include '../events/_tabs.php';
     $smarty->assign('config', $config);
