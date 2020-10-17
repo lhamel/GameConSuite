@@ -48,6 +48,7 @@ if (isset($_REQUEST['update'])) {
   $ribbon = '<p></p>';
 }
 
+$buyEventsEnabled = $config['allow']['buy_events'] ? 'true':'false';
 
 // render the page
 $content = <<< EOD
@@ -64,6 +65,7 @@ $content = <<< EOD
         :cart="cartData"
         :event-formatter="eventFormatter"
         :base-url="baseUrl"
+        :prereg-open="preregOpen"
         @update-schedule="updateMemberSchedule"
       >
       </prereg-order>
@@ -138,14 +140,16 @@ $content = <<< EOD
     <td></td>
 
     <td>
-      <button v-if="entry.type!='Payment'" class="fa-button" style="white-space: nowrap;" @click="currEntry=entry;showConfirmDialog=true">
-        <span v-if="entry.type=='Ticket'">
-          <i class="fas fa-calendar-times"></i> <span style="font-size:smaller">RELEASE</span>
-        </span>
-        <span v-else>
-          <i class="fas fa-trash"></i> <span style="font-size:smaller">REMOVE</span>
-        </span>
-      </button>
+      <span v-if="preregOpen">
+        <button v-if="entry.type!='Payment'" class="fa-button" style="white-space: nowrap;" @click="currEntry=entry;showConfirmDialog=true">
+          <span v-if="entry.type=='Ticket'">
+            <i class="fas fa-calendar-times"></i> <span style="font-size:smaller">RELEASE</span>
+          </span>
+          <span v-else>
+            <i class="fas fa-trash"></i> <span style="font-size:smaller">REMOVE</span>
+          </span>
+        </button>
+      </span>
     </td>
   </tr>
 
@@ -398,6 +402,7 @@ $content = <<< EOD
           cart: Array,
           eventFormatter: Object,
           baseUrl: String,
+          preregOpen: Boolean,
         },
         data: function() {
           return {
@@ -651,6 +656,7 @@ $content = <<< EOD
           scheduleData: [],
           eventFormatter: eventFormatter,
           baseUrl: '{$config['page']['depth']}',
+          preregOpen: {$buyEventsEnabled},
         },
         methods:
         {
