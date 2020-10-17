@@ -3,7 +3,7 @@ info:
   title: GameConSuite Admin API
   description: >-
     This is the administrative API for GameConSuite.  You can find out more
-    about Game Con Suite at  [https://gameconsuite.com](https://gameconsuite.com)
+    about Game Con Suite at  [https://gameconsuite.org](https://gameconsuite.org)
   # termsOfService: 'http://swagger.io/terms/'
 #   contact:
 #     email: lhamel@gmail.com

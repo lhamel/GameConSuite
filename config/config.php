@@ -48,7 +48,7 @@ Exhibitors' Hall, Auction, Specialty Tracks, and much more!
 EOD;
 
 $config['gcs']['name'] = "GameConSuite";
-$config['gcs']['sitetitle'] = $config['gcs']['name'].", Games for All";
+$config['gcs']['sitetitle'] = $config['gcs']['name']; //.", Games for All";
 $config['gcs']['admintitle'] = $config['gcs']['name']." Admin";
 $config['gcs']['website'] = "http://www.ucon-gaming.org/";
 $config['gcs']['location'] = "Ypsilanti, Michigan";
