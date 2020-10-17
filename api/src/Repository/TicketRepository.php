@@ -31,6 +31,10 @@ class TicketRepository
      */
     public function findCurrentTicketCountByEvents($idEvents) : array
     {
+        if (count($idEvents) == 0) {
+            return [];
+        }
+
         // validate parameter
         foreach ($idEvents as $id) {
             if (!is_numeric($id)) {
@@ -103,6 +107,25 @@ EOD;
 
         return $preregOrders;
     }
+
+
+    public function findCartItemsByMember(int $memberId)
+    {
+        // find sum of ticket quantities in prereg data
+        $sql = <<< EOD
+select id_order as id, id_convention as conventionId, id_member as memberId, s_type as type, s_subtype as subtype, i_quantity as quantity, i_price as price, s_special as special
+from ucon_order as O
+where id_convention=?
+  and id_member=?
+order by id_order
+EOD;
+        $preregOrders = $this->db->getArray($sql, [ $this->siteConfiguration['gcs']['year'], $memberId ]);
+        if (!is_array($preregOrders)) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg());
+        }
+        return $preregOrders;
+    }
+
 
     /**
      *  Use this method to add a cart item to the database. The caller is responsible for validating the item, 
@@ -246,6 +269,19 @@ EOD;
         return $item['unit_price'];
     }
 
+    public function getPendingPaymentAmount($memberId)
+    {
+        // search for any unresolved payments pertaining to this member
+        $sql = 'select sum(f_amount) from ucon_incoming_paypal where id_member=? && b_used=0';
+        $pending = $this->db->getOne($sql, [$memberId]);
+        if ($pending===false) {
+            throw new \Exception("SQL Error: " . $this->db->ErrorMsg());
+        }
+
+        if (!isset($pending)) {
+            $pending = 0;
+        }
+        return $pending;
+    }
+
 }
-
-

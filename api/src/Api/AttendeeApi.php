@@ -278,6 +278,74 @@ class AttendeeApi extends AbstractAttendeeApi
         return $response->withStatus(200)->withHeader('Content-type', 'application/json');
     }
 
+
+    /**
+     * GET getCartByMember
+     * Summary: Get the cart for the specified member
+     * Output-Formats: [application/json]
+     *
+     * @param ServerRequestInterface $request  Request
+     * @param ResponseInterface      $response Response
+     * @param array|null             $args     Path arguments
+     *
+     * @return ResponseInterface
+     * @throws Exception to force implementation class to override this method
+     */
+    public function getCartByMember(ServerRequestInterface $request, ResponseInterface $response, array $args)
+    {
+        $memberId = (int) $args['memberId'];
+
+        // check that the user is logged in
+        if (!$this->auth->isLogged()) {
+            $response->getBody()->write('Unauthorized - user must log in');
+            return $response->withStatus(401);
+        }
+
+        // test the member is listed in the associates for the logged in user
+        $userId = $this->auth->getCurrentUser()['uid'];
+        $members = $this->associates->listAssociates($userId);
+        // echo print_r($members, 1)."\n\n";
+        if (!isset($members[$memberId])) {
+            $response->getBody()->write('Unauthorized');
+            return $response->withStatus(401);
+        }
+
+        $cartItems = $this->ticketRepo->findCartItemsByMember($memberId);
+
+        // find games where member has a ticket
+        $ticketItems = array_filter($cartItems, function($v){ return $v['type']=='Ticket'; } );
+        $eventIds = array_column($ticketItems, 'subtype');
+        $indexedEvents = $this->eventRepo->findIndexedEvents($eventIds);
+
+        // add event info to tickets in the cart
+        $balance = 0;
+        foreach ($cartItems as $k => $v)
+        {
+            if ($v['type']=='Ticket')
+            {
+                $eventId = (int) $v['subtype'];
+                $event = $indexedEvents[$eventId];
+                $cartItems[$k]['event'] = $event;
+            }
+            $balance += $v['quantity']*$v['price'];
+        }
+
+        $member = $this->memberRepository->findPublicMemberById($memberId);
+
+        $cart = [
+            'member'=>$member,
+            'pendingPaymentAmount'=>$this->ticketRepo->getPendingPaymentAmount($memberId),
+            'balance'=>$balance,
+            'items'=>$cartItems,
+        ];
+
+        // TODO someday should we limit the event info to only what it needed?  this call currently returns extra fields
+
+        $response->getBody()->write(json_encode($cart));
+        return $response->withStatus(200)->withHeader('Content-type', 'application/json');
+    }
+
+
     /**
      * PUT addItemToCart
      * Summary: Add an item to the cart

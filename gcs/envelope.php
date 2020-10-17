@@ -30,198 +30,10 @@ if (!$associates->checkAuth($id_member)) {
   exit();
 }
 
-$sqlMember = <<< EOD
-  select *
-  from ucon_member
-  where id_member=?
-EOD;
-
-$members = $db->getArray($sqlMember, array($id_member));
-if (!is_array($members)) {
-  error_log('SQL Error in '.$config['page']['location'].'. '.$db->ErrorMsg());
-  die('SQL Error.  Please report via contact form. '.$db->ErrorMsg());
-} else if (count($members) != 1) {
-  error_log("Attempted to access member id which doesn't exist: $id_member");
-  die('No such member '.$id_member);
-} else {
-  $member = $members[0];
-}
-
-
-$sqlOrder = <<< EOD
-  select O.*, E.*, R.*, O.i_quantity*O.i_price as linetotal
-    , CONCAT(M.s_fname, " ", M.s_lname) as gamemaster
-  from ucon_order as O
-      left join ucon_event as E on (E.id_event=O.s_subtype and 
-                          E.id_convention=O.id_convention and
-                          O.s_type='Ticket')
-      left join ucon_member as M on (M.id_member=E.id_gm)
-      left join ucon_room as R on (E.id_room=R.id_room)
-  where O.id_member=?
-    and O.id_convention=?
-EOD;
-
-
-$sqlGm = <<< EOD
-  select E.*, R.*,
-    E.i_time + E.i_length as endtime,
-    CONCAT(M.s_fname, " ", M.s_lname) as gamemaster,
-    if(isNull(O.id_event), 0, quantity) as prereg
-  from ucon_member as M, ucon_event as E 
-    left join ucon_room as R on (E.id_room=R.id_room)
-    left join (
-
-select
-id_event, I.description, sum(TI.quantity) as quantity
-from ucon_transaction_item as TI, ucon_item as I, ucon_event as E
-where
-  E.id_convention=I.year
-  and I.subtype=E.id_event%10000
-  and TI.barcode=I.barcode
-  and E.id_gm=?
-  and I.year=?
-group by id_event
-
-  ) as O on (O.id_event=E.id_event)
-  where E.id_gm=?
-    and E.id_gm=M.id_member
-    and E.id_convention=?
-  order by E.e_day, E.i_time, id_event
-EOD;
-// NOTE: events are not required to be approved to show up here.
-
-$orders = $db->getArray($sqlOrder, array($id_member, $year));
-if (!is_array($orders)) {
-  error_log('SQL Error in '.$config['page']['location'].'. '.$db->ErrorMsg());
-  die('SQL Error.  Please report via contact form. '.$db->ErrorMsg());
-}
-
-
-$events = $db->getArray($sqlGm, array($id_member, $year, $id_member, $year));
-if (!is_array($events)) {
-  error_log('SQL Error in '.$config['page']['location'].'. '.$db->ErrorMsg());
-  die('SQL Error.  Please report via contact form. '.$db->ErrorMsg());
-}
-
-
-
-$first = $member['s_fname'];
-$last = $member['s_lname'];
-$full = $first . ($first && $last ? ' ' : '') . $last;
-$member['name'] = '<a href="envelope.php?envelope='.$id_member.'">'.$full.'</a>';
-
-function filterTickets($item) { return $item['s_type'] == 'Ticket'; }
-function filterPayments($item) { return $item['s_type'] == 'Payment'; }
-function filterNonPayments($item) { return $item['s_type'] != 'Payment'; }
-
-$tickets = array_filter($orders, 'filterTickets');
-$schedule = array_merge($tickets, $events);
-
-function sortByTime($i1, $i2) {
-  if ($i1['e_day'] != $i2['e_day']) {
-    return $i1['e_day'] > $i2['e_day'];
-  }
-  if ($i1['i_time'] != $i2['i_time']) {
-    return $i1['i_time'] > $i2['i_time'];
-  }
-  return 0;
-}
-
-function sortByTimestamp($i1, $i2) {
-  return $i1['d_transaction'] > $i2['d_transaction'];
-}
-
-function formatItemDesc($orders, $fieldname) {
-  global $constants;
-  foreach ($orders as $k => $v) {
-    $type = $v['s_type'];
-    if ($v['s_type'] == "Ticket") {
-      $title = formatSingleEventTitle($v['s_game'], $v['s_title']);
-      $time = formatSingleEventTime($v['e_day'], $v['i_time']);
-      $id = $v['id_event'];
-      $orders[$k][$fieldname] = "$type: $title (#$id, $time)";
-    } else if ($v['s_type'] == "Badge") {
-      $subtype = $v['s_subtype'];
-      $special = $v['s_special'];
-      $orders[$k][$fieldname] = "$type: $subtype - $special";
-    } else if ($v['s_type'] == 'Payment') {
-      $subtype = $v['s_subtype'];
-      $special = $v['s_special'];
-      $orders[$k][$fieldname] = "***$type: $subtype - $special";
-    } else {
-      $subtype = $v['s_subtype'];
-      $orders[$k][$fieldname] = "$type: $subtype";
-    }
-    //$orders[$k][$fieldname] .= $v['d_transaction'];
-  }
-  return $orders;
-}
-
-function formatRemoveBtn($orders, $fieldname) {
-  global $constants,$id_member;
-  foreach ($orders as $k => $v) {
-
-//$config['allow']['buy_events'];
-    if ($v['s_type'] != 'Payment') {
-      $desc = $v['desc']."<br><br>Are you sure you want to remove this item?";
-      $orderId = $v['id_order'];
-      $url = "reg/_add.php?action=removeItem&id_member=$id_member&orderId=$orderId&desc=$v[desc]";
-      $remove = "<a href=\"javascript:removeItemDialog('".addSlashes($desc)."', '".addSlashes($url)."')\"><img src=\"../images/remove.png\" width=\"10\"></a>";
-      $orders[$k][$fieldname] = $remove;
-    }
-  }
-  return $orders;
-}
-
-
-// remove time information from unapproved events
-// foreach ($events as $k => $v) {
-//   if (!$events[$k]['b_approval']) {
-//     $events[$k]['e_day'] = '';
-//     $events[$k]['i_time'] = '';
-//     $events[$k]['endtime'] = '';
-//   }
-// }
-// foreach ($schedule as $k => $v) {
-//   if (!$schedule[$k]['b_approval']) {
-//     $schedule[$k]['e_day'] = '';
-//     $schedule[$k]['i_time'] = '';
-//     $schedule[$k]['endtime'] = '';
-//   }
-// }
-
-// usort($schedule, 'sortByTime');
-usort($orders, 'sortByTimestamp');
-// usort($events, 'sortByTime');
-
-// Calculate the balance due
-$balance = 0;
-foreach ($orders as $k => $v) {
-  $balance += $v['linetotal'];
-  $orders[$k]['balance'] = '$'.number_format($balance,2);
-}
-
-// search for any unresolved payments pertaining to this member
-$sql = 'select sum(f_amount) from ucon_incoming_paypal where id_member=? && b_used=0';
-$pending = $db->getOne($sql, array($id_member));
-if (!isset($pending)) {
-  $pending = 0;
-}
-
-//echo "<pre style=\"text-align:left\">Member\n".print_r($member,1).'</pre>';
-//echo "<pre style=\"text-align:left\">Order\n".print_r($orders,1).'</pre>';
-//echo "<pre style=\"text-align:left\">Events\n".print_r($events,1).'</pre>';
-
-//echo "<pre style=\"text-align:left\">Tickets\n".print_r($tickets,1).'</pre>';
-//echo "<pre style=\"text-align:left\">Schedule\n".print_r($schedule,1).'</pre>';
-
 
 include INC_PATH.'resources/event/constants.php';
 include INC_PATH.'smarty.php';
 include INC_PATH.'layout/menu.php';
-
-$smarty->assign('events', $members); // TODO bug fix, field is called events
-//$smarty->assign('events', $events);
 
 $actions = array();
 
@@ -230,152 +42,41 @@ $smarty->assign('config', $config);
 $smarty->assign('constants', $constants);
 $smarty->assign('title', $title);
 
-// render the page
-//echo '<pre>'.print_r($_SESSION,1).'</pre>'; exit;
-$content = $smarty->fetch('gcs/reg/removeItemDlg.tpl');
-
 if (isset($_REQUEST['update'])) {
   $ribbon = '<p class="ribbon">'.$_REQUEST['update'].'</p>';
 } else {
   $ribbon = '<p></p>';
 }
 
-$content .= <<< EOD
-<h2>Envelope: $full</h2>
-$ribbon
-EOD;
+$buyEventsEnabled = $config['allow']['buy_events'] ? 'true':'false';
 
+// render the page
+$content = <<< EOD
 
-
-// List orders
-$content .= '<h3>Preregistration Order</h3>';
-//$payments = array_filter($orders, 'filterPayments');
-//$nonpayments = array_filter($orders, 'filterNonPayments');
-if (count($orders)>0) {
-
-  $cols = array(
-    'remove'=>'',
-    'desc'=>'Description',
-    'i_quantity'=>'Quantity',
-    'i_price'=>'Unit Price',
-    'linetotal'=>'Total',
-    'balance'=>'Balance',
-  );
-  if (!$config['allow']['buy_events']) {
-    unset($cols['remove']);
-  }
-
-  $items = formatItemDesc($orders, 'desc');
-  $items = formatRemoveBtn($items, 'remove');
-  $smarty->assign('events', $items);
-  $smarty->assign('columns', $cols);
-  $smarty->assign('columnsAlign', array(
-    'i_quantity'=>'right',
-    'i_price'=>'right',
-    'linetotal'=>'right',
-    'balance'=>'right',
-  ));
-
-  $content .= $smarty->fetch('gcs/common/general-table.tpl');
-} else {
-  $content .= "<p>No preregistration order yet</p>";
-}
-
-
-
-$content .= '<h3>Payments</h3>';
-/*
-if (count($payments)>0) {
-  $items = formatItemDesc($payments, 'desc');
-  $smarty->assign('events', $items);
-  $smarty->assign('columns', array(
-    //'id_order'=>'Order',
-    'desc'=>'Description',
-    //'i_quantity'=>'Quantity',
-    //'i_price'=>'Unit Price',
-    'linetotal'=>'Total',
-  ));
-
-  $content .= $smarty->fetch('gcs/common/general-table.tpl');
-} else {
-  $content .= "<p>No payments yet</p>";
-}
-*/
-if ($balance-$pending > 0) {
-  $smarty->assign('amount', ($balance-$pending));
-  $smarty->assign('id_member', $id_member);
-
-  $formatBalance = number_format($balance,2);
-  $fDifference = number_format( ($balance-$pending), 2);
-  $msgPending = '';
-  if ($pending > 0) {
-    $fPending = number_format($pending,2);
-    $msgPending = "<p>Payments totaling <b>\$$fPending</b> have been received but not yet reconciled.</p>";
-  }
-
-  $paypalBtn = $smarty->fetch('gcs/reg/paypal.tpl');
-  $content .= <<< EOD
-<p>Our records show that you have a balance due.  <span style="font-weight:bolder">Please wait until you've got all your items in your cart before you check out!  Also wait for previous payments to be resolved before paying again.</span><!--'--></p>
-
-<p>Balance due: <b>\$$formatBalance</b></p>
-
-$msgPending
-
-<table><tr>
-  <th style="width:36%">Pay by credit card or PayPal</th>
-  <th>Pay by check</th>
-</tr><tr><td>
-
-  <p>Make a credit card or PayPal payment for <b>\$$fDifference</b>: $paypalBtn</p>
-  <p><b>Payments will not appear immediately!</b><br>Please give us 3 business days to update our records, then notify us of any discrepencies.</p>
-
-</td><td>
-
-<p>Alternately, you may submit a check by postal mail to our P.O. Box, however it will
-  take longer for us to receive and process your payment.  Please make checks payable 
-  to <b>{$config['gcs']['payments']['checkPayable']}</b> and include the name on your 
-  registration with the check.  Never send cash through the mail!</p>
-
-  <p>Attn: Registration<br/>
-  {$config['gcs']['payments']['mailAddress']}</p>
-</td></tr></table>
-EOD;
-
-} else if ($balance < 0) {
-  $refund = number_format(-$balance,2);
-  $content .= <<< EOD
-
-
-<p>Refund owed: \$$refund</p>
-
-<p>Our records show that you have a refund due.  Feel free to add additional items into your account.  Please contact us to request an early refund.</p>
-
-EOD;
-} else if ($pending > 0) {
-
-  $fBalance = number_format($balance,2);
-  $fPending = number_format($pending,2);
-
-  $content .= <<< EOD
-<p>Our records show pending payments from PayPal of <b>\$$fPending</b> and a balance due of <b>\$$fBalance.</b></p>
-
-  <p><b>Payments will not appear immediately!</b><br>Please give us 3 business days to update our records, then notify us of any discrepencies.</p>
-
-
-
-EOD;
-
-
-} else {
-  $content .= '<p>No payment due.</p>';
-}
-
-
-
-$content .= <<< EOD
 
     <!-- demo root element -->
     <div id="demo">
+
+      <h2>Envelope: {{fullName}}</h2>
+      $ribbon
+
+      <h3>Preregistration Order</h3>
+      <prereg-order
+        :cart="cartData"
+        :event-formatter="eventFormatter"
+        :base-url="baseUrl"
+        :prereg-open="preregOpen"
+        @update-schedule="updateMemberSchedule"
+      >
+      </prereg-order>
+
+      <h3>Payments</h3>
+      <pay-balance
+        :cart="cartData"
+        :pending-payment-amount="pendingPaymentAmount"
+      >
+      </pay-balance>
+
       <h3>GM Events</h3>
       <gamemaster-events
         :gmevents="gridData"
@@ -393,6 +94,142 @@ $content .= <<< EOD
       </schedule-list>
     </div>
 
+
+<script type="text/x-template" id="prereg-order-template">
+<div>
+
+<table class="striped" border="0" cellspacing="0" cellpadding="1" width="100%">
+<thead>
+  <tr>
+    <th style="white-space: nowrap;">Description</th>
+    <th class="numeric" style="white-space: nowrap;">Quantity</th>
+    <th class="numeric" style="white-space: nowrap;">Unit Price</th>
+    <th class="numeric" style="white-space: nowrap;">Total</th>
+    <!--<th style="white-space: nowrap;">Balance</th>-->
+    <th style="white-space: nowrap;">&nbsp;</th><!-- spacer -->
+    <th style="white-space: nowrap;"></th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr v-for="entry in formatCart">
+
+    <td>
+      <span v-if="entry.type == 'Badge'">
+        {{entry.type}}: {{entry.subtype}} - {{entry.special}}
+      </span>
+      <span v-if="entry.type == 'Ticket'">
+        {{entry.type}}: {{entry.event.formatTitle}} (#{{entry.event.id}}, {{entry.event.formatStartTime}})
+      </span>
+      <span v-if="entry.type == 'Payment'">
+        ***Payment Applied: {{entry.subtype}} {{entry.special}}
+      </span>
+      <span v-if="entry.type != 'Badge' && entry.type != 'Ticket' && entry.type != 'Payment'">
+        {{entry.type}}: {{entry.subtype}}
+      </span>
+    </td>
+
+    <td class="numeric">{{entry.quantity}}</td>
+    <td class="numeric">{{(entry.price*1.0).toFixed(2)}}</td>
+    <td class="numeric">\${{(entry.quantity * entry.price).toFixed(2)}}</td>
+
+    <!-- running balance
+    <td></td> -->
+
+    <!-- spacer -->
+    <td></td>
+
+    <td>
+      <span v-if="preregOpen">
+        <button v-if="entry.type!='Payment'" class="fa-button" style="white-space: nowrap;" @click="currEntry=entry;showConfirmDialog=true">
+          <span v-if="entry.type=='Ticket'">
+            <i class="fas fa-calendar-times"></i> <span style="font-size:smaller">RELEASE</span>
+          </span>
+          <span v-else>
+            <i class="fas fa-trash"></i> <span style="font-size:smaller">REMOVE</span>
+          </span>
+        </button>
+      </span>
+    </td>
+  </tr>
+
+  <tr class="cart-balance">
+    <td></td>
+    <td></td>
+    <td class="numeric">Total</td>
+    <td class="numeric"><strong>\${{balance}}</strong></td>
+    <!--<td class="numeric">Balance</td>-->
+    <td></td>
+    <td></td>
+  </tr>
+
+</tbody>
+</table>
+
+<confirmation-dialog v-if="showConfirmDialog" title="Confirm item should be removed?" :description="currEntry.type+': '+(currEntry.type=='Ticket'? currEntry.event.formatTitle+' #'+currEntry.event.id : currEntry.subtype)" @close="showConfirmDialog=false" @confirm="showConfirmDialog=false;removeItem(currEntry)"></confirmation-dialog>
+
+</div>
+</script>
+
+<script type="text/x-template" id="pay-balance-template">
+<div>
+
+<p v-if="pendingPaymentAmount>0">A payment for \${{pendingPaymentAmount.toFixed(2)}} is pending.  It may take up to 3 business days for us to credit your account.  Meanwhile, the amount has already been applied to your balance below.</p>
+
+
+<p v-if="balance==0">No payment due.</p>
+
+
+<div v-if="balance<0">
+<p>Our records show that you have a refund due.  Feel free to add additional items into your account.  Please contact us to request an early refund.</p>
+
+<p>Refund owed: \${{balance*-1}}</p>
+
+</div>
+
+
+<div v-if="balance>0">
+
+<p>Our records show that you have a balance due.  <span style="font-weight:bolder">Please wait until you've got all your items in your cart before you check out!</span><!--'--></p>
+
+<p>Balance due: <b>\${{balance}}</b><span v-if="pendingPaymentAmount>0"> (after pending amount of \${{pendingPaymentAmount}} is applied)</span></p>
+
+<table><tbody><tr>
+  <th style="width:46%">Pay by credit card or PayPal</th>
+  <th>Pay by check</th>
+</tr><tr><td>
+
+  <p>Make a credit card or PayPal payment for <b>\${{balance}}</b>: </p><form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="{$config['email']['paypal']}">
+<input type="hidden" name="item_name" value="{$config['gcs']['name']} {$config['gcs']['year']} Registration #{$id_member}">
+<input type="hidden" name="item_number" value="Member #{$id_member}">
+<input type="hidden" name="amount" :value="balance">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="lc" value="US">
+<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but01.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+<input type="hidden" name="add" value="1">
+</form>
+
+<p></p>
+  <p><b>Payments will not appear immediately!</b><br>Please give us 3 business days to update our records, then notify us of any discrepencies.</p>
+
+</td><td>
+
+<p>Alternately, you may submit a check by postal mail to our P.O. Box, however it will
+  take longer for us to receive and process your payment.  Please make checks payable 
+  to <b>U-Con Gaming Club</b> and include the name on your 
+  registration with the check.  Never send cash through the mail!</p>
+
+  <p>Attn: Registration<br>
+  U-Con Gaming Convention<br>PO Box 130242<br>Ann Arbor, MI 48113-0242</p>
+</td></tr></tbody></table>
+
+</div>
+
+</div>
+</script>
 
 <script type="text/x-template" id="gamemaster-events-template">
 <div>
@@ -429,6 +266,40 @@ $content .= <<< EOD
 
 </div>
 </script>
+
+
+    <script type="text/x-template" id="confirmation-dialog-template">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+
+              <div class="modal-header">
+                <h3>{{title}}</h3>
+              </div>
+
+              <div class="modal-body">
+                <p>{{description}}</p>
+              </div>
+
+              <div class="modal-footer">
+                <slot name="footer">
+                  &nbsp;
+                  <button class="modal-default-button" @click="\$emit('close')">
+                    Cancel
+                  </button>
+                  <button class="modal-default-button" @click="\$emit('confirm', payload)">
+                    OK
+                  </button>
+                </slot>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </script>
+
+
 
     <script type="text/x-template" id="vtt-dialog-template">
       <transition name="modal">
@@ -525,6 +396,102 @@ $content .= <<< EOD
     <script src="{$config['page']['depth']}js/gcs/events.js"></script>
     <script>
 
+      Vue.component("prereg-order",{
+        template: "#prereg-order-template",
+        props: {
+          cart: Array,
+          eventFormatter: Object,
+          baseUrl: String,
+          preregOpen: Boolean,
+        },
+        data: function() {
+          return {
+            showConfirmDialog: false,
+            currEntry: null,
+          };
+        },
+        computed: {
+          balance : function() {
+            let s = this.cart;
+            let b = 0;
+            s.forEach(e => {
+              console.log(e);
+              b += e.quantity*e.price;
+            });
+            return b.toFixed(2);
+          },
+          formatCart : function() {
+            let ef = this.eventFormatter;
+            let s = this.cart;
+            console.log('formatCart');
+            console.log(s);
+            s.forEach(e => {
+              if (e.event) {
+                e.event.formatTitle = ef.formatTitle(e.event);
+                e.event.formatStartTime = ef.formatDay(e.event.day).substring(0,3) + ' ' + ef.formatSingleTime(e.event.time);
+              }
+            });
+            return s;
+          }
+        },
+        methods:
+        {
+          removeItem : function(entry)
+          {
+            console.log("remove item ")
+            console.log(entry);
+
+            if (entry.type=="Payment") {
+              alert("Error: payments cannot be remove by this method");
+            }
+
+
+            let self = this;
+
+            // remove entry with call to API
+            $.ajax({
+               type: 'DELETE',
+               url: this.baseUrl+"api/user/envelope/{$id_member}/cart/" + entry.id,
+               contentType: 'application/json',
+            })
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                // self.showConfirmDialog = false;
+
+                // update the cart and schedule
+                self.\$emit('update-schedule');
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+                alert("Error: removal failed");
+              });
+
+          }
+        }
+      });
+
+      Vue.component("pay-balance",{
+        template: "#pay-balance-template",
+        props: {
+          cart: Array,
+          pendingPaymentAmount: Number,
+        },
+        computed: {
+          balance : function() {
+            let s = this.cart;
+            let b = -this.pendingPaymentAmount;
+            s.forEach(e => {
+              console.log(e);
+              b += e.quantity*e.price;
+            });
+            return b.toFixed(2);
+          },
+        }
+      });
+
       Vue.component("schedule-list", {
         template: "#schedule-list-template",
         props: {
@@ -551,6 +518,16 @@ $content .= <<< EOD
           }
         }
       });
+
+      Vue.component("confirmation-dialog", {
+        template: "#confirmation-dialog-template",
+        props: {
+          title : String,
+          description : String,
+          payload: Object,
+        },
+      });
+
 
       Vue.component("vtt-dialog", {
         template: "#vtt-dialog-template",
@@ -673,27 +650,56 @@ $content .= <<< EOD
           //searchQuery: "",
           gridColumns: ["id", "game", "minplayers", "maxplayers", "price" ],
           gridData: [],
+          cartData: [],
+          fullName: '',
+          pendingPaymentAmount: 0,
           scheduleData: [],
           eventFormatter: eventFormatter,
           baseUrl: '{$config['page']['depth']}',
+          preregOpen: {$buyEventsEnabled},
+        },
+        methods:
+        {
+          updateMemberSchedule : function() {
+
+            // retrieve items int the cart
+            var jqxhr = $.get( this.baseUrl+"api/user/envelope/{$id_member}/cart")
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+
+                demo.cartData = data.items;
+                demo.fullName = self.eventFormatter.formatGmObj(data.member);
+                demo.pendingPaymentAmount = Number(data.pendingPaymentAmount);
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+              });
+
+            // retrieve the combined schedule
+            var jqxhr = $.get( this.baseUrl+"api/user/envelope/{$id_member}/schedule")
+              .done(function(data) {
+                console.log( "success" );
+                console.log( data );
+                demo.scheduleData = data;
+              })
+              .fail(function(data) {
+                console.log( "error" );
+                console.log( data );
+              });
+
+          }
         },
         created: function() {
           var self = this;
 
-          // Request the token from previous login
-          var jqxhr = $.get( self.baseUrl+"api/user/token")
+          // retrieve the event constants
+          var jqxhr = $.get( self.baseUrl+"api/system/constants/events")
             .done(function(data) {
-              console.log(data);
-              let t = (data);
-              console.log( "retrieved token " + t );
-              localStorage.setItem('token', t);
-
-              // set up the bearer-token for all calls
-              $.ajaxSetup({
-                  beforeSend: function(xhr) {
-                      xhr.setRequestHeader('Authorization', 'Bearer '+t);
-                  }
-              });
+              console.log( "retrieved event constants" );
+              console.log( data );
+              eventFormatter.constants = data;
 
               // retrieve the GM events list
               var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/event")
@@ -714,17 +720,7 @@ $content .= <<< EOD
                   console.log( data );
                 });
 
-              // retrieve the GM events list
-              var jqxhr = $.get( self.baseUrl+"api/user/envelope/{$id_member}/schedule")
-                .done(function(data) {
-                  console.log( "success" );
-                  console.log( data );
-                  demo.scheduleData = data;
-                })
-                .fail(function(data) {
-                  console.log( "error" );
-                  console.log( data );
-                });
+                self.updateMemberSchedule();
 
             })
             .fail(function(data) {

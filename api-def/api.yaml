@@ -1432,8 +1432,33 @@ components:
           example: "p@ssw0rd"
     Cart:
       type: object
+      required:
+        - member
+        - balance
+        - pendingPaymentAmount
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        balance:
+          type: number
+          format: float
+        pendingPaymentAmount:
+          type: number
+          format: float
+        member:
+          $ref: '#/components/schemas/Member'
     CartItem:
       type: object
+      required:
+        - id
+        - conventionId
+        - memberId
+        - type
+        - subtype
+        - quantity
+        - price
       properties:
         id:
           type: integer
@@ -1458,6 +1483,8 @@ components:
         special:
           type: string
           description: for badges, the name on the badge
+        event:
+          $ref: '#/components/schemas/Event'
     Badge:
       type: object
     Ticket:
