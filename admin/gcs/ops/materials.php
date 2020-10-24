@@ -9,6 +9,11 @@ ob_start();
 <h1>Materials</h1>
 <p>These pages generate the materials needed for ops.  Add ?year=&lt;year&gt; to the end of any URL.</p>
 
+<h2>Utilities</h2>
+<ul>
+  <li><a href="materials/event-spreadsheet.php">Event Spreadsheet</a></li>
+</ul>
+
 <h2>Upon Event Schedule Completion</h2>
 <ul>
   <li><a href="materials/gmworksheet.php">GM Worksheets</a>
