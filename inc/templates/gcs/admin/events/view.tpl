@@ -502,6 +502,129 @@ Tix on Board: {$event.i_remaining_tickets}<br/>
 <a class="button" href="{$config.page.depth}{$actions.deleteEvent}">Delete Event</a>
 {/if}
 
+    <!-- demo root element -->
+    <div id="demo">
+      <cancel-event-button @showcanceldialog="showCancelDialog=true"></cancel-event-button>
+
+      <cancel-event-dialog 
+        v-if="showCancelDialog"
+        id-event="{$event.id_event}"
+        title="{$event.s_game}: {$event.s_title}"
+        @close="showCancelDialog=false"></cancel-event-dialog>
+
+    </div>
+
+
+<script type="text/x-template" id="cancel-event-button-template">
+  {literal}
+  <button class="fa-button" style="float:left" @click="$emit('showcanceldialog')">
+    <span>
+      <i class="fas fa-calendar-times"></i>
+    </span>
+    <span style="font-size:smaller">Cancel</span>
+  </button>
+  {/literal}
+</script>
+
+    <script type="text/x-template" id="cancel-event-dialog-template">
+    {literal}
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+
+              <div class="modal-header">
+                <h3>Cancel Event: #{{idEvent}}</h3>
+              </div>
+
+              <div class="modal-body">
+
+  <p style="margin-left:24px"><strong><i>{{title}}</i></strong></p>
+  <p>Are you sure you wish to cancel this event?</p>
+  <p>The following actions will be performed:</p>
+
+    <ul>
+    <li>Add cancelled to the title of the event</li>
+    <li>Set # players to 0</li>
+    <li>Add tag "cancelled" to the event</li>
+    <li>Update the cash register</li>
+    <li>Remove room and table assignment</li>
+    <li>Email the ticketed players</li>
+    </ul>
+
+              </div>
+
+              <div class="modal-footer">
+                <slot name="footer">
+                  &nbsp;
+                  <button class="modal-default-button" @click="$emit('close')">
+                    Close
+                  </button>
+                </slot>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    {/literal}
+    </script>
+
+
+
+    <script src="{$config['page']['depth']}js/gcs/events.js"></script>
+    <script>
+      {literal}
+
+      Vue.component("cancel-event-button", {
+        template: "#cancel-event-button-template",
+        props: {
+        }
+      });
+
+      Vue.component("cancel-event-dialog", {
+        template: "#cancel-event-dialog-template",
+        props: {
+          idEvent: String,
+          title: String,
+        },
+        methods: {
+        }
+      });
+
+
+      // bootstrap the demo
+      var demo = new Vue({
+        el: "#demo",
+        data: function () {
+          return {
+            baseUrl: '{/literal}{$config['page']['depth']}{literal}',
+            showCancelDialog: false,
+          };
+        },
+        methods: {
+        },
+        created: function() {
+          var self = this;
+
+          // // retrieve the event constants
+          // var jqxhr = $.get( self.baseUrl+"api/system/constants/events")
+          //   .done(function(data) {
+          //     console.log( "retrieved event constants" );
+
+          //   })
+          //   .fail(function(data) {
+          //     console.log( "error" );
+          //     console.log( data );
+          //   });
+
+        }
+      });
+
+      {/literal}
+    </script>
+
+
+
 {* 
 {include file="gcs/admin/events/schedule.tpl"}
 *}
