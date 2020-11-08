@@ -1,7 +1,6 @@
 <?php
 include_once ('../../../inc/inc.php');
 $year = $config['gcs']['year'];
-$year=2016;
 include_once (INC_PATH.'db/db.php');
 include INC_PATH.'resources/event/constants.php';
 
@@ -94,13 +93,9 @@ foreach($tickets as $t) {
 }
 
 
-// for testing
-$emails[0] = 'lhamel@gmail.com';
-
-
-
+// instead of sending the email, we prepare a template which can be set to the players
 echo "<pre>Emails:\n";
-
+if (count($emails) == 0) { echo "none\n"; }
 foreach($emails as $e) {
     echo $e."\n";
 }
@@ -129,6 +124,12 @@ Sincerely,
 U-Con Events Team
 
 
+
+
+
+
+
+Note: this message is only appropriate for use during prereg.
 </pre>
 EOD;
 

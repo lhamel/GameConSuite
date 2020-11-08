@@ -549,8 +549,10 @@ Tix on Board: {$event.i_remaining_tickets}<br/>
     <li>Add tag "cancelled" to the event</li>
     <li>Update the cash register</li>
     <li>Remove room and table assignment</li>
-    <li>Email the ticketed players</li>
+    <li>Compose email to the ticketed players</li>
     </ul>
+
+    <a :href="'_cancel.php?id_event='+idEvent">Yes, cancel this event.</a>
 
               </div>
 
