@@ -91,7 +91,7 @@ $smarty->assign('columnsAlign', array(
 //echo '<pre>'.print_r($_SESSION,1).'</pre>'; exit;
 $content = <<< EOD
 <h2>Envelopes</h2>
-<p>A registration packet will be provided for each person listed below who has preregistrations items which have been earned or purchased.  Click on the name of the person to edit their registration.</p>
+<p>Each attendee for this account should have their own envelope.  Each envelope represents all of the pre-registration items such as badges, tickets for events, and/or merchandise ordered for that individual. Click on the name of the person to see or edit this information.  In addition, GMs will be able to see the amount of tickets sold for their events during pre-registration. If you need to add more attendees for this account, please click on the Add Envelope button. Any changes to personal information should be done through a customer service request email.</p>
 EOD;
 
 $content .= '<p class="auth">'.$smarty->fetch('gcs/common/general-table.tpl').'</p>';

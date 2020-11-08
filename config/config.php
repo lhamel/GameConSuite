@@ -28,7 +28,6 @@ $config['allow']['message'] = ''; //<span style="font-size:18pt">Pregistration O
 $config['gcs']['virtual_venue'] = true;
 
 
-// $config['ucon']['baseUrl'] = "https://www.ucon-gaming.org/reg";
 
 $config['email']['registration'] = 'reg2019@ucon-gaming.org';
 // $config['email']['webmaster'] = 'webmaster@ucon-gaming.org';
@@ -47,6 +46,8 @@ Miniatures, Train Games, Live Action RPGs, Video Games,
 Exhibitors' Hall, Auction, Specialty Tracks, and much more!
 EOD;
 
+
+$config['gcs']['baseUrl'] = "http://localhost/GameConSuite";
 $config['gcs']['name'] = "GameConSuite";
 $config['gcs']['sitetitle'] = $config['gcs']['name']; //.", Games for All";
 $config['gcs']['admintitle'] = $config['gcs']['name']." Admin";
