@@ -1,4 +1,8 @@
 {
+  "name": "lhamel/GameConSuite",
+  "description": "Software for organizing a small to mid-size convention",
+  "version": "v1.1.7",
+  "license": "GPL-3.0-only",
 
   "require": {
     "adodb/adodb-php": "^5",
