@@ -1,7 +1,6 @@
 {
   "name": "lhamel/gameconsuite",
   "description": "Software for organizing a small to mid-size convention",
-  "version": "v1.1.7",
   "license": "GPL-3.0-only",
 
   "require": {
