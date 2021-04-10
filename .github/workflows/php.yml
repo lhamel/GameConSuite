@@ -26,8 +26,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
+    - name: Install dependencies for base application
       run: composer install --prefer-dist --no-progress
+
+    - name: Install depedencies in API directory
+      run: cd api; composer install --prefer-dist --no-progress
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
