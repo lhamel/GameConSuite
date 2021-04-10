@@ -21,6 +21,7 @@ jobs:
       id: composer-cache
       uses: actions/cache@v2
       with:
+        php_version: 7.3
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
