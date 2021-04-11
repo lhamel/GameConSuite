@@ -32,6 +32,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Create a test database
+      run: mysql -u root -e "create database ucon_test"
+
     - name: Install dependencies for base application
       run: composer install --prefer-dist --no-progress
 
