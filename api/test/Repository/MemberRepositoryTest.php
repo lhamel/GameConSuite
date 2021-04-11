@@ -65,7 +65,7 @@ class MemberRepositoryTest extends TestCase
 
         // load the database with test data
         // If strict types are enabled i.e. declare(strict_types=1);
-        $file = file_get_contents(dirname(__FILE__).'/../../../dev_scripts/ucon-scrub-2019.sql', true);
+        $file = file_get_contents(dirname(__FILE__).'/../../../dev_scripts/test-db.sql', true);
         $cmds = explode(';', $file);
         foreach ($cmds as $cmd) {
             if (substr(trim($cmd), 0, 12) == "CREATE TABLE") {
