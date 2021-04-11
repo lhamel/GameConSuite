@@ -55,13 +55,9 @@ class MemberRepositoryTest extends TestCase
      */
     public function setUp() : void
     {
-        // $this->db = \NewADOConnection('mysqli://root:@localhost/ucon_test');
-        // $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+        $this->db = \NewADOConnection('mysqli://root:@localhost/ucon_test');
+        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
-        $dsn = 'sqlite::memory:';
-        $user = 'root';
-        $this->db = \NewADOConnection('pdo');
-        $this->db->connect($dsn,$user);
 
         // load the database with test data
         // If strict types are enabled i.e. declare(strict_types=1);
