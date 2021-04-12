@@ -32,7 +32,7 @@ jobs:
       run: sudo /etc/init.d/mysql start --skip-grant-tables
 
     - name: Verify MySQL connection from host
-      run: mysql -e "SHOW DATABASES"
+      run: mysql -u root -e "SHOW DATABASES"
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
