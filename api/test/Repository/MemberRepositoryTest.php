@@ -55,20 +55,16 @@ class MemberRepositoryTest extends TestCase
      */
     public function setUp() : void
     {
-
-
-// Create connection
-$conn = new \mysqli('localhost', 'root', 'root');
-
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
-
-
         $this->db = \NewADOConnection('mysql://root:root@localhost/ucon_test');
+        if ($this->db === false) {
+            echo "could not connect to database"; return;
+        }
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
+        // $dsn = 'sqlite::memory:';
+        // $user = 'root';
+        // $this->db = \NewADOConnection('pdo');
+        // $this->db->connect($dsn,$user);
 
         // load the database with test data
         // If strict types are enabled i.e. declare(strict_types=1);
