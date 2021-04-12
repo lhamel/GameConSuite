@@ -28,6 +28,12 @@ jobs:
 
     steps:
 
+    - name: Start mysql service
+      run: sudo /etc/init.d/mysql start
+
+    - name: Verify MySQL connection from host
+      run: mysql -uroot -ppassword -e "SHOW DATABASES"
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
