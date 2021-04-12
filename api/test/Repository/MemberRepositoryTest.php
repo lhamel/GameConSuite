@@ -58,7 +58,7 @@ class MemberRepositoryTest extends TestCase
 
 
 // Create connection
-$conn = new mysqli('localhost', 'root', 'root');
+$conn = new \mysqli('localhost', 'root', 'root');
 
 // Check connection
 if ($conn->connect_error) {
