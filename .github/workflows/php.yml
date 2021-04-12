@@ -19,8 +19,11 @@ jobs:
     - name: Verify MySQL connection from host
       run: mysql -uroot -proot -e "SHOW DATABASES"
 
-    - name: Verify MySQL connection from host
+    - name: Create test database
       run: mysql -uroot -proot -e "CREATE DATABASE ucon_test"
+
+    - name: Check connection to test database
+      run: mysql -uroot -proot ucon_test -e "SHOW TABLES"
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
