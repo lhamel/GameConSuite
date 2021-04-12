@@ -20,8 +20,8 @@ class MemberRepository
 {
     protected $db;
 
-    const PUBLIC_DB_FIELDS = ['id_member', 's_lname', 's_fname', 's_group'];
-    const PRIVATE_DB_FIELDS = ['s_email', 's_addr1', 's_addr2', 's_city', 's_state', 's_zip', 's_international', 's_phone'];
+    const PUBLIC_DB_FIELDS = ['id_member as id', 's_lname as lastName', 's_fname as firstName', 's_group as groupName'];
+    const PRIVATE_DB_FIELDS = ['s_email as email', 's_addr1 as addr1', 's_addr2 as addr2', 's_city as city', 's_state as state', 's_zip as zip', 's_international as international', 's_phone as phone'];
 
     const FIELD_MAP = ['id_member'=>'id', 's_lname'=>'lastName', 's_fname'=>'firstName', 's_group'=>'groupName', 's_email'=>'email', 's_addr1'=>'addr1', 's_addr2'=>'addr2', 's_city'=>'city', 's_state'=>'state', 's_zip'=>'zip', 's_international'=>'international', 's_phone'=>'phone'];
 
@@ -39,6 +39,61 @@ class MemberRepository
     //     return PostId::fromInt($this->persistence->generateId());
     // }
 
+    public function persistMember(MemberPrivate $member) {
+
+        // map fields back to their database names
+        $data = [];
+        foreach(MemberRepository::FIELD_MAP as $dbField=>$objField) {
+            $v = $member->$objField;
+            $data[$dbField] = $v;
+        }
+        // echo print_r($member, true)."\n\n";
+
+        // if a member ID is included, check that if it is already in use
+        $sql = "select id_member, id_member as id2 from ucon_member where id_member=?";
+        $result = $this->db->getAssoc($sql, [$member->id] );
+        if ($result === false) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg(). "\n\n$sql");
+        }
+
+        // this is a new member, add it
+        if ($result === false || count($result) == 0) {
+
+            // This works because all fields are string
+            $setValues = implode('=?, ',array_keys($data)).'=? ';
+
+            $sql = "INSERT INTO ucon_member set $setValues";
+            $ok = $this->db->execute($sql, $data);
+            if ($ok === false) {
+                throw new \Exception("SQL Error: ".$this->db->ErrorMsg()."\n\n$sql");
+            }
+
+        } else {
+
+            // This works because all fields are string
+            unset($data['id_member']);
+            $setValues = implode('=?, ',array_keys($data)).'=? ';
+
+            $sql = "UPDATE ucon_member set $setValues where id_member=?";
+            // echo "\n\n$sql \n\n";
+            $ok = $this->db->execute($sql, $data+[$member->id]);
+            if ($ok === false) {
+                throw new \Exception("SQL Error: ".$this->db->ErrorMsg()."\n\n$sql");
+            }
+        }
+    }
+
+
+    /**
+     * Delete the specified member, or if this member doesn't exist throw an exception
+     */
+    public function deleteMember(MemberPrivate $member) : void {
+        $sql = "delete from ucon_member where id_member=?";
+        $result = $this->db->getAssoc($sql, [$member->id] );
+        if ($result === false) {
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg(). "\n\n$sql");
+        }
+    }
 
 
     /** Retrieve the Event by its Event Id */
@@ -51,7 +106,7 @@ class MemberRepository
         $sql = 'select '.join(',', self::PUBLIC_DB_FIELDS).' from ucon_member where id_member=?';
         $result = $this->db->getAll($sql, [$id]);
         if (!is_array($result)) {
-            throw new \Exception("SQL Error: ".$db->ErrMsg());
+            throw new \Exception("SQL Error: ".$this->db->ErrorMsg(). "\n\n$sql");
         }
 
         if (count($result) == 0) {
@@ -60,8 +115,16 @@ class MemberRepository
 
         // map the data into the API model object
         $m = $result[0];
-        $member = new Member((int)$m['id_member'], $m['s_lname'], $m['s_fname'], $m['s_group']);
-        return $member;
+        return Member::createFromData($m);
+    }
+
+    public function findById(int $memberId) : ?MemberPrivate {
+        $results = $this->findPrivateMembersByIds( [$memberId] );
+        if (count($results) > 0) {
+            return $results[0];
+        } else {
+            return null;
+        }
     }
 
     public function findPrivateMembersByIds(array $memberIds) {
@@ -84,13 +147,15 @@ class MemberRepository
         // map the data into the API model object
         $members = [];
         foreach ($result as $m) {
-            $mId = (int)$m['id_member'];
-            $newMember = new Member($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
-            // foreach ($m as $k => $v) {
-            //     $field = self::FIELD_MAP[$k];
-            //     $newMember->$field = $v;
-            // }
-            $members[] = $newMember;
+            $members[] = MemberPrivate::createFromData($m);
+
+            // $mId = (int)$m['id_member'];
+            // $newMember = new Member($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
+            // // foreach ($m as $k => $v) {
+            // //     $field = self::FIELD_MAP[$k];
+            // //     $newMember->$field = $v;
+            // // }
+            // $members[] = $newMember;
         }
 
         return $members;
@@ -132,9 +197,8 @@ class MemberRepository
 
         // map the data into the API model object
         foreach ($result as $m) {
-            $mId = (int)$m['id_member'];
-            $member = new Member($mId, $m['s_lname'], $m['s_fname'], $m['s_group']);
-            $this->cachePublicMembers[$mId] = $member;
+            $mId = (int)$m['id'];
+            $this->cachePublicMembers[$mId] = Member::createFromData($m);
         }
     }
 

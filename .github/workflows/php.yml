@@ -12,6 +12,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - name: Start mysql service
+      run: sudo /etc/init.d/mysql start
+      
+    - name: Check mysql version
+      run: mysql --version
+
+    - name: Verify MySQL connection from host
+      run: mysql -uroot -proot -e "SHOW DATABASES"
+
+    - name: Create test database
+      run: mysql -uroot -proot -e "CREATE DATABASE ucon_test"
+
+    - name: Check connection to test database
+      run: mysql -uroot -proot ucon_test -e "SHOW TABLES"
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+
     - uses: actions/checkout@v2
 
     - name: Validate composer.json and composer.lock
@@ -21,16 +42,23 @@ jobs:
       id: composer-cache
       uses: actions/cache@v2
       with:
+        php_version: 7.4
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
+    #- name: Create a test database
+    #  run: mysql --host 127.0.0.1 -uroot -ppassword -e "create database ucon_test"
+
+    - name: Install dependencies for base application
       run: composer install --prefer-dist --no-progress
+
+    - name: Install depedencies in API directory
+      run: cd api; composer install --prefer-dist --no-progress
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Run test suite
+      run: cd api; composer test

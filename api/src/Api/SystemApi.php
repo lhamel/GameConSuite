@@ -35,8 +35,9 @@ use Exception;
 
 
 // TODO FIXME find a better way to do this
-$config = $GLOBALS['config'];
+include __DIR__.'/../../../config/config.php';
 include __DIR__.'/../../../inc/resources/event/constants.php';
+$GLOBALS['config'] = $config;
 $GLOBALS['constants'] = $constants;
 //echo print_r($GLOBALS['constants'],1);
 
