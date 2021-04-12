@@ -29,10 +29,10 @@ jobs:
     steps:
 
     - name: Start mysql service
-      run: sudo /usr/sbin/mysqld --skip-grant-tables --skip-networking &
+      run: sudo /etc/init.d/mysql start
 
     - name: Verify MySQL connection from host
-      run: mysql -u root -e "SHOW DATABASES"
+      run: mysql -uroot -proot -e "SHOW DATABASES"
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
