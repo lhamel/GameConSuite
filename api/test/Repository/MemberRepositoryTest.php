@@ -55,7 +55,7 @@ class MemberRepositoryTest extends TestCase
      */
     public function setUp() : void
     {
-        $this->db = \NewADOConnection('mysqli://root:@localhost/ucon_test');
+        $this->db = \NewADOConnection('mysqli://root:root@localhost/ucon_test');
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
 
