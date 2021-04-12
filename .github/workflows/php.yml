@@ -10,21 +10,21 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      DB_ADAPTER: mysql
-      DB_HOST: 127.0.0.1
-      DB_NAME: ucon_test
-      DB_USERNAME: root
-      DB_PASSWORD: password
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          #MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: ucon_test
-        ports:
-          - 3306/tcp
+#     env:
+#       DB_ADAPTER: mysql
+#       DB_HOST: 127.0.0.1
+#       DB_NAME: ucon_test
+#       DB_USERNAME: root
+#       DB_PASSWORD: password
+#     services:
+#       mysql:
+#         image: mysql:5.7
+#         env:
+#           MYSQL_ALLOW_EMPTY_PASSWORD: true
+#           #MYSQL_ROOT_PASSWORD: password
+#           MYSQL_DATABASE: ucon_test
+#         ports:
+#           - 3306/tcp
 
     steps:
 
@@ -32,7 +32,7 @@ jobs:
       run: sudo /etc/init.d/mysql start
 
     - name: Verify MySQL connection from host
-      run: mysql --host mysql -uroot -e "SHOW DATABASES"
+      run: mysql -e "SHOW DATABASES"
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
