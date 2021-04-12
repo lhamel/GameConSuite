@@ -15,6 +15,9 @@ jobs:
 
     - name: Start mysql service
       run: sudo /etc/init.d/mysql start
+      
+    - name: Check mysql version
+      run: mysql --version
 
     - name: Verify MySQL connection from host
       run: mysql -uroot -proot -e "SHOW DATABASES"
