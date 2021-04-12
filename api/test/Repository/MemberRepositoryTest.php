@@ -55,7 +55,17 @@ class MemberRepositoryTest extends TestCase
      */
     public function setUp() : void
     {
-        $this->db = \NewADOConnection('mysql://root:root@localhost/ucon_test');
+
+
+// Create connection
+$conn = new \mysqli('localhost', 'root', 'root');
+
+// Check connection
+if ($conn->connect_error) {
+  throw new \Exception("Connection failed: " . $conn->connect_error);
+}
+
+        $this->db = \NewADOConnection('mysqli://root:root@localhost/ucon_test');
         $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
         // $dsn = 'sqlite::memory:';
