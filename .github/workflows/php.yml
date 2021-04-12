@@ -50,8 +50,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Create a test database
-      run: mysql --host 127.0.0.1 -uroot -ppassword -e "create database ucon_test"
+    #- name: Create a test database
+    #  run: mysql --host 127.0.0.1 -uroot -ppassword -e "create database ucon_test"
 
     - name: Install dependencies for base application
       run: composer install --prefer-dist --no-progress
