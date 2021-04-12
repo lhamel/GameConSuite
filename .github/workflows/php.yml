@@ -32,7 +32,7 @@ jobs:
       run: sudo /etc/init.d/mysql start
 
     - name: Verify MySQL connection from host
-      run: mysql -uroot -e "SHOW DATABASES"
+      run: mysql --host mysql -uroot -e "SHOW DATABASES"
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
